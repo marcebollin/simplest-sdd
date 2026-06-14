@@ -39,7 +39,7 @@ CLAUDE.md -> AGENTS.md
 .claude/skills/spec-library -> ../../.agents/skills/spec-library
 ```
 
-See [examples](examples/) for a sample conversation and result.
+See [examples](examples/) for an anonymized read-later product case showing the discovery conversation and resulting document architecture.
 
 ## Why
 

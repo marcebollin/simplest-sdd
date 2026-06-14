@@ -1,4 +1,4 @@
 # Examples
 
-- [Discovery conversation](discovery-conversation.md): how the bootstrap learns project intent without asking the user to repeat repository facts.
-- [Generated result](generated-result.md): the files created and how a future feature uses them.
+- [Read-later discovery conversation](discovery-conversation.md): an anonymized real-product example of inferred goals, users, clues, and mandatory questions.
+- [Read-later generated result](generated-result.md): the resulting `AGENTS.md`, library architecture, and abbreviated business, technical, plan, and decision documents.
