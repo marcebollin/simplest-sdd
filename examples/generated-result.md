@@ -27,3 +27,5 @@ A future substantial feature creates only:
 ```
 
 The business and technical files remain useful after shipping. The plan carries temporary implementation progress and verification evidence.
+
+Both `business.md` and `plan.md` state the inferred intended users, so implementation and review stay tied to the people the feature is meant to help.

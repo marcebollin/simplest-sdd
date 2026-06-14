@@ -5,12 +5,13 @@ A copy-paste prompt that adds a small, self-improving spec-driven development sy
 It keeps the useful guardrails:
 
 - one required clarification conversation before substantial work;
+- inferred end users plus conditional goal and example questions;
 - separate business, technical, and implementation documents;
 - durable decisions without documenting every small choice;
 - `AGENTS.md` and `.agents/skills` as the source of truth;
 - Claude compatibility through symlinks.
 
-It avoids turning the workflow into a ceremony. Clear, low-risk changes can still be implemented directly.
+It avoids turning the workflow into a ceremony. The skill is required when reviewing the expected output would take more than about five minutes; smaller clear changes can still be implemented directly.
 
 ## Use it
 

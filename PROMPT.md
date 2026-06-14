@@ -35,16 +35,22 @@ Summarize what you learned internally. Do not make the user explain facts alread
 
 ## 2. Ask the project discovery questions
 
-Ask the user one concise round of at least eight material questions and wait for every answer before editing files. Adapt the wording to what you discovered, but cover:
+Infer the project's goal, useful examples, and intended users from the repository before asking questions.
 
-1. What is the project trying to make possible, in one or two sentences?
-2. Who are its primary users, and what do they care about most?
-3. What product qualities should guide tradeoffs, such as speed, calmness, reliability, privacy, flexibility, or low cost?
-4. What should the agent avoid building or optimizing for?
-5. Which technical boundaries are non-negotiable?
-6. Which kinds of changes deserve a written spec, and which should stay direct and lightweight?
-7. Which risks require explicit technical approval, such as auth, billing, migrations, security, infrastructure, or public APIs?
-8. What commands and user-visible checks prove work is complete?
+- **Goal prerequisite:** If the existing request and repository do not reveal the concrete result the project is trying to produce, ask a direct goal question. Do not count it toward the discovery minimum below.
+- **Clues and examples prerequisite:** Gather directional clues from current features, neighboring applications, the user's other projects when known, or relevant products in general. If none are available, ask which examples should influence the result and what property is useful about each. Do not count this toward the discovery minimum.
+- **Intended users:** Infer the primary users and their important needs from repository instructions, product behavior, docs, and the request. Do not ask the user to invent this from scratch. Present your inference for correction.
+
+Ask the user one concise round of at least eight material product, business, and workflow questions and wait for every answer before editing files. Put any missing prerequisite questions first, but do not count them toward the eight. Adapt the wording to what you discovered, and cover:
+
+1. Your inferred primary users, their context, and their most important need; ask what should be corrected.
+2. The product or business outcome that should define success for those users.
+3. The user problems or jobs that should take priority when features compete.
+4. The product qualities that should guide tradeoffs, such as speed, calmness, reliability, privacy, flexibility, or low cost.
+5. What the agent should avoid building or optimizing for.
+6. Which technical boundaries are non-negotiable.
+7. Which risks require explicit technical approval, such as auth, billing, migrations, security, infrastructure, or public APIs.
+8. Which commands and user-visible checks prove work is complete.
 
 Ask extra questions only when an answer could materially change the generated instructions or workflow. Prefer concrete examples over abstract questionnaires.
 
@@ -62,6 +68,7 @@ Preserve every existing instruction while establishing one source of truth:
 Add or update a concise project guidance section containing:
 
 - what the project is and who it serves;
+- the project goal and the inferred end users' context and needs;
 - the product principles learned from the user;
 - stable technical boundaries and essential commands;
 - this resolver:
@@ -71,9 +78,9 @@ Add or update a concise project guidance section containing:
 
 | When | Load |
 | --- | --- |
-| Meaningful product ambiguity, architectural/security risk, multi-session handoff, or behavior covered by an existing spec | `.agents/skills/spec-library/SKILL.md` |
+| Output whose review would take more than ~5 minutes; meaningful product ambiguity; architectural/security risk; multi-session handoff; or behavior covered by an existing spec | `.agents/skills/spec-library/SKILL.md` |
 | Question about a past technical, architectural, product, or style choice | `.agents/skills/spec-library/decisions/INDEX.md` |
-| Clear low-risk change with no existing spec implicated | Implement and verify directly |
+| Clear low-risk change whose output is reviewable within ~5 minutes and no existing spec is implicated | Implement and verify directly |
 
 The spec workflow always includes one concise user clarification round with at least five material questions. After implementation, run its close-out step so durable specs and decisions match what shipped.
 ```
@@ -106,7 +113,7 @@ The skill must encode this workflow:
 
 ### Gate
 
-Use the workflow for meaningful product ambiguity, expensive misunderstandings, architecture/data/auth/security/billing/public-contract risk, multi-session handoffs, or changes to behavior covered by an existing spec. Do not trigger it from time or file count alone.
+Always use the workflow when reviewing the expected output would take more than about five minutes. Also use it for meaningful product ambiguity, expensive misunderstandings, architecture/data/auth/security/billing/public-contract risk, multi-session handoffs, or changes to behavior covered by an existing spec. The five-minute threshold concerns review effort, not implementation time or file count.
 
 ### Resolve context
 
@@ -114,7 +121,13 @@ Read the spec and decision indexes, load only relevant artifacts, inspect code b
 
 ### Clarify: mandatory guardrail
 
-Before drafting, ask the user at least five material questions in one concise round and wait for answers. Cover outcome, scope, behavior, constraints, and proof. Do not repeat facts already established by the request or repository; use them to ask sharper tradeoff and edge-case questions.
+Before the mandatory five questions:
+
+- infer the concrete feature goal, asking a separate goal question only when it is missing; this does not count toward the five;
+- gather clues and examples from the product, the user's other projects, or relevant external products, asking separately only when none are available; this does not count toward the five;
+- infer intended users from `AGENTS.md`, the request, product behavior, and existing specs. Do not ask the user to restate users already supported by the evidence. Resolve conflicting evidence in one of the mandatory questions.
+
+Then ask the user at least five material questions in one concise round and wait for answers. Cover outcome for the inferred users, scope, behavior, constraints, and proof. Do not repeat facts already established by the request or repository; use them to ask sharper tradeoff and edge-case questions.
 
 ### Create one feature folder
 
@@ -125,9 +138,9 @@ specs/<domain>-<feature>/
 └── plan.md
 ```
 
-- `business.md`: durable product contract. Problem, users, outcomes, primary flow, scope, acceptance criteria, open product questions. No file paths or implementation checklist.
+- `business.md`: durable product contract. Goal, intended users, problem, outcomes, primary flow, clues/examples, scope, acceptance criteria, and open product questions. No file paths or implementation checklist.
 - `technical.md`: durable design. Current system, proposed approach, boundaries, failure/security/compatibility concerns, verification strategy, and feature-local choices.
-- `plan.md`: implementation handoff. Links to both specs and relevant decisions, ordered tasks, useful starting code surfaces, verification, discoveries, deviations, and completion summary.
+- `plan.md`: implementation handoff. Goal and intended users, links to both specs and relevant decisions, ordered tasks, useful starting code surfaces, verification, discoveries, deviations, and completion summary.
 
 Keep all three short. Let the implementing agent inspect ordinary code details.
 
@@ -153,11 +166,11 @@ Use YAML frontmatter with `name`, `description`, `status`, and only the metadata
 
 The templates should provide these headings:
 
-**Business:** Problem, Outcomes, User flow, Scope in/out, Acceptance criteria, Open questions, Related.
+**Business:** Goal, Intended users, Problem, Outcomes, User flow, Clues and examples, Scope in/out, Acceptance criteria, Open questions, Related.
 
 **Technical:** Current system, Proposed approach, Boundaries and contracts, Failure/security/compatibility, Verification strategy, Feature-local choices, Open questions, Related.
 
-**Plan:** Read first, Tasks, Likely code surfaces, Verification, Discoveries and deviations, Completion summary.
+**Plan:** Goal and intended users, Read first, Tasks, Likely code surfaces, Verification, Discoveries and deviations, Completion summary.
 
 **Decision:** Decision, Over, Why, How to apply, Origin. Include importance and active/superseded status.
 
