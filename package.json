@@ -1,0 +1,34 @@
+{
+  "name": "simplest-sdd",
+  "version": "0.1.0",
+  "description": "Agent-ready prompts for installing, updating, and removing the simplest spec-driven development workflow.",
+  "type": "module",
+  "bin": {
+    "simplest-sdd": "./bin/simplest-sdd.mjs"
+  },
+  "files": [
+    "bin",
+    "docs",
+    "examples",
+    "prompts",
+    "schema",
+    "PROMPT.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "agents",
+    "claude",
+    "codex",
+    "spec-driven-development",
+    "sdd"
+  ],
+  "author": "Marcelo Leon",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

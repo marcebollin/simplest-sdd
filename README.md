@@ -1,6 +1,6 @@
 # simplest-sdd
 
-A copy-paste prompt that adds a small, self-improving spec-driven development system to an existing project.
+An npx-ready prompt CLI that gives an AI coding agent the instructions to install, update, or remove a small, self-improving spec-driven development system in an existing project.
 
 It keeps the useful guardrails:
 
@@ -9,37 +9,74 @@ It keeps the useful guardrails:
 - separate business, technical, and implementation documents;
 - durable decisions without documenting every small choice;
 - `AGENTS.md` and `.agents/skills` as the source of truth;
-- Claude compatibility through symlinks.
+- Claude compatibility through `CLAUDE.md` importing `@AGENTS.md`;
+- clean static HTML specs, plans, decisions, indexes, and templates.
 
 It avoids turning the workflow into a ceremony. The skill is required when reviewing the expected output would take more than about five minutes; smaller clear changes can still be implemented directly.
 
-## Use it
+## Use It
 
-1. Open [PROMPT.md](PROMPT.md).
-2. Copy the entire prompt into your coding agent while it is opened in the project you want to configure.
-3. Answer its project questions.
-4. Review the generated changes before committing them.
+Run one of these from the project you want your coding agent to modify:
 
-The prompt preserves existing agent instructions. It adds the project context and workflow around them instead of replacing them.
+```sh
+npx simplest-sdd@latest init
+npx simplest-sdd@latest update
+npx simplest-sdd@latest remove
+```
 
-## What it creates
+Then paste the printed instructions into your AI coding agent.
+
+The CLI does not edit files directly. It inspects a few local paths so the printed instructions can include useful state, then the agent performs the repository-specific work.
+
+## Commands
+
+- `init`: prints agent instructions for adding simplest-sdd to a project.
+- `update`: prints agent instructions for comparing the installed skill schema version against the changelog and migrating conservatively.
+- `remove`: prints agent instructions for deactivating simplest-sdd without deleting user-owned specs, decisions, or unrelated instructions.
+
+You can inspect another directory with:
+
+```sh
+npx simplest-sdd@latest update --cwd ../some-project
+```
+
+`init` also tells the agent to add a short maintenance note to `AGENTS.md` so future agents know to use `npx simplest-sdd@latest update` or `npx simplest-sdd@latest remove` for current instructions.
+
+## What Init Creates
 
 ```text
 AGENTS.md
-CLAUDE.md -> AGENTS.md
+CLAUDE.md                         # regular file containing @AGENTS.md
 .agents/skills/spec-library/
-├── SKILL.md
-├── specs/INDEX.md
-├── decisions/INDEX.md
+├── SKILL.md                      # includes simplest-sdd schema version
+├── specs/
+│   └── index.html
+├── decisions/
+│   └── index.html
 └── templates/
-    ├── business-spec.md
-    ├── technical-spec.md
-    ├── plan.md
-    └── decision-template.md
+    ├── business-spec.html
+    ├── technical-spec.html
+    ├── plan.html
+    └── decision-template.html
 .claude/skills/spec-library -> ../../.agents/skills/spec-library
 ```
 
+Feature work creates:
+
+```text
+.agents/skills/spec-library/specs/<domain>-<feature>/
+├── business.html
+├── technical.html
+└── plan.html
+```
+
+The HTML artifacts are plain, readable static documents with embedded focus styles and optional simple charts or diagrams when they clarify decisions or technical tradeoffs.
+
 See [examples](examples/) for an anonymized read-later product case showing the discovery conversation and resulting document architecture.
+
+## Publishing
+
+See [docs/npm-publish.md](docs/npm-publish.md) for the npm release checklist.
 
 ## Why
 

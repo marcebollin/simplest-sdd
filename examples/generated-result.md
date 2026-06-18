@@ -15,182 +15,184 @@ The primary users are heavy internet readers who value low-friction capture, und
 
 Prefer obvious workflows over configurable machinery. Push back when complexity does not meaningfully improve saving, finding, organizing, or reading.
 
+For simplest-sdd maintenance instructions, run `npx simplest-sdd@latest update` or `npx simplest-sdd@latest remove` and follow the printed agent prompt.
+
 ## Spec-driven workflow
 
 | When | Load |
 | --- | --- |
 | Output review takes more than ~5 minutes, or work carries meaningful ambiguity or risk | `.agents/skills/spec-library/SKILL.md` |
+| Question about a past decision | `.agents/skills/spec-library/decisions/index.html` |
 | Clear low-risk output reviewable within ~5 minutes | Implement and verify directly |
+```
+
+`CLAUDE.md` is a regular file:
+
+```markdown
+@AGENTS.md
 ```
 
 ## Library architecture
 
 ```text
 AGENTS.md
-CLAUDE.md -> AGENTS.md
+CLAUDE.md
 .agents/skills/spec-library/
 ├── SKILL.md
 ├── specs/
-│   ├── INDEX.md
+│   ├── index.html
 │   └── content-discovery-export/
-│       ├── business.md
-│       ├── technical.md
-│       └── plan.md
+│       ├── business.html
+│       ├── technical.html
+│       └── plan.html
 ├── decisions/
-│   ├── INDEX.md
-│   └── export-reuses-active-result-set.md
+│   ├── index.html
+│   └── export-reuses-active-result-set.html
 └── templates/
-    ├── business-spec.md
-    ├── technical-spec.md
-    ├── plan.md
-    └── decision-template.md
+    ├── business-spec.html
+    ├── technical-spec.html
+    ├── plan.html
+    └── decision-template.html
 .claude/skills/spec-library -> ../../.agents/skills/spec-library
 ```
 
 The indexes expose only enough metadata for an agent to decide what to load:
 
-```markdown
-# Specs Index
-- [content-discovery-export](content-discovery-export/business.md) — (implemented) Unified discovery, ordering, and export for the active saved-content scope.
-
-# Decisions Index
-- [export-reuses-active-result-set](../decisions/export-reuses-active-result-set.md) — (medium) Export completes and serializes the active result set.
+```html
+<main>
+  <header>
+    <h1>Specs Index</h1>
+    <p class="meta">Short entries for progressive disclosure.</p>
+  </header>
+  <section>
+    <h2>Implemented</h2>
+    <ul>
+      <li>
+        <a href="content-discovery-export/business.html">Content discovery export</a>
+        <span class="meta">Unified discovery, ordering, and export for the active saved-content scope.</span>
+      </li>
+    </ul>
+  </section>
+</main>
 ```
 
 ## Business spec
 
 The business document describes the product contract without implementation instructions:
 
-```markdown
----
-name: content-discovery-export-business
-description: Product contract for unified discovery and scoped export.
-domain: content
-status: approved
-created: YYYY-MM-DD
----
-
-# Content discovery and export
-
-## Goal
-Help readers find and reuse the complete set of saved material relevant to their current context.
-
-## Intended users
-People who save many items from across the internet and may not remember their original organization choices.
-
-## Problem
-Browsing works for familiar collections, but discovery and reuse become slower as the library grows.
-
-## Outcomes
-- Readers can search across organizational dimensions from one place.
-- Export reflects the same scope and ordering the reader is viewing.
-
-## Clues and examples
-- Preserve the existing browsable filters.
-- Use a command-style finder only as an accelerator.
-
-## Scope
-**In:** unified discovery, explicit ordering, scoped export.
-**Out:** redesigning saved-item cards or changing organization semantics.
-
-## Acceptance criteria
-- Discovery clearly identifies result types.
-- Export includes the complete active result set in visible order.
+```html
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="artifact-type" content="business-spec">
+  <meta name="status" content="approved">
+  <title>Content discovery and export</title>
+  <style>
+    body { margin: 0; font: 16px/1.65 system-ui, sans-serif; color: #202124; background: #f8f7f3; }
+    main { width: min(76ch, calc(100% - 32px)); margin: 0 auto; padding: 48px 0; }
+    a:focus-visible { outline: 3px solid #0b6bcb; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Content discovery and export</h1>
+      <p class="meta">Product contract for unified discovery and scoped export.</p>
+    </header>
+    <section>
+      <h2>Goal</h2>
+      <p>Help readers find and reuse the complete set of saved material relevant to their current context.</p>
+    </section>
+    <section>
+      <h2>Intended users</h2>
+      <p>People who save many items from across the internet and may not remember their original organization choices.</p>
+    </section>
+    <section>
+      <h2>Acceptance criteria</h2>
+      <ul>
+        <li>Discovery clearly identifies result types.</li>
+        <li>Export includes the complete active result set in visible order.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
 ```
 
 ## Technical spec
 
-The technical document records durable system boundaries and why the approach fits:
+The technical document records durable boundaries and may include a simple diagram when it helps:
 
-```markdown
----
-name: content-discovery-export-technical
-description: Engineering design for unified discovery and scoped export.
-domain: content
-status: approved
-created: YYYY-MM-DD
----
-
-# Content discovery and export: technical design
-
-## Current system
-Saved content is loaded through server-owned query boundaries and displayed from a paginated client cache.
-
-## Proposed approach
-Use one discovery surface over existing entity queries. Complete the active paginated result set before serialization instead of creating a second export data path.
-
-## Boundaries and contracts
-- Server remains authoritative for user-owned data.
-- The active query key defines search, filters, and ordering.
-- Export serializers consume the completed result set.
-
-## Failure, security, and compatibility
-- Never trust client-supplied content as the export source.
-- Keep export and visible results from drifting into different scopes.
-
-## Verification strategy
-- Focused query and serializer tests.
-- Type and lint checks.
-- Desktop and narrow-screen discovery/export flow.
+```html
+<section>
+  <h2>Proposed approach</h2>
+  <p>Use one discovery surface over existing entity queries. Complete the active paginated result set before serialization.</p>
+  <figure class="panel">
+    <figcaption>Export path</figcaption>
+    <svg role="img" aria-labelledby="export-title" viewBox="0 0 560 120">
+      <title id="export-title">Visible results are completed before export serialization.</title>
+      <rect x="10" y="35" width="130" height="50" rx="6"></rect>
+      <text x="75" y="65" text-anchor="middle">Active scope</text>
+      <path d="M150 60 H250"></path>
+      <rect x="260" y="35" width="130" height="50" rx="6"></rect>
+      <text x="325" y="65" text-anchor="middle">Complete set</text>
+      <path d="M400 60 H500"></path>
+      <rect x="510" y="35" width="40" height="50" rx="6"></rect>
+    </svg>
+  </figure>
+</section>
 ```
 
 ## Implementation plan
 
 The plan carries execution details and explicitly keeps the users visible:
 
-```markdown
----
-name: content-discovery-export-plan
-description: Implementation handoff for unified discovery and scoped export.
-status: ready
-created: YYYY-MM-DD
----
-
-# Content discovery and export: implementation plan
-
-## Goal and intended users
-- **Goal:** make discovery and scoped reuse reliable as a saved library grows.
-- **Intended users:** heavy internet readers managing many saved items.
-
-## Read first
-- Business spec
-- Technical spec
-- Relevant active decisions
-
-## Tasks
-- [ ] Normalize discovery and ordering inputs.
-- [ ] Build the shared discovery surface.
-- [ ] Complete the active result set before export.
-- [ ] Add focused tests and browser verification.
-
-## Verification
-- [ ] Project tests, type checks, and lint pass.
-- [ ] Discovery and export match the active user-visible scope.
+```html
+<main>
+  <header>
+    <h1>Content discovery and export: implementation plan</h1>
+    <p class="meta">Status: ready</p>
+  </header>
+  <section>
+    <h2>Goal and intended users</h2>
+    <p>Make discovery and scoped reuse reliable as a saved library grows for heavy internet readers.</p>
+  </section>
+  <section>
+    <h2>Tasks</h2>
+    <ol>
+      <li>Normalize discovery and ordering inputs.</li>
+      <li>Build the shared discovery surface.</li>
+      <li>Complete the active result set before export.</li>
+      <li>Add focused tests and browser verification.</li>
+    </ol>
+  </section>
+</main>
 ```
 
 ## Durable decision
 
 Only a choice that affects future features is promoted from the technical spec:
 
-```markdown
----
-name: export-reuses-active-result-set
-description: Exports complete and serialize the active result set.
-type: architecture
-importance: medium
-status: active
-created: YYYY-MM-DD
----
-
-# Reuse the active result set for exports
-
-**Decision:** Complete and serialize the active paginated result set.
-
-**Over:** Maintaining a separate all-record export query.
-
-**Why:** It prevents visible results and exports from using different scopes while reusing already loaded data.
-
-**How to apply:** Future export formats consume the same completed result set instead of querying storage directly.
+```html
+<main>
+  <header>
+    <h1>Reuse the active result set for exports</h1>
+    <p class="meta">Importance: medium. Status: active.</p>
+  </header>
+  <section>
+    <h2>Decision</h2>
+    <p>Complete and serialize the active paginated result set.</p>
+  </section>
+  <section>
+    <h2>Over</h2>
+    <p>Maintaining a separate all-record export query.</p>
+  </section>
+  <section>
+    <h2>Why</h2>
+    <p>It prevents visible results and exports from using different scopes while reusing already loaded data.</p>
+  </section>
+</main>
 ```
 
-The business and technical specs remain useful after shipping. `plan.md` holds temporary progress, discoveries, and verification evidence.
+The business and technical specs remain useful after shipping. `plan.html` holds temporary progress, discoveries, and verification evidence.

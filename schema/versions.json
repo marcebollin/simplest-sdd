@@ -1,0 +1,34 @@
+{
+  "currentSchemaVersion": "1.0.0",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-17",
+      "summary": "Initial versioned simplest-sdd schema with npx CLI prompts and Claude import compatibility.",
+      "changes": [
+        "Record the simplest-sdd schema version in .agents/skills/spec-library/SKILL.md.",
+        "Use AGENTS.md as the canonical agent instruction source.",
+        "Use a regular CLAUDE.md file containing @AGENTS.md instead of making CLAUDE.md a symlink.",
+        "Keep .agents/skills/spec-library as the canonical skill and .claude/skills/spec-library as a relative symlink for Claude skill discovery.",
+        "Use clean static HTML for generated specs, plans, decisions, indexes, and templates.",
+        "Document the HTML readability and focus-style contract inside the generated skill.",
+        "Ship init, update, and remove agent-instruction prompts through an npx-friendly CLI."
+      ],
+      "migrations": [
+        {
+          "from": "unversioned",
+          "steps": [
+            "Inspect AGENTS.md, CLAUDE.md, .agents/skills/spec-library, and .claude/skills/spec-library before editing.",
+            "Preserve every existing instruction by moving unique CLAUDE.md content into AGENTS.md before replacing CLAUDE.md.",
+            "Replace a CLAUDE.md -> AGENTS.md symlink with a regular CLAUDE.md file that imports @AGENTS.md.",
+            "Add the simplest-sdd schema marker to .agents/skills/spec-library/SKILL.md immediately after the skill frontmatter.",
+            "Keep the existing spec library under .agents/skills/spec-library and keep or create .claude/skills/spec-library as a relative symlink to it.",
+            "Convert generated Markdown templates, indexes, specs, plans, and decisions to clean static HTML when conversion is safe.",
+            "Preserve old Markdown artifacts whenever ownership or conversion fidelity is unclear.",
+            "Update stale documentation that still says CLAUDE.md should be a symlink or generated artifacts should be Markdown."
+          ]
+        }
+      ]
+    }
+  ]
+}
