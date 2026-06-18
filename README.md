@@ -74,10 +74,6 @@ The HTML artifacts are plain, readable static documents with embedded focus styl
 
 See [examples](examples/) for an anonymized read-later product case showing the discovery conversation and resulting document architecture.
 
-## Publishing
-
-See [docs/npm-publish.md](docs/npm-publish.md) for the npm release checklist.
-
 ## Why
 
 Agents work best when they understand the product and can talk through unclear work. They work worse when every change requires a large process.
