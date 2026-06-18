@@ -42,6 +42,14 @@ npx simplest-sdd@latest update --cwd ../some-project
 
 `init` also tells the agent to add a short maintenance note to `AGENTS.md` so future agents know to use `npx simplest-sdd@latest update` or `npx simplest-sdd@latest remove` for current instructions.
 
+## Versioning
+
+The npm package version and the simplest-sdd schema version are independent.
+
+- The npm package version in `package.json` tracks CLI and packaging releases.
+- The schema version in `.agents/skills/spec-library/SKILL.md` tracks the installed workflow contract that `update` migrates.
+- `schema/CHANGELOG.md` records schema changes only. A CLI patch can ship without changing the installed schema.
+
 ## What Init Creates
 
 ```text

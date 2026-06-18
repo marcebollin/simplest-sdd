@@ -1,5 +1,7 @@
 # Simplest SDD Schema Changelog
 
+This changelog tracks the installed simplest-sdd schema, not the npm package version. The npm package can release CLI or packaging fixes without changing the schema version.
+
 ## 1.0.0 - 2026-06-17
 
 - Added a skill-local schema marker in `.agents/skills/spec-library/SKILL.md`.
