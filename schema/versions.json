@@ -1,6 +1,33 @@
 {
-  "currentSchemaVersion": "0.1.0",
+  "currentSchemaVersion": "0.2.0",
   "versions": [
+    {
+      "version": "0.2.0",
+      "date": "2026-06-18",
+      "summary": "Adds a root spec-library index as the human and agent entry point for all internal specification documentation.",
+      "changes": [
+        "Create .agents/skills/spec-library/index.html as the top-level library index.",
+        "Keep specs/index.html and decisions/index.html as focused supporting indexes.",
+        "Make the root library index list all internal spec-library documentation while exposing latest documents by last-updated date.",
+        "Allow small client-side filtering or search in the root library index while keeping artifacts static and readable without routing.",
+        "Require close-out to update the root library index along with spec and decision indexes.",
+        "Keep root library index links internal; internal documents may reference external URLs when useful."
+      ],
+      "migrations": [
+        {
+          "from": "0.1.0",
+          "steps": [
+            "Inspect the existing spec and decision indexes plus all generated spec-library artifacts before editing.",
+            "Create .agents/skills/spec-library/index.html if it is missing, preserving any existing local library landing page if present.",
+            "Populate the root library index with links to all internal specs, plans, decisions, templates only when useful, and supporting indexes.",
+            "Add an accessible latest-documents section ordered by each artifact's last-updated metadata or the best available maintained date.",
+            "Keep links in the root library index internal to the repository documentation; let linked internal documents cite external URLs as needed.",
+            "Update SKILL.md so resolve-context and close-out steps require maintaining the root library index.",
+            "Add or preserve small client-side filtering/search only when it improves reading the library and the page remains useful without routing."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.1.0",
       "date": "2026-06-17",

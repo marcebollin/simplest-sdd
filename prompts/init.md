@@ -12,7 +12,7 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Use `.agents/skills/` as the canonical repository skill directory.
 - For Claude, make `CLAUDE.md` a regular file that imports the canonical instructions with `@AGENTS.md`.
 - Keep the Claude skill compatibility path as a relative symlink: `.claude/skills/spec-library -> ../../.agents/skills/spec-library`.
-- Store specs, decisions, plans, and indexes as clean static HTML files with readable embedded CSS.
+- Store the library index, specs, decisions, plans, and supporting indexes as clean static HTML files with readable embedded CSS.
 - Keep the resulting files concise and specific to this project.
 - Do not copy implementation details that the agent can discover from the repository.
 - Do not implement unrelated product code.
@@ -77,10 +77,11 @@ Add or update a concise project guidance section containing:
 | When | Load |
 | --- | --- |
 | Output whose review would take more than ~5 minutes; meaningful product ambiguity; architectural/security risk; multi-session handoff; or behavior covered by an existing spec | `.agents/skills/spec-library/SKILL.md` |
-| Question about a past technical, architectural, product, or style choice | `.agents/skills/spec-library/decisions/index.html` |
+| Question about past specs, plans, decisions, or internal specification documentation | `.agents/skills/spec-library/index.html` |
+| Question specifically about a past technical, architectural, product, or style choice | `.agents/skills/spec-library/decisions/index.html` |
 | Clear low-risk change whose output is reviewable within ~5 minutes and no existing spec is implicated | Implement and verify directly |
 
-The spec workflow always includes one concise user clarification round with at least five material questions. Specs, plans, decisions, and indexes are clean static HTML files. After implementation, run its close-out step so durable specs and decisions match what shipped.
+The spec workflow always includes one concise user clarification round with at least five material questions. The library index, specs, plans, decisions, and supporting indexes are clean static HTML files. After implementation, run its close-out step so durable specs, decisions, and indexes match what shipped.
 ```
 
 Do not duplicate existing commands or rules. Integrate additions where they are easiest to read.
@@ -92,6 +93,7 @@ Create or carefully update:
 ```text
 .agents/skills/spec-library/
 ├── SKILL.md
+├── index.html
 ├── specs/
 │   └── index.html
 ├── decisions/
@@ -119,7 +121,7 @@ Always use the workflow when reviewing the expected output would take more than 
 
 ### Resolve Context
 
-Read the spec and decision indexes, load only relevant artifacts, inspect code before proposing implementation details, and treat active decisions as constraints.
+Read the root library index, spec index, and decision index, load only relevant artifacts, inspect code before proposing implementation details, and treat active decisions as constraints.
 
 ### Clarify: Mandatory Guardrail
 
@@ -133,7 +135,7 @@ Then ask the user at least five material questions in one concise round and wait
 
 ### HTML Artifacts
 
-Create specs, plans, decisions, and indexes as standalone HTML documents. Keep them readable in a browser and easy for agents to parse as text.
+Create the library index, specs, plans, decisions, and supporting indexes as standalone HTML documents. Keep them readable in a browser and easy for agents to parse as text.
 
 Every artifact should use:
 
@@ -197,8 +199,23 @@ Use `plan.html` as the execution record. Update a durable spec and regain its re
 - Make business and technical specs describe what shipped.
 - Complete the plan with verification evidence.
 - Create a durable decision only when a choice affects future features, is expensive to reverse, resolves recurring disagreement, or establishes a project-wide convention.
-- Update indexes and mark replaced artifacts as superseded instead of deleting history.
+- Update the root library index, spec index, and decision index. Mark replaced artifacts as superseded instead of deleting history.
 - Improve the skill only when repeated friction reveals a reusable guardrail. Do not add ceremony for a one-off mistake.
+
+### Root Library Index
+
+Maintain `.agents/skills/spec-library/index.html` as the easy entry point for humans and agents. It is a library catalog, not a router or application shell.
+
+The root index must:
+
+- link to all internal spec-library documentation, including feature specs, plans, decisions, and supporting indexes;
+- keep an accessible "Latest documents" section ordered by each artifact's last-updated date;
+- provide short descriptions that help readers decide what to open without loading every artifact;
+- keep direct links internal to repository documentation. Internal documents may reference external URLs when useful;
+- remain useful as static HTML if JavaScript is unavailable;
+- include small client-side filtering or search only when it improves reading the library and does not replace normal links.
+
+Prefer metadata from each artifact, such as `<meta name="last-updated" content="YYYY-MM-DD">`. When older artifacts lack metadata, use the best maintained date visible in the artifact or explain that the date is unknown.
 
 ## 5. Create Concise HTML Templates
 
@@ -206,12 +223,12 @@ Each template should be a complete HTML document with the baseline style from th
 
 The templates should provide these sections:
 
-- Business: Goal, Intended users, Problem, Outcomes, User flow, Clues and examples, Scope in/out, Acceptance criteria, Open questions, Related.
-- Technical: Current system, Proposed approach, Boundaries and contracts, Failure/security/compatibility, Verification strategy, Feature-local choices, Open questions, Related.
-- Plan: Goal and intended users, Read first, Tasks, Likely code surfaces, Verification, Discoveries and deviations, Completion summary.
-- Decision: Decision, Over, Why, How to apply, Origin. Include importance and active/superseded status.
+- Business: Goal, Intended users, Problem, Outcomes, User flow, Clues and examples, Scope in/out, Acceptance criteria, Open questions, Related. Include status and last-updated metadata.
+- Technical: Current system, Proposed approach, Boundaries and contracts, Failure/security/compatibility, Verification strategy, Feature-local choices, Open questions, Related. Include status and last-updated metadata.
+- Plan: Goal and intended users, Read first, Tasks, Likely code surfaces, Verification, Discoveries and deviations, Completion summary. Include status and last-updated metadata.
+- Decision: Decision, Over, Why, How to apply, Origin. Include importance, active/superseded status, and last-updated metadata.
 
-Write HTML index instructions that make entries short descriptions used for progressive disclosure. Do not pre-create fake project decisions.
+Write HTML index instructions that make entries short descriptions used for progressive disclosure. Create a root library index with no fake project documents, an empty latest-documents state, links to the focused spec and decision indexes, and optional filtering/search scaffolding only if it stays small and readable. Do not pre-create fake project decisions.
 
 ## 6. Add Claude Compatibility
 
@@ -232,7 +249,7 @@ Before finishing:
 - confirm `CLAUDE.md` is a regular file and contains `@AGENTS.md`;
 - confirm the Claude skill link resolves to the canonical skill;
 - confirm `.agents/skills/spec-library/SKILL.md` contains `<!-- simplest-sdd-schema-version: {{schemaVersion}} -->`;
-- confirm specs, plans, decisions, indexes, and templates are HTML files with readable focus styles;
+- confirm the root library index, specs, plans, decisions, supporting indexes, and templates are HTML files with readable focus styles;
 - confirm no existing instruction, spec, decision, or skill was lost;
 - search for stale references saying `CLAUDE.md` should be a symlink or that generated artifacts should be Markdown;
 - validate skill frontmatter if a validator is available;

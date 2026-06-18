@@ -10,6 +10,7 @@ It keeps the useful guardrails:
 - durable decisions without documenting every small choice;
 - `AGENTS.md` and `.agents/skills` as the source of truth;
 - Claude compatibility through `CLAUDE.md` importing `@AGENTS.md`;
+- a root library index for all internal spec documentation, with latest documents easy to reach;
 - clean static HTML specs, plans, decisions, indexes, and templates.
 
 It avoids turning the workflow into a ceremony. The skill is required when reviewing the expected output would take more than about five minutes; smaller clear changes can still be implemented directly.
@@ -57,6 +58,7 @@ AGENTS.md
 CLAUDE.md                         # regular file containing @AGENTS.md
 .agents/skills/spec-library/
 ├── SKILL.md                      # includes simplest-sdd schema version
+├── index.html                    # root library entry point
 ├── specs/
 │   └── index.html
 ├── decisions/
@@ -79,6 +81,8 @@ Feature work creates:
 ```
 
 The HTML artifacts are plain, readable static documents with embedded focus styles and optional simple charts or diagrams when they clarify decisions or technical tradeoffs.
+
+The root library index links to all internal spec-library documentation and keeps a latest-documents section ordered by last-updated date. It is a static catalog, not a router; small client-side filtering/search is allowed when it keeps the library easier to read.
 
 See [examples](examples/) for an anonymized read-later product case showing the discovery conversation and resulting document architecture.
 

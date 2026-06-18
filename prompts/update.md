@@ -18,7 +18,7 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Use `CLAUDE.md` as a regular Claude import file containing `@AGENTS.md`, not as a symlink.
 - Keep `.agents/skills/spec-library` as the canonical skill directory.
 - Keep `.claude/skills/spec-library -> ../../.agents/skills/spec-library` for Claude skill compatibility.
-- Use clean static HTML for specs, decisions, plans, indexes, and templates.
+- Use clean static HTML for the root library index, specs, decisions, plans, supporting indexes, and templates.
 - Never delete user-authored specs or decisions during update.
 
 ## 1. Inspect Current Installation
@@ -28,6 +28,7 @@ Read:
 - `AGENTS.md`;
 - `CLAUDE.md`, including symlink targets if it is currently a symlink;
 - `.agents/skills/spec-library/SKILL.md`;
+- `.agents/skills/spec-library/index.html` when present;
 - `.agents/skills/spec-library/specs/index.html` or older `.agents/skills/spec-library/specs/INDEX.md`;
 - existing spec folders, including older Markdown artifacts;
 - `.agents/skills/spec-library/decisions/index.html` or older `.agents/skills/spec-library/decisions/INDEX.md`;
@@ -76,10 +77,12 @@ For an unversioned install moving to `{{schemaVersion}}`, migrate this way:
 7. Convert generated indexes from Markdown to static HTML:
    - `specs/INDEX.md` to `specs/index.html`;
    - `decisions/INDEX.md` to `decisions/index.html`.
-8. For existing feature folders, migrate `business.md`, `technical.md`, and `plan.md` to `business.html`, `technical.html`, and `plan.html` only after preserving all content. Keep the old Markdown file if there is any uncertainty about conversion fidelity.
-9. For existing decisions, migrate generated decision `.md` files to `.html` only after preserving all content. Keep the old Markdown file if ownership or conversion fidelity is unclear.
-10. Add the HTML artifact style contract to `SKILL.md`: standalone semantic HTML, embedded readable CSS, visible `:focus-visible` outlines, no external assets, and optional inline SVG/tables/simple charts only when they clarify technical or decision content.
-11. Update stale instructions that say `CLAUDE.md` should be a symlink or that generated artifacts should be Markdown.
+8. Create `.agents/skills/spec-library/index.html` as the root library index if it is missing. Link to all internal spec-library documentation, keep an accessible latest-documents section ordered by last-updated date, and keep direct links internal.
+9. For existing feature folders, migrate `business.md`, `technical.md`, and `plan.md` to `business.html`, `technical.html`, and `plan.html` only after preserving all content. Keep the old Markdown file if there is any uncertainty about conversion fidelity.
+10. For existing decisions, migrate generated decision `.md` files to `.html` only after preserving all content. Keep the old Markdown file if ownership or conversion fidelity is unclear.
+11. Add the HTML artifact style contract to `SKILL.md`: standalone semantic HTML, embedded readable CSS, visible `:focus-visible` outlines, no external assets, and optional inline SVG/tables/simple charts only when they clarify technical or decision content.
+12. Add the root library index contract to `SKILL.md`: all internal docs represented, latest by last-updated date, static link-based catalog, optional small filtering/search, and close-out maintenance.
+13. Update stale instructions that say `CLAUDE.md` should be a symlink, generated artifacts should be Markdown, or only focused spec and decision indexes need maintenance.
 
 For future version jumps, follow the matching changelog migration steps and adapt them to the repository after inspection.
 
@@ -90,7 +93,7 @@ Before finishing:
 - confirm `CLAUDE.md` is a regular file containing `@AGENTS.md`;
 - confirm `.agents/skills/spec-library/SKILL.md` has the latest schema marker;
 - confirm `.claude/skills/spec-library` resolves to `../../.agents/skills/spec-library`;
-- confirm current templates, indexes, specs, plans, and decisions are HTML or that old Markdown copies were intentionally preserved to avoid data loss;
+- confirm the root library index, current templates, supporting indexes, specs, plans, and decisions are HTML or that old Markdown copies were intentionally preserved to avoid data loss;
 - confirm no specs, decisions, unrelated skills, or existing instructions were lost;
 - search for stale references to the previous simplest-sdd behavior;
 - run the repository's relevant formatting or documentation checks;

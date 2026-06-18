@@ -22,6 +22,7 @@ For simplest-sdd maintenance instructions, run `npx simplest-sdd@latest update` 
 | When | Load |
 | --- | --- |
 | Output review takes more than ~5 minutes, or work carries meaningful ambiguity or risk | `.agents/skills/spec-library/SKILL.md` |
+| Question about past specs, plans, decisions, or internal spec documentation | `.agents/skills/spec-library/index.html` |
 | Question about a past decision | `.agents/skills/spec-library/decisions/index.html` |
 | Clear low-risk output reviewable within ~5 minutes | Implement and verify directly |
 ```
@@ -39,6 +40,7 @@ AGENTS.md
 CLAUDE.md
 .agents/skills/spec-library/
 ├── SKILL.md
+├── index.html
 ├── specs/
 │   ├── index.html
 │   └── content-discovery-export/
@@ -56,7 +58,34 @@ CLAUDE.md
 .claude/skills/spec-library -> ../../.agents/skills/spec-library
 ```
 
-The indexes expose only enough metadata for an agent to decide what to load:
+The root library index is the read-first catalog. It links to all internal spec-library documents, keeps latest documents easy to reach by last-updated date, and may include small static-page filtering:
+
+```html
+<main>
+  <header>
+    <h1>Spec Library</h1>
+    <p class="meta">Read-first catalog for internal product and technical specification documents.</p>
+  </header>
+  <section>
+    <h2>Latest documents</h2>
+    <ul>
+      <li>
+        <a href="specs/content-discovery-export/plan.html">Content discovery export plan</a>
+        <span class="meta">Last updated 2026-06-18. Implementation handoff and verification record.</span>
+      </li>
+    </ul>
+  </section>
+  <section>
+    <h2>All documents</h2>
+    <ul>
+      <li><a href="specs/index.html">Specs index</a></li>
+      <li><a href="decisions/index.html">Decisions index</a></li>
+    </ul>
+  </section>
+</main>
+```
+
+The focused indexes expose only enough metadata for an agent to decide what to load:
 
 ```html
 <main>

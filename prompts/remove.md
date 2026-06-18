@@ -13,7 +13,7 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - If you cannot prove a line or file was created by simplest-sdd, preserve it.
 - Never delete user-authored specs or decisions by default, even though they live under `.agents/skills/spec-library`.
 - Ask for explicit confirmation before deleting any durable spec, decision, ADR, plan, or non-template document.
-- Treat HTML specs, plans, decisions, and indexes as user-owned once they contain project-specific content.
+- Treat the root library index, HTML specs, plans, decisions, and supporting indexes as user-owned once they contain project-specific content.
 - Prefer deactivation over data deletion when the safe ownership boundary is unclear.
 
 ## 1. Inspect Ownership
@@ -23,6 +23,7 @@ Read:
 - `AGENTS.md`;
 - `CLAUDE.md`, including symlink targets if it is currently a symlink;
 - `.agents/skills/spec-library/SKILL.md`;
+- `.agents/skills/spec-library/index.html`;
 - `.agents/skills/spec-library/specs/`;
 - `.agents/skills/spec-library/decisions/`;
 - `.agents/skills/spec-library/templates/`;
@@ -60,7 +61,7 @@ Before finishing:
 
 - confirm no simplest-sdd workflow remains active in `AGENTS.md`;
 - confirm Claude no longer loads simplest-sdd skill instructions;
-- confirm user-authored HTML specs, plans, decisions, indexes, and unrelated instructions still exist;
+- confirm the root library index, user-authored HTML specs, plans, decisions, supporting indexes, and unrelated instructions still exist;
 - search for remaining `simplest-sdd`, `spec-driven workflow`, and `spec-library` references and explain any preserved references;
 - run relevant formatting or documentation checks if the repository has them;
 - report the files changed, files intentionally preserved, and any assumptions.

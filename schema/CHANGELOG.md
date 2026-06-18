@@ -2,6 +2,25 @@
 
 This changelog tracks the installed simplest-sdd schema. Schema versions are kept in sync with the npm package version.
 
+## 0.2.0 - 2026-06-18
+
+- Added `.agents/skills/spec-library/index.html` as the root library index and preferred entry point for humans and agents.
+- Kept `specs/index.html` and `decisions/index.html` as focused supporting indexes.
+- Required the root library index to represent all internal spec-library documentation while making the latest documents easy to access by last-updated date.
+- Allowed small client-side filtering or search in the root index while keeping it static, readable, and link-based rather than router-like.
+- Limited root index links to internal documentation; linked internal documents can reference external URLs when relevant.
+- Made root index maintenance part of the close-out step.
+
+### Migration from 0.1.0
+
+1. Inspect existing spec-library artifacts and focused indexes before editing.
+2. Create `.agents/skills/spec-library/index.html` if missing, preserving any local landing page if one already exists.
+3. Link all internal spec-library documentation from the root index, including specs, plans, decisions, and supporting indexes.
+4. Add a latest-documents section ordered by `last-updated` metadata, or the best available maintained date when older artifacts lack metadata.
+5. Keep root index links internal to repository documentation; external references belong inside linked internal documents.
+6. Update `SKILL.md` so context resolution and close-out require maintaining the root index.
+7. Add or preserve small client-side filtering/search only when it improves readability and does not turn the index into a router.
+
 ## 0.1.0 - 2026-06-17
 
 - Added a skill-local schema marker in `.agents/skills/spec-library/SKILL.md`.

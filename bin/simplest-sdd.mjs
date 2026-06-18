@@ -101,6 +101,7 @@ function detectState(cwd) {
   const claudePath = path.join(cwd, "CLAUDE.md");
   const skillPath = path.join(cwd, ".agents", "skills", "spec-library", "SKILL.md");
   const claudeSkillPath = path.join(cwd, ".claude", "skills", "spec-library");
+  const libraryHtmlIndex = path.join(cwd, ".agents", "skills", "spec-library", "index.html");
   const specsHtmlIndex = path.join(cwd, ".agents", "skills", "spec-library", "specs", "index.html");
   const specsMarkdownIndex = path.join(cwd, ".agents", "skills", "spec-library", "specs", "INDEX.md");
   const decisionsHtmlIndex = path.join(cwd, ".agents", "skills", "spec-library", "decisions", "index.html");
@@ -117,6 +118,7 @@ function detectState(cwd) {
     claude: describeClaude(claudePath),
     skill: skillText ? `found (${skillVersion})` : describePath(skillPath),
     claudeSkill: describePath(claudeSkillPath),
+    libraryIndex: describeArtifactIndex(libraryHtmlIndex, null),
     specsIndex: describeArtifactIndex(specsHtmlIndex, specsMarkdownIndex),
     decisionsIndex: describeArtifactIndex(decisionsHtmlIndex, decisionsMarkdownIndex)
   };
@@ -165,7 +167,7 @@ function describePath(filePath) {
 
 function describeArtifactIndex(htmlPath, markdownPath) {
   const hasHtml = Boolean(safeLstat(htmlPath));
-  const hasMarkdown = Boolean(safeLstat(markdownPath));
+  const hasMarkdown = markdownPath ? Boolean(safeLstat(markdownPath)) : false;
 
   if (hasHtml && hasMarkdown) {
     return "HTML index found; older Markdown index also present";
@@ -193,6 +195,7 @@ function formatDetectedState(state) {
     `- \`CLAUDE.md\`: ${state.claude}`,
     `- \`.agents/skills/spec-library/SKILL.md\`: ${state.skill}`,
     `- \`.claude/skills/spec-library\`: ${state.claudeSkill}`,
+    `- library index: ${state.libraryIndex}`,
     `- spec index: ${state.specsIndex}`,
     `- decision index: ${state.decisionsIndex}`
   ].join("\n");
