@@ -1,8 +1,8 @@
 {
-  "currentSchemaVersion": "1.0.0",
+  "currentSchemaVersion": "0.1.0",
   "versions": [
     {
-      "version": "1.0.0",
+      "version": "0.1.0",
       "date": "2026-06-17",
       "summary": "Initial versioned simplest-sdd schema with npx CLI prompts and Claude import compatibility.",
       "changes": [

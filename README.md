@@ -44,11 +44,11 @@ npx simplest-sdd@latest update --cwd ../some-project
 
 ## Versioning
 
-The npm package version and the simplest-sdd schema version are independent.
+The npm package version and the simplest-sdd schema version are kept in sync.
 
-- The npm package version in `package.json` tracks CLI and packaging releases.
-- The schema version in `.agents/skills/spec-library/SKILL.md` tracks the installed workflow contract that `update` migrates.
-- `schema/CHANGELOG.md` records schema changes only. A CLI patch can ship without changing the installed schema.
+- The npm package version in `package.json` is the release version.
+- The same version is used as the installed schema marker in `.agents/skills/spec-library/SKILL.md`.
+- `schema/CHANGELOG.md` records what changed for that shared release version.
 
 ## What Init Creates
 

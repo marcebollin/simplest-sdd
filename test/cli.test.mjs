@@ -21,7 +21,7 @@ test("prints init instructions", () => {
 
   assert.match(output, /Simplest SDD Init Instructions/);
   assert.match(output, /@AGENTS\.md/);
-  assert.match(output, /simplest-sdd-schema-version: 1\.0\.0/);
+  assert.match(output, /simplest-sdd-schema-version: 0\.1\.0/);
   assert.match(output, /business\.html/);
   assert.match(output, /:focus-visible/);
 });
@@ -34,14 +34,14 @@ test("prints detected update state", () => {
   fs.writeFileSync(path.join(cwd, "CLAUDE.md"), "@AGENTS.md\n");
   fs.writeFileSync(
     path.join(skillDir, "SKILL.md"),
-    "---\nname: spec-library\ndescription: Test skill.\n---\n\n<!-- simplest-sdd-schema-version: 1.0.0 -->\n"
+    "---\nname: spec-library\ndescription: Test skill.\n---\n\n<!-- simplest-sdd-schema-version: 0.1.0 -->\n"
   );
 
   const output = run(["update", "--cwd", cwd]);
 
   assert.match(output, /Detected Local State/);
   assert.match(output, /regular file importing @AGENTS\.md/);
-  assert.match(output, /found \(1\.0\.0\)/);
+  assert.match(output, /found \(0\.1\.0\)/);
 });
 
 test("prints conservative removal instructions", () => {
