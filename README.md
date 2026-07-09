@@ -52,7 +52,7 @@ The npm package version and the simplest-sdd schema version are kept in sync.
 - The npm package version in `package.json` is the release version.
 - The same version is used as the installed schema marker in `.agents/skills/spec-library/SKILL.md`.
 - `schema/CHANGELOG.md` records what changed for that shared release version.
-- Each release is tagged as `v<version>` (e.g. `v0.4.0`) and pushed with `git push origin v<version>` so the latest release appears in the GitHub "Releases" sidebar.
+- Each release is tagged as `v<version>` (e.g. `v0.4.0`), pushed with `git push origin v<version>`, and published as a GitHub Release with `gh release create v<version> --latest --notes "<changelog>"` so the "Releases" sidebar shows the latest version. A tag alone is not enough — the GitHub Release entry is what populates the sidebar.
 
 ## What Init Creates
 
