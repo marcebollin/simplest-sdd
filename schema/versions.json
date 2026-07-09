@@ -1,6 +1,30 @@
 {
-  "currentSchemaVersion": "0.4.0",
+  "currentSchemaVersion": "0.5.0",
   "versions": [
+    {
+      "version": "0.5.0",
+      "date": "2026-07-09",
+      "summary": "Stops unconditionally installing the tdd skill and instead adapts the spec-library skill to the repository's resolved testing discipline (test-first skill, other defined testing approach, or intentional test-free stance).",
+      "changes": [
+        "Remove the unconditional `npx skills add ... --skill tdd -y` install step from init.",
+        "Discover the testing discipline during inspection: explicit testing instruction, installed test-first skill, existing repo test setup, or none.",
+        "Write the resolved testing discipline by name into the generated spec-library SKILL.md implement-and-verify step so future agents reuse it.",
+        "Keep the tdd skill as one offered option when no discipline is discoverable; do not install any skill unprompted during update.",
+        "Preserve the explicit spec-approval gate; the testing discipline governs only the implementation phase."
+      ],
+      "migrations": [
+        {
+          "from": "0.4.0",
+          "steps": [
+            "Discover the resolved testing discipline from AGENTS.md/CLAUDE.md/existing skills/repo test setup; do not reinstall a test-first skill if one is present.",
+            "Update .agents/skills/spec-library/SKILL.md so the implement-and-verify step references the resolved discipline by name instead of always naming the tdd skill.",
+            "Update AGENTS.md so the spec-driven workflow note says approved implementations follow the resolved testing discipline.",
+            "If a tdd skill was installed only because 0.4.0 asked for it and the repo has another explicit testing instruction, keep both but let the existing instruction take precedence.",
+            "If no discipline is discoverable, leave the skill test-discipline-agnostic and offer the init.md choice when the workflow next runs; do not install a skill unprompted during update."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.4.0",
       "date": "2026-07-09",

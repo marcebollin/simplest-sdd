@@ -17,29 +17,34 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Do not copy implementation details that the agent can discover from the repository.
 - Do not implement unrelated product code.
 
-## 1. Install The TDD Skill
-
-Install `mattpocock/skills` `tdd` skill into the repository with preselected options so no interactive prompts block the run:
-
-```sh
-npx skills add https://github.com/mattpocock/skills --skill tdd -y
-```
-
-If the skills CLI is unavailable in the environment, ask the user once whether they want the tdd skill installed before continuing. Preserve any existing tdd skill the user already installed; do not overwrite its files.
-
-## 2. Inspect
+## 1. Inspect And Discover The Testing Discipline
 
 Read, when present:
 
 - `AGENTS.md`, `CLAUDE.md`, and other repository instruction files;
-- `.agents/skills/` and `.claude/skills/`;
+- `.agents/skills/` and `.claude/skills/`, looking specifically for any installed testing or TDD skill (such as `mattpocock/skills` `tdd`) or any skill/rule that says testing should be avoided;
 - README and package/workspace manifests;
 - the main source tree, tests, CI, and deployment configuration;
 - existing specs, ADRs, plans, or architecture documents.
 
 Summarize what you learned internally. Do not make the user explain facts already visible in the repository.
 
-## 3. Ask The Project Discovery Questions
+While inspecting, determine the repository's testing discipline before writing the spec-library skill. Check, in order, and stop at the first match:
+
+1. An explicit testing instruction in `AGENTS.md`, `CLAUDE.md`, another rules file, or an existing skill. This covers three cases:
+   - a TDD or test-first discipline (red-green-refactor, agreed seams, vertical slices) — use it verbatim as the implementation discipline;
+   - another defined testing approach (characterization tests, snapshot tests, integration-only, manual QA scripts, etc.) — use that approach as the implementation discipline;
+   - an explicit statement that tests are not required or should be avoided (throwaway prototypes, benchmark-only repos, config-only projects) — record that testing is intentionally not part of the discipline.
+2. An installed `tdd` skill under `.agents/skills/` or `.claude/skills/` (for example from `npx skills add`). Use it as the implementation discipline without reinstalling.
+3. A working test setup in the repository (test runner in the manifest, `test/` or `tests/` directory, CI test steps, existing assertions). Treat the existing approach as the implementation discipline and name the runner and seam it already uses.
+4. No discoverable testing instruction, testing skill, or test setup. Offer the user one concise choice, presented at once, in the discovery questions below:
+   - install `mattpocock/skills` `tdd` skill with `npx skills add https://github.com/mattpocock/skills --skill tdd -y`;
+   - keep the project test-free for now (the generated skill will not require tests);
+   - use a different testing approach the user names.
+
+Record the resolved testing discipline internally. The generated spec-library skill will reference it by name in its implement-and-verify step. Do not install any skill or write tests until the user answers, unless the discipline was already explicit in the repository.
+
+## 2. Ask The Project Discovery Questions
 
 Infer the project's goal, useful examples, and intended users from the repository before asking questions.
 
@@ -60,7 +65,7 @@ Ask the user one concise round of at least eight material product, business, and
 
 Ask extra questions only when an answer could materially change the generated instructions or workflow. Prefer concrete examples over abstract questionnaires.
 
-## 4. Make `AGENTS.md` Canonical Without Losing Content
+## 3. Make `AGENTS.md` Canonical Without Losing Content
 
 Preserve every existing instruction while establishing one source of truth:
 
@@ -91,12 +96,12 @@ Add or update a concise project guidance section containing:
 | Question specifically about a past technical, architectural, product, or style choice | `.agents/skills/spec-library/decisions/index.html` |
 | Clear low-risk change whose output is reviewable within ~5 minutes and no existing spec is implicated | Implement and verify directly |
 
-The spec workflow always starts with one concise request-refinement round with at least five material questions, then generates or updates the spec and waits for explicit approval before implementation. After approval, implementations run through the tdd skill (red-green-refactor at pre-agreed seams). The library index, specs, plans, decisions, and supporting indexes are clean static HTML files. After implementation, run its close-out step so durable specs, decisions, and indexes match what shipped.
+The spec workflow always starts with one concise request-refinement round with at least five material questions, then generates or updates the spec and waits for explicit approval before implementation. After approval, implementations follow the repository's resolved testing discipline (an installed test-first skill, another defined testing approach, or an intentional test-free stance) recorded in the spec-library skill. The library index, specs, plans, decisions, and supporting indexes are clean static HTML files. After implementation, run its close-out step so durable specs, decisions, and indexes match what shipped.
 ```
 
 Do not duplicate existing commands or rules. Integrate additions where they are easiest to read.
 
-## 5. Create The Canonical Spec Skill
+## 4. Create The Canonical Spec Skill
 
 Create or carefully update:
 
@@ -206,7 +211,13 @@ Do not begin implementation, edit product code, or run implementation tasks unti
 
 Use `plan.html` as the execution record. Update a durable spec and regain its required approval only when product behavior or approved design changes. Run the repository's real verification commands and user-visible checks.
 
-After the required spec approval and before changing product code, drive the implementation through the installed tdd skill (the red-green-refactor loop with vertical slices and pre-agreed seams). Read `CONTEXT.md` when it exists so test names and interface vocabulary match the project's domain language. Let the tdd skill govern how code is written and verified; the spec-library skill governs what gets built and when it is approved.
+The testing discipline recorded during discovery governs this phase. Write it into the skill by name so future agents reuse it without re-deriving:
+
+- When the discipline is a TDD or test-first skill, drive the implementation through that skill (red-green-refactor loop, vertical slices, pre-agreed seams) after spec approval and before changing product code. Read `CONTEXT.md` when it exists so test names and interface vocabulary match the project's domain language. Let the testing skill govern how code is written; the spec-library skill governs what gets built and when it is approved.
+- When the discipline is another defined testing approach (characterization tests, snapshot tests, integration-only, manual QA scripts, etc.), follow that approach as the implementation discipline and name the runner, seam, and commands it relies on.
+- When the repository is intentionally test-free, do not require tests. Still run the repository's real verification commands and user-visible checks; record that testing is intentionally omitted so the agent does not add a test suite unprompted.
+
+Never invent a new testing discipline during implementation. If the resolved discipline no longer fits the work, stop, raise it with the user, and update the generated skill before continuing.
 
 ### Close Out And Self-Improve
 
@@ -231,7 +242,7 @@ The root index must:
 
 Prefer metadata from each artifact, such as `<meta name="last-updated" content="YYYY-MM-DD">`. When older artifacts lack metadata, use the best maintained date visible in the artifact or explain that the date is unknown.
 
-## 6. Create Concise HTML Templates
+## 5. Create Concise HTML Templates
 
 Each template should be a complete HTML document with the baseline style from the skill.
 
@@ -244,7 +255,7 @@ The templates should provide these sections:
 
 Write HTML index instructions that make entries short descriptions used for progressive disclosure. Create a root library index with no fake project documents, an empty latest-documents state, links to the focused spec and decision indexes, and optional filtering/search scaffolding only if it stays small and readable. Do not pre-create fake project decisions.
 
-## 7. Add Claude Compatibility
+## 6. Add Claude Compatibility
 
 Create `CLAUDE.md` as a regular file that imports the canonical instructions:
 
@@ -256,14 +267,14 @@ Make `.claude/skills/spec-library` a relative symlink to `../../.agents/skills/s
 
 Preserve every other existing skill and compatibility link. If a physical Claude spec library already exists, move its contents to the canonical `.agents` location before creating the symlink. If both locations contain different files, merge without overwriting and report any unresolved conflict.
 
-## 8. Validate
+## 7. Validate
 
 Before finishing:
 
 - confirm `CLAUDE.md` is a regular file and contains `@AGENTS.md`;
 - confirm the Claude skill link resolves to the canonical skill;
 - confirm `.agents/skills/spec-library/SKILL.md` contains `<!-- simplest-sdd-schema-version: {{schemaVersion}} -->`;
-- confirm the tdd skill is installed (from `npx skills add https://github.com/mattpocock/skills --skill tdd -y`) and that `SKILL.md` tells implementations to run through it after spec approval;
+- confirm the generated `SKILL.md` records the repository's resolved testing discipline by name (test-first skill, other defined testing approach, or intentional test-free stance) and its implement-and-verify step follows that discipline after spec approval;
 - confirm the root library index, specs, plans, decisions, supporting indexes, and templates are HTML files with readable focus styles;
 - confirm no existing instruction, spec, decision, or skill was lost;
 - search for stale references saying `CLAUDE.md` should be a symlink or that generated artifacts should be Markdown;

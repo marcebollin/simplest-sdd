@@ -21,11 +21,12 @@ test("prints init instructions", () => {
 
   assert.match(output, /Simplest SDD Init Instructions/);
   assert.match(output, /@AGENTS\.md/);
-  assert.match(output, /simplest-sdd-schema-version: 0\.4\.0/);
+  assert.match(output, /simplest-sdd-schema-version: 0\.5\.0/);
   assert.match(output, /request-refinement round/);
   assert.match(output, /waits for explicit approval before implementation/);
+  assert.match(output, /Inspect And Discover The Testing Discipline/);
+  assert.match(output, /resolved testing discipline/);
   assert.match(output, /npx skills add https:\/\/github\.com\/mattpocock\/skills --skill tdd -y/);
-  assert.match(output, /drive.*implementation.*tdd skill/);
   assert.match(output, /\.agents\/skills\/spec-library\/index\.html/);
   assert.match(output, /business\.html/);
   assert.match(output, /:focus-visible/);
@@ -46,11 +47,11 @@ test("prints detected update state", () => {
   const output = run(["update", "--cwd", cwd]);
 
   assert.match(output, /Detected Local State/);
-  assert.match(output, /Latest schema version: `0\.4\.0`/);
+  assert.match(output, /Latest schema version: `0\.5\.0`/);
   assert.match(output, /regular file importing @AGENTS\.md/);
   assert.match(output, /found \(0\.2\.0\)/);
   assert.match(output, /wait for explicit approval before implementation/);
-  assert.match(output, /npx skills add https:\/\/github\.com\/mattpocock\/skills --skill tdd -y/);
+  assert.match(output, /resolved testing discipline/);
   assert.match(output, /library index: HTML index found/);
 });
 

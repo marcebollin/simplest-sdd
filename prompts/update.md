@@ -29,7 +29,7 @@ Read:
 - `CLAUDE.md`, including symlink targets if it is currently a symlink;
 - `.agents/skills/spec-library/SKILL.md`;
 - `.agents/skills/spec-library/index.html` when present;
-- the installed skills under `.agents/skills/` and `.claude/skills/`, including whether the `tdd` skill is present;
+- the installed skills under `.agents/skills/` and `.claude/skills/`, the `AGENTS.md`/`CLAUDE.md` instructions, and the repository test setup, to discover the resolved testing discipline (test-first skill, other defined testing approach, or intentional test-free stance);
 - `.agents/skills/spec-library/specs/index.html` or older `.agents/skills/spec-library/specs/INDEX.md`;
 - existing spec folders, including older Markdown artifacts;
 - `.agents/skills/spec-library/decisions/index.html` or older `.agents/skills/spec-library/decisions/INDEX.md`;
@@ -85,12 +85,13 @@ For an unversioned install moving to `{{schemaVersion}}`, migrate this way:
 12. Add the root library index contract to `SKILL.md`: all internal docs represented, latest by last-updated date, static link-based catalog, optional small filtering/search, and close-out maintenance.
 13. Update stale instructions that say `CLAUDE.md` should be a symlink, generated artifacts should be Markdown, or only focused spec and decision indexes need maintenance.
 
-For a 0.3.0 install moving to `{{schemaVersion}}`, migrate this way:
+For a 0.4.0 install moving to `{{schemaVersion}}`, migrate this way:
 
-1. Run `npx skills add https://github.com/mattpocock/skills --skill tdd -y` in the repository root to install the tdd skill with preselected options. If the tdd skill is already installed, preserve it.
-2. Update `.agents/skills/spec-library/SKILL.md` so the implement-and-verify step tells the agent to drive implementations through the tdd skill (red-green-refactor at pre-agreed seams) after the required spec approval and before changing product code.
-3. Update `AGENTS.md` so the spec-driven workflow note mentions that approved implementations follow the tdd skill discipline.
-4. Preserve the explicit spec-approval gate; the tdd skill governs only the implementation phase.
+1. Discover the repository's resolved testing discipline: an explicit testing instruction in `AGENTS.md`/`CLAUDE.md`/another rules file/existing skill, a `tdd` skill already installed under `.agents/skills/` or `.claude/skills/`, the repository's existing test setup, or none of the above. Do not reinstall a test-first skill if one is already present.
+2. If a `tdd` skill was installed only because 0.4.0 asked for it and the repository has another explicit testing instruction, keep both but let the existing instruction take precedence; record the resolved discipline in `SKILL.md`.
+3. Update `.agents/skills/spec-library/SKILL.md` so the implement-and-verify step references the resolved testing discipline by name (test-first skill, other defined testing approach, or intentional test-free stance) instead of always naming the `tdd` skill.
+4. Update `AGENTS.md` so the spec-driven workflow note says approved implementations follow the resolved testing discipline, not just the `tdd` skill.
+5. If the repo has no discoverable testing discipline, leave the skill test-discipline-agnostic and, when the user next runs the workflow, offer the same concise choice documented in `prompts/init.md` (install `tdd` via `npx skills add https://github.com/mattpocock/skills --skill tdd -y`, keep test-free, or use a named approach). Do not install a skill unprompted during update.
 
 For future version jumps, follow the matching changelog migration steps and adapt them to the repository after inspection.
 
@@ -100,7 +101,7 @@ Before finishing:
 
 - confirm `CLAUDE.md` is a regular file containing `@AGENTS.md`;
 - confirm `.agents/skills/spec-library/SKILL.md` has the latest schema marker;
-- confirm the tdd skill is installed and `SKILL.md` drives implementations through it after spec approval;
+- confirm `SKILL.md` records the resolved testing discipline by name and its implement-and-verify step follows that discipline (not a hardcoded `tdd` requirement);
 - confirm `.claude/skills/spec-library` resolves to `../../.agents/skills/spec-library`;
 - confirm the root library index, current templates, supporting indexes, specs, plans, and decisions are HTML or that old Markdown copies were intentionally preserved to avoid data loss;
 - confirm no specs, decisions, unrelated skills, or existing instructions were lost;

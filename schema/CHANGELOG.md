@@ -2,6 +2,22 @@
 
 This changelog tracks the installed simplest-sdd schema. Schema versions are kept in sync with the npm package version.
 
+## 0.5.0 - 2026-07-09
+
+- Stops unconditionally installing the `tdd` skill during init.
+- Discovers the repository's resolved testing discipline during inspection: an explicit testing instruction in `AGENTS.md`/`CLAUDE.md`/a rules file/existing skill, an installed test-first skill, the repository's existing test setup, or none of the above.
+- Writes the resolved testing discipline by name into the generated spec-library `SKILL.md` implement-and-verify step (test-first skill, other defined testing approach, or intentional test-free stance).
+- Keeps the `tdd` skill as one offered option when no discipline is discoverable; update no longer installs any skill unprompted.
+- Preserves the explicit spec-approval gate; the testing discipline governs only the implementation phase.
+
+### Migration from 0.4.0
+
+1. Discover the resolved testing discipline from `AGENTS.md`/`CLAUDE.md`/existing skills/repo test setup; do not reinstall a test-first skill if one is present.
+2. Update `.agents/skills/spec-library/SKILL.md` so the implement-and-verify step references the resolved discipline by name instead of always naming the `tdd` skill.
+3. Update `AGENTS.md` so the spec-driven workflow note says approved implementations follow the resolved testing discipline.
+4. If a `tdd` skill was installed only because 0.4.0 asked for it and the repo has another explicit testing instruction, keep both but let the existing instruction take precedence.
+5. If no discipline is discoverable, leave the skill test-discipline-agnostic and offer the `init.md` choice when the workflow next runs; do not install a skill unprompted during update.
+
 ## 0.4.0 - 2026-07-09
 
 - Installs `mattpocock/skills` `tdd` skill with the skills CLI using preselected options (`npx skills add https://github.com/mattpocock/skills --skill tdd -y`).
