@@ -27,6 +27,8 @@ For simplest-sdd maintenance instructions, run `npx simplest-sdd@latest update` 
 | Clear low-risk output reviewable within ~5 minutes | Implement and verify directly |
 ```
 
+The spec workflow starts by refining the request into generated `business.html`, `technical.html`, and `plan.html` documents. Implementation waits until the generated spec receives explicit approval.
+
 `CLAUDE.md` is a regular file:
 
 ```markdown

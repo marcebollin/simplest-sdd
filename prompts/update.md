@@ -29,6 +29,7 @@ Read:
 - `CLAUDE.md`, including symlink targets if it is currently a symlink;
 - `.agents/skills/spec-library/SKILL.md`;
 - `.agents/skills/spec-library/index.html` when present;
+- the installed skills under `.agents/skills/` and `.claude/skills/`, including whether the `tdd` skill is present;
 - `.agents/skills/spec-library/specs/index.html` or older `.agents/skills/spec-library/specs/INDEX.md`;
 - existing spec folders, including older Markdown artifacts;
 - `.agents/skills/spec-library/decisions/index.html` or older `.agents/skills/spec-library/decisions/INDEX.md`;
@@ -84,6 +85,13 @@ For an unversioned install moving to `{{schemaVersion}}`, migrate this way:
 12. Add the root library index contract to `SKILL.md`: all internal docs represented, latest by last-updated date, static link-based catalog, optional small filtering/search, and close-out maintenance.
 13. Update stale instructions that say `CLAUDE.md` should be a symlink, generated artifacts should be Markdown, or only focused spec and decision indexes need maintenance.
 
+For a 0.3.0 install moving to `{{schemaVersion}}`, migrate this way:
+
+1. Run `npx skills add https://github.com/mattpocock/skills --skill tdd -y` in the repository root to install the tdd skill with preselected options. If the tdd skill is already installed, preserve it.
+2. Update `.agents/skills/spec-library/SKILL.md` so the implement-and-verify step tells the agent to drive implementations through the tdd skill (red-green-refactor at pre-agreed seams) after the required spec approval and before changing product code.
+3. Update `AGENTS.md` so the spec-driven workflow note mentions that approved implementations follow the tdd skill discipline.
+4. Preserve the explicit spec-approval gate; the tdd skill governs only the implementation phase.
+
 For future version jumps, follow the matching changelog migration steps and adapt them to the repository after inspection.
 
 ## 4. Validate
@@ -92,6 +100,7 @@ Before finishing:
 
 - confirm `CLAUDE.md` is a regular file containing `@AGENTS.md`;
 - confirm `.agents/skills/spec-library/SKILL.md` has the latest schema marker;
+- confirm the tdd skill is installed and `SKILL.md` drives implementations through it after spec approval;
 - confirm `.claude/skills/spec-library` resolves to `../../.agents/skills/spec-library`;
 - confirm the root library index, current templates, supporting indexes, specs, plans, and decisions are HTML or that old Markdown copies were intentionally preserved to avoid data loss;
 - confirm no specs, decisions, unrelated skills, or existing instructions were lost;

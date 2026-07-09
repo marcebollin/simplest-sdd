@@ -2,6 +2,34 @@
 
 This changelog tracks the installed simplest-sdd schema. Schema versions are kept in sync with the npm package version.
 
+## 0.4.0 - 2026-07-09
+
+- Installs `mattpocock/skills` `tdd` skill with the skills CLI using preselected options (`npx skills add https://github.com/mattpocock/skills --skill tdd -y`).
+- Makes the generated spec-library skill drive implementations through the `tdd` skill discipline (red-green-refactor at pre-agreed seams) after the required spec approval and before product code changes.
+- Preserves the explicit spec-approval gate; the `tdd` skill governs only the implementation phase.
+
+### Migration from 0.3.0
+
+1. Run `npx skills add https://github.com/mattpocock/skills --skill tdd -y` in the repository root to install the tdd skill.
+2. Update `.agents/skills/spec-library/SKILL.md` so the implement-and-verify step tells the agent to use the tdd skill after required spec approval and before changing product code.
+3. Update `AGENTS.md` so the spec-driven workflow note mentions that approved implementations follow the tdd skill discipline.
+4. Preserve the explicit spec-approval gate; the tdd skill only governs the implementation phase.
+
+## 0.3.0 - 2026-06-18
+
+- Reframed the first feature workflow questions as request refinement, not generic clarification.
+- Made the request-refinement round explicitly produce or update the generated feature spec.
+- Required the agent to stop after generating or updating the spec and wait for explicit approval before implementation.
+- Preserved the additional technical approval gate for migrations, auth, billing, security, public contracts, infrastructure boundaries, and active decision changes.
+
+### Migration from 0.2.0
+
+1. Update `AGENTS.md` spec-driven workflow wording so the mandatory question round is described as request refinement.
+2. Update `.agents/skills/spec-library/SKILL.md` so the first questions explicitly refine the request into a generated spec.
+3. Ensure the skill requires the agent to stop after generating or updating the spec and wait for explicit approval before implementation.
+4. Preserve the existing technical approval gate for high-risk technical areas and active decision changes.
+5. Update templates or local examples only where they imply that implementation can begin immediately after clarification answers.
+
 ## 0.2.0 - 2026-06-18
 
 - Added `.agents/skills/spec-library/index.html` as the root library index and preferred entry point for humans and agents.

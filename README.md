@@ -4,7 +4,9 @@ An npx-ready prompt CLI that gives an AI coding agent the instructions to instal
 
 It keeps the useful guardrails:
 
-- one required clarification conversation before substantial work;
+- one required request-refinement conversation before writing the spec;
+- explicit approval of the generated spec before implementation;
+- implementations run through `mattpocock/skills` `tdd` skill (red-green-refactor at pre-agreed seams) after spec approval;
 - inferred end users plus conditional goal and example questions;
 - separate business, technical, and implementation documents;
 - durable decisions without documenting every small choice;
@@ -31,7 +33,7 @@ The CLI does not edit files directly. It inspects a few local paths so the print
 
 ## Commands
 
-- `init`: prints agent instructions for adding simplest-sdd to a project.
+- `init`: prints agent instructions for adding simplest-sdd to a project, including installing the `tdd` skill via `npx skills add https://github.com/mattpocock/skills --skill tdd -y`.
 - `update`: prints agent instructions for comparing the installed skill schema version against the changelog and migrating conservatively.
 - `remove`: prints agent instructions for deactivating simplest-sdd without deleting user-owned specs, decisions, or unrelated instructions.
 

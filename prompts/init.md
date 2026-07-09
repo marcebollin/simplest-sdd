@@ -17,7 +17,17 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Do not copy implementation details that the agent can discover from the repository.
 - Do not implement unrelated product code.
 
-## 1. Inspect
+## 1. Install The TDD Skill
+
+Install `mattpocock/skills` `tdd` skill into the repository with preselected options so no interactive prompts block the run:
+
+```sh
+npx skills add https://github.com/mattpocock/skills --skill tdd -y
+```
+
+If the skills CLI is unavailable in the environment, ask the user once whether they want the tdd skill installed before continuing. Preserve any existing tdd skill the user already installed; do not overwrite its files.
+
+## 2. Inspect
 
 Read, when present:
 
@@ -29,7 +39,7 @@ Read, when present:
 
 Summarize what you learned internally. Do not make the user explain facts already visible in the repository.
 
-## 2. Ask The Project Discovery Questions
+## 3. Ask The Project Discovery Questions
 
 Infer the project's goal, useful examples, and intended users from the repository before asking questions.
 
@@ -50,7 +60,7 @@ Ask the user one concise round of at least eight material product, business, and
 
 Ask extra questions only when an answer could materially change the generated instructions or workflow. Prefer concrete examples over abstract questionnaires.
 
-## 3. Make `AGENTS.md` Canonical Without Losing Content
+## 4. Make `AGENTS.md` Canonical Without Losing Content
 
 Preserve every existing instruction while establishing one source of truth:
 
@@ -81,12 +91,12 @@ Add or update a concise project guidance section containing:
 | Question specifically about a past technical, architectural, product, or style choice | `.agents/skills/spec-library/decisions/index.html` |
 | Clear low-risk change whose output is reviewable within ~5 minutes and no existing spec is implicated | Implement and verify directly |
 
-The spec workflow always includes one concise user clarification round with at least five material questions. The library index, specs, plans, decisions, and supporting indexes are clean static HTML files. After implementation, run its close-out step so durable specs, decisions, and indexes match what shipped.
+The spec workflow always starts with one concise request-refinement round with at least five material questions, then generates or updates the spec and waits for explicit approval before implementation. After approval, implementations run through the tdd skill (red-green-refactor at pre-agreed seams). The library index, specs, plans, decisions, and supporting indexes are clean static HTML files. After implementation, run its close-out step so durable specs, decisions, and indexes match what shipped.
 ```
 
 Do not duplicate existing commands or rules. Integrate additions where they are easiest to read.
 
-## 4. Create The Canonical Spec Skill
+## 5. Create The Canonical Spec Skill
 
 Create or carefully update:
 
@@ -123,7 +133,7 @@ Always use the workflow when reviewing the expected output would take more than 
 
 Read the root library index, spec index, and decision index, load only relevant artifacts, inspect code before proposing implementation details, and treat active decisions as constraints.
 
-### Clarify: Mandatory Guardrail
+### Refine Request: Mandatory First Questions
 
 Before the mandatory five questions:
 
@@ -131,7 +141,7 @@ Before the mandatory five questions:
 - gather clues and examples from the product, the user's other projects, or relevant external products, asking separately only when none are available; this does not count toward the five;
 - infer intended users from `AGENTS.md`, the request, product behavior, and existing specs. Do not ask the user to restate users already supported by the evidence. Resolve conflicting evidence in one of the mandatory questions.
 
-Then ask the user at least five material questions in one concise round and wait for answers. Cover outcome for the inferred users, scope, behavior, constraints, and proof. Do not repeat facts already established by the request or repository; use them to ask sharper tradeoff and edge-case questions.
+Then ask the user at least five material questions in one concise round and wait for answers. These first questions exist to refine the user's request into a concrete, approvable spec; they are not permission to begin implementation. Cover outcome for the inferred users, scope, behavior, constraints, and proof. Do not repeat facts already established by the request or repository; use them to ask sharper tradeoff and edge-case questions.
 
 ### HTML Artifacts
 
@@ -186,13 +196,17 @@ specs/<domain>-<feature>/
 
 Keep all three short. Let the implementing agent inspect ordinary code details.
 
-### Approval
+### Generate Spec And Wait For Approval
 
-Require explicit business-spec approval before implementation. Also require explicit technical approval for migrations, auth, billing, security, public contracts, infrastructure boundaries, or changes to active decisions. For ordinary design, business approval and no unresolved technical objection are enough.
+After the request-refinement answers, create or update `business.html`, `technical.html`, and `plan.html` before implementing product code. Present the generated spec summary and stop. Require explicit business-spec approval before implementation. Also require explicit technical approval for migrations, auth, billing, security, public contracts, infrastructure boundaries, or changes to active decisions. For ordinary design, business approval and no unresolved technical objection are enough.
+
+Do not begin implementation, edit product code, or run implementation tasks until the required spec approval has been given. If approval changes the requested behavior or approved design, update the generated spec and regain the required approval before continuing.
 
 ### Implement And Verify
 
 Use `plan.html` as the execution record. Update a durable spec and regain its required approval only when product behavior or approved design changes. Run the repository's real verification commands and user-visible checks.
+
+After the required spec approval and before changing product code, drive the implementation through the installed tdd skill (the red-green-refactor loop with vertical slices and pre-agreed seams). Read `CONTEXT.md` when it exists so test names and interface vocabulary match the project's domain language. Let the tdd skill govern how code is written and verified; the spec-library skill governs what gets built and when it is approved.
 
 ### Close Out And Self-Improve
 
@@ -217,7 +231,7 @@ The root index must:
 
 Prefer metadata from each artifact, such as `<meta name="last-updated" content="YYYY-MM-DD">`. When older artifacts lack metadata, use the best maintained date visible in the artifact or explain that the date is unknown.
 
-## 5. Create Concise HTML Templates
+## 6. Create Concise HTML Templates
 
 Each template should be a complete HTML document with the baseline style from the skill.
 
@@ -230,7 +244,7 @@ The templates should provide these sections:
 
 Write HTML index instructions that make entries short descriptions used for progressive disclosure. Create a root library index with no fake project documents, an empty latest-documents state, links to the focused spec and decision indexes, and optional filtering/search scaffolding only if it stays small and readable. Do not pre-create fake project decisions.
 
-## 6. Add Claude Compatibility
+## 7. Add Claude Compatibility
 
 Create `CLAUDE.md` as a regular file that imports the canonical instructions:
 
@@ -242,13 +256,14 @@ Make `.claude/skills/spec-library` a relative symlink to `../../.agents/skills/s
 
 Preserve every other existing skill and compatibility link. If a physical Claude spec library already exists, move its contents to the canonical `.agents` location before creating the symlink. If both locations contain different files, merge without overwriting and report any unresolved conflict.
 
-## 7. Validate
+## 8. Validate
 
 Before finishing:
 
 - confirm `CLAUDE.md` is a regular file and contains `@AGENTS.md`;
 - confirm the Claude skill link resolves to the canonical skill;
 - confirm `.agents/skills/spec-library/SKILL.md` contains `<!-- simplest-sdd-schema-version: {{schemaVersion}} -->`;
+- confirm the tdd skill is installed (from `npx skills add https://github.com/mattpocock/skills --skill tdd -y`) and that `SKILL.md` tells implementations to run through it after spec approval;
 - confirm the root library index, specs, plans, decisions, supporting indexes, and templates are HTML files with readable focus styles;
 - confirm no existing instruction, spec, decision, or skill was lost;
 - search for stale references saying `CLAUDE.md` should be a symlink or that generated artifacts should be Markdown;

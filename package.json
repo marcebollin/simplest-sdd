@@ -1,6 +1,6 @@
 {
   "name": "simplest-sdd",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "description": "Agent-ready prompts for installing, updating, and removing the simplest spec-driven development workflow.",
   "type": "module",
   "bin": {

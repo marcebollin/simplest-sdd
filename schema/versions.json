@@ -1,6 +1,52 @@
 {
-  "currentSchemaVersion": "0.2.0",
+  "currentSchemaVersion": "0.4.0",
   "versions": [
+    {
+      "version": "0.4.0",
+      "date": "2026-07-09",
+      "summary": "Installs mattpocock's tdd skill as the implementation discipline and makes the spec-library skill drive implementations through it.",
+      "changes": [
+        "Init install the tdd skill with the skills CLI using preselected options: npx skills add https://github.com/mattpocock/skills --skill tdd -y.",
+        "Update installs the tdd skill when it is missing so existing projects gain the implementation discipline.",
+        "Update the generated spec-library SKILL.md so implementations run through the tdd skill after spec approval and before product code changes.",
+        "Keep the explicit spec-approval gate; the tdd skill governs the implementation phase, not the spec phase."
+      ],
+      "migrations": [
+        {
+          "from": "0.3.0",
+          "steps": [
+            "Run `npx skills add https://github.com/mattpocock/skills --skill tdd -y` in the repository root to install the tdd skill with preselected options.",
+            "Update .agents/skills/spec-library/SKILL.md so the implement-and-verify step tells the agent to use the tdd skill (red-green-refactor, agreed seams) after required spec approval and before changing product code.",
+            "Update AGENTS.md so the spec-driven workflow note mentions that approved implementations follow the tdd skill discipline.",
+            "Preserve the explicit spec-approval gate; the tdd skill only governs the implementation phase."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.3.0",
+      "date": "2026-06-18",
+      "summary": "Frames the first workflow questions as request refinement and makes generated spec approval an explicit implementation gate.",
+      "changes": [
+        "Rename the feature workflow's first question round from general clarification to request refinement.",
+        "State that the first questions exist to sharpen the request into an approvable spec, not to begin implementation.",
+        "Require the agent to generate or update the feature spec after the request-refinement answers.",
+        "Require the agent to stop after generating the spec and wait for explicit approval before implementation.",
+        "Keep technical approval required for migrations, auth, billing, security, public contracts, infrastructure boundaries, and active decision changes."
+      ],
+      "migrations": [
+        {
+          "from": "0.2.0",
+          "steps": [
+            "Update AGENTS.md spec-driven workflow wording so the mandatory question round is described as request refinement.",
+            "Update .agents/skills/spec-library/SKILL.md so the first questions explicitly refine the request into a generated spec.",
+            "Ensure the skill requires the agent to stop after generating or updating the spec and wait for explicit approval before implementation.",
+            "Preserve the existing technical approval gate for high-risk technical areas and active decision changes.",
+            "Update templates or local examples only where they imply that implementation can begin immediately after clarification answers."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.2.0",
       "date": "2026-06-18",
