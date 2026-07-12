@@ -35,12 +35,13 @@ function main() {
   }
 
   const cwd = path.resolve(parsed.cwd || process.cwd());
+  const detectedState = detectState(cwd);
   const template = readText(path.join(packageRoot, "prompts", `${parsed.command}.md`));
   const output = render(template, {
     packageVersion: packageJson.version,
     schemaVersion: versions.currentSchemaVersion,
-    detectedState: formatDetectedState(detectState(cwd)),
-    versionHistory: formatVersionHistory(versions)
+    detectedState: formatDetectedState(detectedState),
+    versionHistory: formatVersionHistory(versions, detectedState.skillVersion)
   });
 
   print(output.trimEnd());
@@ -117,6 +118,7 @@ function detectState(cwd) {
     agents: describePath(agentsPath),
     claude: describeClaude(claudePath),
     skill: skillText ? `found (${skillVersion})` : describePath(skillPath),
+    skillVersion,
     claudeSkill: describePath(claudeSkillPath),
     libraryIndex: describeArtifactIndex(libraryHtmlIndex, null),
     specsIndex: describeArtifactIndex(specsHtmlIndex, specsMarkdownIndex),
@@ -201,14 +203,24 @@ function formatDetectedState(state) {
   ].join("\n");
 }
 
-function formatVersionHistory(data) {
+function formatVersionHistory(data, installedVersion) {
+  const relevantVersions = relevantVersionHistory(data.versions, installedVersion);
   const lines = [
     "## Simplest SDD Schema Versions",
     "",
     `Latest schema version: \`${data.currentSchemaVersion}\``
   ];
 
-  for (const version of data.versions) {
+  if (relevantVersions.length === 0) {
+    lines.push(
+      "",
+      installedVersion === data.currentSchemaVersion
+        ? "The installed schema is current; no migration history is needed."
+        : `The installed schema \`${installedVersion}\` is newer than or equal to the packaged migration history. Do not downgrade it.`
+    );
+  }
+
+  for (const version of relevantVersions) {
     lines.push("", `### ${version.version} - ${version.date}`, "", version.summary, "", "Changes:");
     for (const change of version.changes) {
       lines.push(`- ${change}`);
@@ -226,6 +238,36 @@ function formatVersionHistory(data) {
   }
 
   return lines.join("\n");
+}
+
+function relevantVersionHistory(history, installedVersion) {
+  if (!installedVersion || installedVersion === "unversioned") {
+    return history;
+  }
+
+  return history.filter((entry) => compareVersions(entry.version, installedVersion) > 0);
+}
+
+function compareVersions(left, right) {
+  const leftParts = parseVersion(left);
+  const rightParts = parseVersion(right);
+
+  if (!leftParts || !rightParts) {
+    return left.localeCompare(right, undefined, { numeric: true });
+  }
+
+  for (let index = 0; index < 3; index += 1) {
+    if (leftParts[index] !== rightParts[index]) {
+      return leftParts[index] - rightParts[index];
+    }
+  }
+
+  return 0;
+}
+
+function parseVersion(version) {
+  const match = version.match(/^(\d+)\.(\d+)\.(\d+)$/);
+  return match ? match.slice(1).map(Number) : null;
 }
 
 function render(template, values) {

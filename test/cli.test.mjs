@@ -21,7 +21,7 @@ test("prints init instructions", () => {
 
   assert.match(output, /Simplest SDD Init Instructions/);
   assert.match(output, /@AGENTS\.md/);
-  assert.match(output, /simplest-sdd-schema-version: 0\.5\.0/);
+  assert.match(output, /simplest-sdd-schema-version: 0\.6\.0/);
   assert.match(output, /request-refinement round/);
   assert.match(output, /waits for explicit approval before implementation/);
   assert.match(output, /Inspect And Discover The Testing Discipline/);
@@ -30,6 +30,9 @@ test("prints init instructions", () => {
   assert.match(output, /\.agents\/skills\/spec-library\/index\.html/);
   assert.match(output, /business\.html/);
   assert.match(output, /:focus-visible/);
+  assert.match(output, /Do not spawn subagents unless the user explicitly asks/);
+  assert.match(output, /exact stop condition/);
+  assert.match(output, /Do not continue into commits, pull requests, deployment, monitoring, or review handling/);
 });
 
 test("prints detected update state", () => {
@@ -47,12 +50,32 @@ test("prints detected update state", () => {
   const output = run(["update", "--cwd", cwd]);
 
   assert.match(output, /Detected Local State/);
-  assert.match(output, /Latest schema version: `0\.5\.0`/);
+  assert.match(output, /Latest schema version: `0\.6\.0`/);
   assert.match(output, /regular file importing @AGENTS\.md/);
   assert.match(output, /found \(0\.2\.0\)/);
   assert.match(output, /wait for explicit approval before implementation/);
   assert.match(output, /resolved testing discipline/);
   assert.match(output, /library index: HTML index found/);
+  assert.match(output, /defaults to direct execution/);
+  assert.match(output, /### 0\.6\.0/);
+  assert.match(output, /### 0\.3\.0/);
+  assert.doesNotMatch(output, /### 0\.2\.0/);
+});
+
+test("omits migration history for a current installation", () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "simplest-sdd-test-"));
+  const skillDir = path.join(cwd, ".agents", "skills", "spec-library");
+  fs.mkdirSync(skillDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(skillDir, "SKILL.md"),
+    "---\nname: spec-library\ndescription: Test skill.\n---\n\n<!-- simplest-sdd-schema-version: 0.6.0 -->\n"
+  );
+
+  const output = run(["update", "--cwd", cwd]);
+
+  assert.match(output, /installed schema is current; no migration history is needed/);
+  assert.doesNotMatch(output, /### 0\.6\.0/);
+  assert.doesNotMatch(output, /### 0\.5\.0/);
 });
 
 test("prints conservative removal instructions", () => {
@@ -60,6 +83,7 @@ test("prints conservative removal instructions", () => {
 
   assert.match(output, /Removal Instructions/);
   assert.match(output, /Never delete user-authored specs or decisions by default/);
+  assert.match(output, /Treat removal as the active phase/);
 });
 
 function run(args) {

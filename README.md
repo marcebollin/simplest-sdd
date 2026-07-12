@@ -6,6 +6,8 @@ It keeps the useful guardrails:
 
 - one required request-refinement conversation before writing the spec;
 - explicit approval of the generated spec before implementation;
+- explicit phase boundaries and stop conditions so agents do not continue into unrequested follow-on work;
+- direct execution by default: subagents are used only when the user or existing repository guidance explicitly authorizes them;
 - implementations follow the repository's resolved testing discipline (an installed test-first skill, another defined testing approach, or an intentional test-free stance), recorded by name in the spec-library skill;
 - inferred end users plus conditional goal and example questions;
 - separate business, technical, and implementation documents;
@@ -30,6 +32,19 @@ npx simplest-sdd@latest remove
 Then paste the printed instructions into your AI coding agent.
 
 The CLI does not edit files directly. It inspects a few local paths so the printed instructions can include useful state, then the agent performs the repository-specific work.
+
+## Bounded Agent Runs
+
+Simplest SDD keeps model and speed selection outside the repository because those choices depend on the user's Codex plan, current model availability, and the task. Instead, it installs durable execution controls that work across models and coding agents:
+
+- treat each prompt as one authorized phase with a named stop condition;
+- do not spawn subagents unless the user or existing repository instructions explicitly allow it;
+- after implementation, verify and close out the approved spec, then stop;
+- do not continue into commits, pull requests, deployment, monitoring, or review handling unless the user requested that work in the active prompt.
+
+This keeps long-running models useful without letting a feature request silently expand into a delivery workflow.
+
+Simplest SDD installs this policy at project scope. To make the no-implicit-subagents default apply across every repository, add the same instruction to `~/.codex/AGENTS.md`; Codex layers that global file with project-level guidance as described in the [official `AGENTS.md` guide](https://developers.openai.com/codex/guides/agents-md/).
 
 ## Commands
 

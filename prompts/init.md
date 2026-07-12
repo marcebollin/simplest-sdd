@@ -16,6 +16,8 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Keep the resulting files concise and specific to this project.
 - Do not copy implementation details that the agent can discover from the repository.
 - Do not implement unrelated product code.
+- Preserve an existing explicit delegation policy. Otherwise default to direct execution: do not spawn subagents unless the user explicitly asks for them.
+- Treat this init as the active phase. After installing and validating simplest-sdd, stop; do not begin feature implementation, commit, open a pull request, deploy, monitor, or handle reviews unless the user explicitly included that work in this prompt.
 
 ## 1. Inspect And Discover The Testing Discipline
 
@@ -84,6 +86,17 @@ Add or update a concise project guidance section containing:
 - the product principles learned from the user;
 - stable technical boundaries and essential commands;
 - a short simplest-sdd maintenance note telling future agents to use `npx simplest-sdd@latest update` for migration instructions and `npx simplest-sdd@latest remove` for conservative removal instructions;
+- a concise execution-boundaries note that preserves any existing explicit delegation policy and otherwise says:
+
+```markdown
+## Execution boundaries
+
+- Work directly by default. Do not spawn subagents unless the user explicitly asks for delegation.
+- Treat the user's current prompt as the authorized phase. Honor every stated stop point.
+- When a prompt has no explicit stop point, stop after the requested artifact or approved implementation is complete, verified, and its simplest-sdd close-out is recorded.
+- Do not continue into commits, pull requests, deployment, monitoring, or review handling unless the current prompt explicitly requests it.
+```
+
 - this resolver:
 
 ```markdown
@@ -207,6 +220,8 @@ After the request-refinement answers, create or update `business.html`, `technic
 
 Do not begin implementation, edit product code, or run implementation tasks until the required spec approval has been given. If approval changes the requested behavior or approved design, update the generated spec and regain the required approval before continuing.
 
+Before stopping, make `plan.html` name the next authorized phase, its exact stop condition, whether delegation is allowed, and follow-on actions that remain out of scope. Delegation defaults to disallowed unless the user or an existing repository instruction explicitly authorizes it.
+
 ### Implement And Verify
 
 Use `plan.html` as the execution record. Update a durable spec and regain its required approval only when product behavior or approved design changes. Run the repository's real verification commands and user-visible checks.
@@ -218,6 +233,8 @@ The testing discipline recorded during discovery governs this phase. Write it in
 - When the repository is intentionally test-free, do not require tests. Still run the repository's real verification commands and user-visible checks; record that testing is intentionally omitted so the agent does not add a test suite unprompted.
 
 Never invent a new testing discipline during implementation. If the resolved discipline no longer fits the work, stop, raise it with the user, and update the generated skill before continuing.
+
+Honor the execution boundary recorded in `plan.html`. Work directly unless delegation was explicitly authorized. Complete the approved implementation, verification, and close-out, then stop at the named condition. Do not commit, open a pull request, deploy, monitor, or handle review comments unless the user's current prompt explicitly includes those actions. If new work appears while implementing, record it as a follow-up instead of silently expanding the phase.
 
 ### Close Out And Self-Improve
 
@@ -250,7 +267,7 @@ The templates should provide these sections:
 
 - Business: Goal, Intended users, Problem, Outcomes, User flow, Clues and examples, Scope in/out, Acceptance criteria, Open questions, Related. Include status and last-updated metadata.
 - Technical: Current system, Proposed approach, Boundaries and contracts, Failure/security/compatibility, Verification strategy, Feature-local choices, Open questions, Related. Include status and last-updated metadata.
-- Plan: Goal and intended users, Read first, Tasks, Likely code surfaces, Verification, Discoveries and deviations, Completion summary. Include status and last-updated metadata.
+- Plan: Goal and intended users, Execution boundary (authorized phase, exact stop condition, delegation allowed or disallowed, and excluded follow-on actions), Read first, Tasks, Likely code surfaces, Verification, Discoveries and deviations, Completion summary. Include status and last-updated metadata.
 - Decision: Decision, Over, Why, How to apply, Origin. Include importance, active/superseded status, and last-updated metadata.
 
 Write HTML index instructions that make entries short descriptions used for progressive disclosure. Create a root library index with no fake project documents, an empty latest-documents state, links to the focused spec and decision indexes, and optional filtering/search scaffolding only if it stays small and readable. Do not pre-create fake project decisions.
@@ -281,5 +298,7 @@ Before finishing:
 - validate skill frontmatter if a validator is available;
 - run the repository's relevant formatting or documentation checks;
 - show a concise summary of files created or changed and any assumptions.
+
+Stop after reporting the validated simplest-sdd installation. Do not begin a feature workflow or any delivery work unless it was explicitly requested in the active prompt.
 
 Do not commit unless the user explicitly asks.

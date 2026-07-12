@@ -15,6 +15,7 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Ask for explicit confirmation before deleting any durable spec, decision, ADR, plan, or non-template document.
 - Treat the root library index, HTML specs, plans, decisions, and supporting indexes as user-owned once they contain project-specific content.
 - Prefer deactivation over data deletion when the safe ownership boundary is unclear.
+- Treat removal as the active phase. After deactivating and validating, stop before unrelated feature work, commits, pull requests, deployment, monitoring, or review handling unless the user explicitly requested it.
 
 ## 1. Inspect Ownership
 
@@ -65,5 +66,7 @@ Before finishing:
 - search for remaining `simplest-sdd`, `spec-driven workflow`, and `spec-library` references and explain any preserved references;
 - run relevant formatting or documentation checks if the repository has them;
 - report the files changed, files intentionally preserved, and any assumptions.
+
+Stop after reporting the validated removal. Do not continue into unrelated work unless it was explicitly requested in the active prompt.
 
 Do not commit unless the user explicitly asks.

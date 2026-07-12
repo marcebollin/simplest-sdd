@@ -1,6 +1,32 @@
 {
-  "currentSchemaVersion": "0.5.0",
+  "currentSchemaVersion": "0.6.0",
   "versions": [
+    {
+      "version": "0.6.0",
+      "date": "2026-07-12",
+      "summary": "Adds cost-conscious execution boundaries: direct work by default, explicit authorization for subagents, named phase stop conditions, and no unrequested delivery follow-ons.",
+      "changes": [
+        "Preserve explicit repository delegation policies; otherwise tell agents not to spawn subagents unless the user explicitly asks.",
+        "Require every generated plan to name the authorized phase, exact stop condition, delegation policy, and excluded follow-on work.",
+        "Stop implementation after the approved scope is implemented, verified, and closed out instead of continuing into unrequested delivery work.",
+        "Require explicit active-prompt authorization for commits, pull requests, deployment, monitoring, and review handling.",
+        "Add terminal stop points to init, update, and remove flows.",
+        "Limit update prompt history to schema versions newer than the detected installation."
+      ],
+      "migrations": [
+        {
+          "from": "0.5.0",
+          "steps": [
+            "Preserve any explicit delegation policy; otherwise add an AGENTS.md execution-boundaries section that defaults to direct execution and requires an explicit user request for subagents.",
+            "Update the spec-library SKILL.md and plan template so plans record the authorized phase, exact stop condition, delegation policy, and excluded follow-on actions.",
+            "Require implementations to stop after approved work is implemented, verified, and closed out.",
+            "Keep commits, pull requests, deployment, monitoring, and review handling out of scope unless explicitly requested in the active prompt.",
+            "Use only migration history newer than the installed schema when generating update instructions.",
+            "Preserve all existing approval gates, explicit local delegation policies, and stricter execution rules."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.5.0",
       "date": "2026-07-09",

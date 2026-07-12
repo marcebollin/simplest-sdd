@@ -2,6 +2,24 @@
 
 This changelog tracks the installed simplest-sdd schema. Schema versions are kept in sync with the npm package version.
 
+## 0.6.0 - 2026-07-12
+
+- Preserves explicit repository delegation policies; when none exists, generated `AGENTS.md` guidance defaults to direct execution and forbids spawning subagents unless the user explicitly asks.
+- Requires every generated `plan.html` to record the active phase, exact stop condition, whether delegation is authorized, and which delivery actions remain out of scope.
+- Stops approved implementation after code, verification, and spec-library close-out instead of silently continuing into commits, pull requests, deployment, monitoring, or review handling.
+- Adds explicit terminal stop points to simplest-sdd init, update, and remove flows.
+- Reduces update-prompt context by including only schema history newer than the detected installed version; unversioned installations still receive the full migration history.
+- Keeps model, reasoning-effort, and speed-tier selection outside repository schema because those are user/runtime choices rather than portable project policy.
+
+### Migration from 0.5.0
+
+1. Preserve any explicit delegation policy in the repository. If none exists, add an `AGENTS.md` execution-boundaries section that defaults to direct execution and requires an explicit user request before spawning subagents.
+2. Update `.agents/skills/spec-library/SKILL.md` so generated plans record the authorized phase, exact stop condition, delegation policy, and excluded follow-on actions.
+3. Add the same Execution boundary section to `templates/plan.html`.
+4. Require implementation to stop after the approved scope is implemented, verified, and closed out.
+5. Do not commit, open a pull request, deploy, monitor, or handle reviews unless the active user prompt explicitly requests that work.
+6. Preserve the existing business-spec and technical-approval gates plus any stricter local rules.
+
 ## 0.5.0 - 2026-07-09
 
 - Stops unconditionally installing the `tdd` skill during init.

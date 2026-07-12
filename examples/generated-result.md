@@ -17,6 +17,13 @@ Prefer obvious workflows over configurable machinery. Push back when complexity 
 
 For simplest-sdd maintenance instructions, run `npx simplest-sdd@latest update` or `npx simplest-sdd@latest remove` and follow the printed agent prompt.
 
+## Execution boundaries
+
+- Work directly by default. Do not spawn subagents unless the user explicitly asks for delegation.
+- Treat the user's current prompt as the authorized phase and honor every stated stop point.
+- Without an explicit stop point, stop after the requested artifact or approved implementation is complete, verified, and closed out.
+- Do not continue into commits, pull requests, deployment, monitoring, or review handling unless the current prompt explicitly requests it.
+
 ## Spec-driven workflow
 
 | When | Load |
@@ -188,6 +195,10 @@ The plan carries execution details and explicitly keeps the users visible:
   <section>
     <h2>Goal and intended users</h2>
     <p>Make discovery and scoped reuse reliable as a saved library grows for heavy internet readers.</p>
+  </section>
+  <section>
+    <h2>Execution boundary</h2>
+    <p>Authorized phase: implement and verify the approved discovery/export spec. Stop after close-out evidence is recorded. Delegation is not authorized. Commit, pull request, deployment, monitoring, and review handling remain out of scope.</p>
   </section>
   <section>
     <h2>Tasks</h2>
