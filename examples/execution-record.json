@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "1.0.0",
+  "specId": "content-discovery-export",
+  "title": "Content discovery and export",
+  "classification": {
+    "primaryCategory": "feature",
+    "tags": ["performance", "design", "tests"],
+    "overallEffort": "M",
+    "planConfidence": "high",
+    "delegationConfidence": "high"
+  },
+  "planning": {
+    "plannedAt": "2026-07-12T14:00:00Z",
+    "plannedAtCommit": "abc1234",
+    "capabilityProfile": "strong-planner",
+    "actualModel": "planner-model-example",
+    "reasoningEffort": "high"
+  },
+  "strategy": {
+    "recommended": {
+      "mode": "hybrid",
+      "rationale": "The shared design is coupled, while test and browser-verification tasks are bounded and independently verifiable."
+    },
+    "optionsPresented": ["same-session", "hybrid", "custom"],
+    "selected": {
+      "mode": "hybrid",
+      "selectedAt": "2026-07-12T14:15:00Z",
+      "selectedBy": "user",
+      "overrideReason": null,
+      "customInstructions": null
+    }
+  },
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "Normalize discovery and ordering inputs",
+      "category": "design",
+      "effort": "M",
+      "risk": "medium",
+      "planConfidence": "high",
+      "delegationConfidence": "medium",
+      "dependsOn": [],
+      "parallelizable": false,
+      "scope": {
+        "in": ["src/discovery/inputs.ts", "src/discovery/ordering.ts"],
+        "out": ["src/export/"]
+      },
+      "verification": [
+        { "command": "npm test -- discovery", "expected": "All discovery tests pass." }
+      ],
+      "stopConditions": ["The existing ordering contract differs from technical.html."],
+      "recommendedExecution": {
+        "mode": "same-session",
+        "capabilityProfile": "strong-worker",
+        "reasoningEffort": "high",
+        "rationale": "The task carries the cross-cutting design decision and should retain planner context."
+      },
+      "selectedExecution": {
+        "mode": "same-session",
+        "capabilityProfile": "strong-worker",
+        "reasoningEffort": "high",
+        "rationale": "Accepted as recommended."
+      }
+    },
+    {
+      "id": "T2",
+      "title": "Add focused tests and browser verification",
+      "category": "tests",
+      "effort": "S",
+      "risk": "low",
+      "planConfidence": "high",
+      "delegationConfidence": "high",
+      "dependsOn": ["T1"],
+      "parallelizable": false,
+      "scope": {
+        "in": ["test/discovery.test.ts", "test/browser/discovery.spec.ts"],
+        "out": ["src/"]
+      },
+      "verification": [
+        { "command": "npm test", "expected": "All tests pass." }
+      ],
+      "stopConditions": ["Verification requires changing product behavior or files under src/."],
+      "recommendedExecution": {
+        "mode": "delegated",
+        "capabilityProfile": "efficient-worker",
+        "reasoningEffort": "medium",
+        "rationale": "The task is bounded by existing behavior and machine-checkable verification."
+      },
+      "selectedExecution": {
+        "mode": "delegated",
+        "capabilityProfile": "efficient-worker",
+        "reasoningEffort": "medium",
+        "rationale": "Accepted as recommended."
+      }
+    }
+  ],
+  "runs": [
+    {
+      "id": "run-001",
+      "role": "executor",
+      "taskIds": ["T1"],
+      "executionMode": "same-session",
+      "capabilityProfile": "strong-worker",
+      "actualModel": "strong-model-example",
+      "reasoningEffort": "high",
+      "provider": "example",
+      "startedAt": "2026-07-12T14:20:00Z",
+      "completedAt": "2026-07-12T15:00:00Z",
+      "durationMs": 2400000,
+      "tokenUsage": {
+        "usageId": "example-run-001",
+        "source": "measured",
+        "scope": "run",
+        "inputTokens": 80000,
+        "cachedInputTokens": 30000,
+        "outputTokens": 12000,
+        "reasoningOutputTokens": 18000,
+        "totalTokens": 110000
+      },
+      "outcome": "complete",
+      "revisionCount": 0,
+      "verification": ["npm test -- discovery: passed"],
+      "worktree": null,
+      "branch": "feature/content-discovery-export",
+      "commitBefore": "abc1234",
+      "commitAfter": null,
+      "notes": "Executed in the user-selected same session."
+    },
+    {
+      "id": "run-002",
+      "role": "executor",
+      "taskIds": ["T2"],
+      "executionMode": "delegated",
+      "capabilityProfile": "efficient-worker",
+      "actualModel": "efficient-model-example",
+      "reasoningEffort": "medium",
+      "provider": "example",
+      "startedAt": "2026-07-12T15:05:00Z",
+      "completedAt": "2026-07-12T15:25:00Z",
+      "durationMs": 1200000,
+      "tokenUsage": {
+        "usageId": "example-run-002",
+        "source": "measured",
+        "scope": "run",
+        "inputTokens": 50000,
+        "cachedInputTokens": 18000,
+        "outputTokens": 9000,
+        "reasoningOutputTokens": 15000,
+        "totalTokens": 74200
+      },
+      "outcome": "complete",
+      "revisionCount": 1,
+      "verification": ["npm test: passed", "browser discovery flow: passed"],
+      "worktree": ".codex/worktrees/content-discovery-export-t2",
+      "branch": "worker/content-discovery-export-t2",
+      "commitBefore": "abc1234",
+      "commitAfter": "def5678",
+      "notes": "Diff was reviewed before changed tests were executed. Merge remained a user decision."
+    }
+  ]
+}

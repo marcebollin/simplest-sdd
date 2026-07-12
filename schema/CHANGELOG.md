@@ -4,21 +4,26 @@ This changelog tracks the installed simplest-sdd schema. Schema versions are kep
 
 ## 0.6.0 - 2026-07-12
 
-- Preserves explicit repository delegation policies; when none exists, generated `AGENTS.md` guidance defaults to direct execution and forbids spawning subagents unless the user explicitly asks.
-- Requires every generated `plan.html` to record the active phase, exact stop condition, whether delegation is authorized, and which delivery actions remain out of scope.
-- Stops approved implementation after code, verification, and spec-library close-out instead of silently continuing into commits, pull requests, deployment, monitoring, or review handling.
-- Adds explicit terminal stop points to simplest-sdd init, update, and remove flows.
+- Keeps one integrated `plan.html` per feature while dividing it into detailed tasks classified by category, effort, risk, plan confidence, delegation confidence, dependencies, scope, verification, and STOP conditions.
+- Makes the planner evaluate same-session, delegated, and hybrid execution. Same-session is always offered; delegated/hybrid modes appear only when recommended with rationale; a custom assignment example is always shown.
+- Requires explicit user approval of the execution topology and per-task assignments before any subagent starts. The recommendation and user override are both retained.
+- Uses model-agnostic capability profiles and low/medium/high effort for durable routing recommendations, while recording actual planner, executor, verifier, and reviewer model names after execution.
+- Adds `design` to the feature classification taxonomy alongside feature, bug, security, performance, tests, tech-debt, migration, DX, docs, and research.
+- Adds per-feature `execution.json` records and a committed `data/executions.jsonl` ledger covering actual models, token usage and provenance, duration, outcomes, revisions, verification, commits, and execution strategy.
+- Adds read-only `analytics` output in summary, JSON, JSONL, and CSV formats plus `codex-usage` inspection for local session model, effort, duration, and token totals without conversation content.
+- Uses isolated worktrees for delegated writers, requires diff review before running changed code, stops before merge, and keeps delivery follow-ons outside the active phase unless explicitly requested.
 - Reduces update-prompt context by including only schema history newer than the detected installed version; unversioned installations still receive the full migration history.
-- Keeps model, reasoning-effort, and speed-tier selection outside repository schema because those are user/runtime choices rather than portable project policy.
 
 ### Migration from 0.5.0
 
-1. Preserve any explicit delegation policy in the repository. If none exists, add an `AGENTS.md` execution-boundaries section that defaults to direct execution and requires an explicit user request before spawning subagents.
-2. Update `.agents/skills/spec-library/SKILL.md` so generated plans record the authorized phase, exact stop condition, delegation policy, and excluded follow-on actions.
-3. Add the same Execution boundary section to `templates/plan.html`.
-4. Require implementation to stop after the approved scope is implemented, verified, and closed out.
-5. Do not commit, open a pull request, deploy, monitor, or handle reviews unless the active user prompt explicitly requests that work.
-6. Preserve the existing business-spec and technical-approval gates plus any stricter local rules.
+1. Preserve any explicit repository delegation policy. Otherwise allow the planner to recommend delegation while requiring explicit user strategy approval before spawning subagents.
+2. Keep one integrated `plan.html`; add detailed task classification, dependencies, scope, verification, STOP conditions, capability recommendations, and selected assignments.
+3. Add `templates/execution-template.json`, a per-feature `execution.json`, and `data/executions.jsonl` using execution schema `1.0.0`. Do not invent telemetry for old executions.
+4. Always offer same-session execution. Offer delegated and hybrid modes only with a rationale, and show a concrete custom assignment example.
+5. Record capability profiles in recommendations and actual model names, effort, tokens, duration, outcome, revisions, and verification after execution.
+6. Run `npx simplest-sdd@latest analytics`, then rebuild the committed JSONL ledger. Generate CSV only when needed.
+7. Use isolated worktrees for delegated writers, inspect their diffs before running changed code, and stop before merge.
+8. Preserve the existing business-spec and technical-approval gates plus stricter local rules. Keep delivery follow-ons out of scope unless explicitly requested.
 
 ## 0.5.0 - 2026-07-09
 

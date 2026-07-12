@@ -20,7 +20,8 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Keep `.claude/skills/spec-library -> ../../.agents/skills/spec-library` for Claude skill compatibility.
 - Use clean static HTML for the root library index, specs, decisions, plans, supporting indexes, and templates.
 - Never delete user-authored specs or decisions during update.
-- Preserve an existing explicit delegation policy. Otherwise ensure direct execution is the default and subagents require an explicit user request.
+- Preserve an existing explicit delegation policy. Otherwise let the planner recommend delegation, but require explicit user approval of the proposed topology and assignments before spawning subagents.
+- Keep recommendations model-agnostic through capability profiles and effort; record actual models in execution data after runs.
 - Treat this migration as the active phase. After migrating and validating, stop before feature work, commits, pull requests, deployment, monitoring, or review handling unless the user explicitly requested it.
 
 ## 1. Inspect Current Installation
@@ -37,6 +38,7 @@ Read:
 - `.agents/skills/spec-library/decisions/index.html` or older `.agents/skills/spec-library/decisions/INDEX.md`;
 - existing decisions, including older Markdown artifacts;
 - `.agents/skills/spec-library/templates/`;
+- `.agents/skills/spec-library/data/executions.jsonl` and every feature `execution.json` when present;
 - `.claude/skills/spec-library` and its target if present.
 
 Identify the installed schema version from `SKILL.md`:
@@ -73,6 +75,9 @@ Before finishing:
 - confirm `CLAUDE.md` is a regular file containing `@AGENTS.md`;
 - confirm `.agents/skills/spec-library/SKILL.md` has the latest schema marker;
 - confirm `SKILL.md` records the resolved testing discipline by name and its implement-and-verify step follows that discipline (not a hardcoded `tdd` requirement);
+- confirm every feature keeps one integrated `plan.html` with detailed classified tasks instead of independent task-plan files;
+- confirm delegation recommendations require an explicit user strategy selection, same-session is always offered, and actual runtime models are recorded separately from capability recommendations;
+- confirm every new feature has a valid `execution.json`; run `npx simplest-sdd@latest analytics` and rebuild the committed JSONL ledger when records exist;
 - confirm `.claude/skills/spec-library` resolves to `../../.agents/skills/spec-library`;
 - confirm the root library index, current templates, supporting indexes, specs, plans, and decisions are HTML or that old Markdown copies were intentionally preserved to avoid data loss;
 - confirm no specs, decisions, unrelated skills, or existing instructions were lost;

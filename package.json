@@ -1,13 +1,14 @@
 {
   "name": "simplest-sdd",
   "version": "0.6.0",
-  "description": "Agent-ready prompts for installing, updating, and removing the simplest spec-driven development workflow.",
+  "description": "An approval-gated spec-driven workflow with integrated planning, model-agnostic execution routing, and execution analytics.",
   "type": "module",
   "bin": {
-    "simplest-sdd": "./bin/simplest-sdd.mjs"
+    "simplest-sdd": "bin/simplest-sdd.mjs"
   },
   "files": [
     "bin",
+    "lib",
     "docs",
     "examples",
     "prompts",
@@ -23,6 +24,8 @@
     "agents",
     "claude",
     "codex",
+    "orchestration",
+    "analytics",
     "spec-driven-development",
     "sdd"
   ],

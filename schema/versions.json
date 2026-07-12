@@ -4,23 +4,30 @@
     {
       "version": "0.6.0",
       "date": "2026-07-12",
-      "summary": "Adds cost-conscious execution boundaries: direct work by default, explicit authorization for subagents, named phase stop conditions, and no unrequested delivery follow-ons.",
+      "summary": "Adds approval-gated execution strategy recommendations, integrated task classification, model-agnostic routing, and analysis-ready execution telemetry without fragmenting each feature's single plan.",
       "changes": [
-        "Preserve explicit repository delegation policies; otherwise tell agents not to spawn subagents unless the user explicitly asks.",
-        "Require every generated plan to name the authorized phase, exact stop condition, delegation policy, and excluded follow-on work.",
-        "Stop implementation after the approved scope is implemented, verified, and closed out instead of continuing into unrequested delivery work.",
-        "Require explicit active-prompt authorization for commits, pull requests, deployment, monitoring, and review handling.",
-        "Add terminal stop points to init, update, and remove flows.",
+        "Keep one integrated plan per feature and divide it into detailed tasks classified by category, effort, risk, plan confidence, delegation confidence, dependencies, scope, verification, and STOP conditions.",
+        "Have the planner recommend same-session, delegated, or hybrid execution, always offer same-session, show a custom assignment example, and require explicit user strategy approval before spawning subagents.",
+        "Use model-agnostic capability profiles and reasoning effort for recommendations while recording the actual planner, executor, verifier, and reviewer models after execution.",
+        "Add the design category alongside feature, bug, security, performance, tests, tech-debt, migration, DX, docs, and research.",
+        "Add per-feature execution.json records plus a committed executions.jsonl ledger with actual models, tokens, duration, outcomes, revisions, verification, and user overrides.",
+        "Add read-only analytics validation/export in summary, JSON, JSONL, and CSV formats plus local Codex session usage inspection.",
+        "Require delegated writers to use isolated worktrees, review their diffs before executing changed code, and stop before merge.",
+        "Keep commits, pull requests, deployment, monitoring, and review handling outside the active phase unless explicitly requested.",
         "Limit update prompt history to schema versions newer than the detected installation."
       ],
       "migrations": [
         {
           "from": "0.5.0",
           "steps": [
-            "Preserve any explicit delegation policy; otherwise add an AGENTS.md execution-boundaries section that defaults to direct execution and requires an explicit user request for subagents.",
-            "Update the spec-library SKILL.md and plan template so plans record the authorized phase, exact stop condition, delegation policy, and excluded follow-on actions.",
-            "Require implementations to stop after approved work is implemented, verified, and closed out.",
-            "Keep commits, pull requests, deployment, monitoring, and review handling out of scope unless explicitly requested in the active prompt.",
+            "Preserve any explicit delegation policy; otherwise update AGENTS.md so planners may recommend delegation but cannot spawn subagents before the user approves the execution strategy.",
+            "Keep each feature's single plan.html and expand it with classified task rows, dependencies, exact scope, verification, STOP conditions, capability recommendations, and user-selected assignments.",
+            "Add execution-template.json, per-feature execution.json records, and data/executions.jsonl using execution schema 1.0.0.",
+            "Add same-session as an always-available option; offer delegated and hybrid options only with planner rationale, plus a concrete custom assignment example.",
+            "Use capability profiles and effort in durable recommendations; record actual model names, tokens, duration, outcomes, verification, and overrides after execution.",
+            "Run analytics validation, rebuild executions.jsonl, and preserve old specs without inventing historical telemetry.",
+            "Use isolated worktrees for delegated writers, inspect diffs before running changed code, and never merge automatically.",
+            "Keep commits in same-session mode, merges, pull requests, deployment, monitoring, and review handling out of scope unless explicitly requested.",
             "Use only migration history newer than the installed schema when generating update instructions.",
             "Preserve all existing approval gates, explicit local delegation policies, and stricter execution rules."
           ]

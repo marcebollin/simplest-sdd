@@ -19,9 +19,10 @@ For simplest-sdd maintenance instructions, run `npx simplest-sdd@latest update` 
 
 ## Execution boundaries
 
-- Work directly by default. Do not spawn subagents unless the user explicitly asks for delegation.
 - Treat the user's current prompt as the authorized phase and honor every stated stop point.
-- Without an explicit stop point, stop after the requested artifact or approved implementation is complete, verified, and closed out.
+- For spec-driven work, recommend same-session, delegated, or hybrid execution from the classified tasks, but do not spawn a subagent before the user selects the strategy.
+- Always offer same-session execution and show a concrete custom assignment example.
+- Without an explicit stop point, stop after the selected strategy completes the approved implementation, verification, analytics, and close-out.
 - Do not continue into commits, pull requests, deployment, monitoring, or review handling unless the current prompt explicitly requests it.
 
 ## Spec-driven workflow
@@ -34,7 +35,7 @@ For simplest-sdd maintenance instructions, run `npx simplest-sdd@latest update` 
 | Clear low-risk output reviewable within ~5 minutes | Implement and verify directly |
 ```
 
-The spec workflow starts by refining the request into generated `business.html`, `technical.html`, and `plan.html` documents. Implementation waits until the generated spec receives explicit approval.
+The spec workflow starts by refining the request into generated `business.html`, `technical.html`, and one integrated `plan.html`. It creates `execution.json`, recommends an execution strategy, and waits for explicit spec and strategy approval before implementation.
 
 `CLAUDE.md` is a regular file:
 
@@ -50,12 +51,15 @@ CLAUDE.md
 .agents/skills/spec-library/
 ├── SKILL.md
 ├── index.html
+├── data/
+│   └── executions.jsonl
 ├── specs/
 │   ├── index.html
 │   └── content-discovery-export/
 │       ├── business.html
 │       ├── technical.html
-│       └── plan.html
+│       ├── plan.html
+│       └── execution.json
 ├── decisions/
 │   ├── index.html
 │   └── export-reuses-active-result-set.html
@@ -63,11 +67,12 @@ CLAUDE.md
     ├── business-spec.html
     ├── technical-spec.html
     ├── plan.html
+    ├── execution-template.json
     └── decision-template.html
 .claude/skills/spec-library -> ../../.agents/skills/spec-library
 ```
 
-The root library index is the read-first catalog. It links to all internal spec-library documents, keeps latest documents easy to reach by last-updated date, and may include small static-page filtering:
+The root library index is the read-first catalog. It links to all internal spec-library documents, keeps latest documents easy to reach, and exposes category, effort, confidence, strategy, actual models, tokens, and outcome for static filtering:
 
 ```html
 <main>
@@ -75,6 +80,10 @@ The root library index is the read-first catalog. It links to all internal spec-
     <h1>Spec Library</h1>
     <p class="meta">Read-first catalog for internal product and technical specification documents.</p>
   </header>
+  <section>
+    <h2>Execution summary</h2>
+    <p><a href="specs/content-discovery-export/execution.json">Content discovery export</a> · feature + performance · effort M · plan confidence high · delegation confidence high · hybrid · 184,200 measured tokens · complete</p>
+  </section>
   <section>
     <h2>Latest documents</h2>
     <ul>
@@ -198,16 +207,21 @@ The plan carries execution details and explicitly keeps the users visible:
   </section>
   <section>
     <h2>Execution boundary</h2>
-    <p>Authorized phase: implement and verify the approved discovery/export spec. Stop after close-out evidence is recorded. Delegation is not authorized. Commit, pull request, deployment, monitoring, and review handling remain out of scope.</p>
+    <p>Authorized phase: implement and verify the approved discovery/export spec. Stop after analytics and close-out evidence are recorded. Merge, pull request, deployment, monitoring, and review handling remain out of scope.</p>
   </section>
   <section>
-    <h2>Tasks</h2>
-    <ol>
-      <li>Normalize discovery and ordering inputs.</li>
-      <li>Build the shared discovery surface.</li>
-      <li>Complete the active result set before export.</li>
-      <li>Add focused tests and browser verification.</li>
-    </ol>
+    <h2>Execution recommendation and decision</h2>
+    <p>Recommended: hybrid. Keep the shared discovery design in the current session; delegate bounded tests and browser verification to efficient workers. Selected by user: hybrid as recommended.</p>
+  </section>
+  <section>
+    <h2>Integrated task plan</h2>
+    <table>
+      <thead><tr><th>ID</th><th>Task</th><th>Category</th><th>Effort</th><th>Plan / delegation confidence</th><th>Assignment</th></tr></thead>
+      <tbody>
+        <tr><td>T1</td><td>Normalize discovery and ordering inputs</td><td>design</td><td>M</td><td>high / medium</td><td>same-session, strong-worker, high</td></tr>
+        <tr><td>T2</td><td>Add focused tests and browser verification</td><td>tests</td><td>S</td><td>high / high</td><td>delegated, efficient-worker, medium</td></tr>
+      </tbody>
+    </table>
   </section>
 </main>
 ```
@@ -237,4 +251,4 @@ Only a choice that affects future features is promoted from the technical spec:
 </main>
 ```
 
-The business and technical specs remain useful after shipping. `plan.html` holds temporary progress, discoveries, and verification evidence.
+The business and technical specs remain useful after shipping. `plan.html` holds the single integrated implementation record, while `execution.json` and the derived JSONL ledger make routing, models, tokens, and outcomes queryable later. See the complete [execution record example](execution-record.json).
