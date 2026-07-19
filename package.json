@@ -1,7 +1,15 @@
 {
   "name": "simplest-sdd",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "An approval-gated spec-driven workflow with integrated planning, model-agnostic execution routing, and execution analytics.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcebollin/simplest-sdd.git"
+  },
+  "homepage": "https://github.com/marcebollin/simplest-sdd#readme",
+  "bugs": {
+    "url": "https://github.com/marcebollin/simplest-sdd/issues"
+  },
   "type": "module",
   "bin": {
     "simplest-sdd": "bin/simplest-sdd.mjs"
