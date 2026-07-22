@@ -1,6 +1,35 @@
 {
-  "currentSchemaVersion": "0.6.0",
+  "currentSchemaVersion": "0.8.0",
   "versions": [
+    {
+      "version": "0.8.0",
+      "date": "2026-07-22",
+      "summary": "Turns durable decisions into a small project-wide registry organized by living category documents, with explicit spec impact links and a strict preference for inference over unnecessary documentation.",
+      "changes": [
+        "Keep decisions independent from feature folders in living category documents, creating a category only when its first qualifying decision is approved.",
+        "Use decisions/index.html as a compact routing page with stable decision IDs, summaries, status, dates, and direct section links.",
+        "Require each technical spec to record decisions it uses, proposes, or modifies, or explicitly state that there is no durable decision impact.",
+        "Read the decision index during context resolution and load only category documents relevant to the current request.",
+        "Create or update a decision only when it has likely cross-feature value, inconsistent interpretations would matter, and the intent cannot be reliably inferred.",
+        "Amend compatible decision changes in place with compact history; supersede only when the meaning is fundamentally reversed.",
+        "Keep active-decision changes behind explicit technical approval while allowing clearly listed new decisions to be approved with the applicable spec."
+      ],
+      "migrations": [
+        {
+          "from": "0.6.0",
+          "steps": [
+            "Preserve all existing decisions and stable links; do not delete or blindly rewrite one-decision artifacts.",
+            "Update SKILL.md so context resolution always reads decisions/index.html, then loads only relevant populated category documents.",
+            "Make decisions/index.html a concise registry of stable IDs, titles, statuses, summaries, dates, and direct links to decision sections.",
+            "Organize new decisions in living category documents such as design.html or architecture.html, but create no empty categories and preserve older files when safe consolidation is unclear.",
+            "Add one Decision impact section to the technical template and new technical specs, listing used, proposed, and modified decisions or the standard no-impact statement.",
+            "Add the strict promotion threshold: cross-feature value, meaningful cost of inconsistent inference, and intent not reliably inferable from code, conventions, or an active spec.",
+            "Amend compatible decisions in place with compact history and a link to the changing spec; supersede only fundamental reversals.",
+            "Preserve explicit approval for active-decision changes and all stricter local approval rules."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.6.0",
       "date": "2026-07-12",

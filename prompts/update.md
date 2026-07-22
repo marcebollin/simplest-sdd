@@ -18,8 +18,9 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Use `CLAUDE.md` as a regular Claude import file containing `@AGENTS.md`, not as a symlink.
 - Keep `.agents/skills/spec-library` as the canonical skill directory.
 - Keep `.claude/skills/spec-library -> ../../.agents/skills/spec-library` for Claude skill compatibility.
-- Use clean static HTML for the root library index, specs, decisions, plans, supporting indexes, and templates.
+- Use clean static HTML for the root library index, specs, living decision category documents, plans, supporting indexes, and templates.
 - Never delete user-authored specs or decisions during update.
+- Keep decision documentation sparse: do not create empty categories or promote choices that remain reliably inferable from code, conventions, or an active specification.
 - Preserve an existing explicit delegation policy. Otherwise let the planner recommend delegation, but require explicit user approval of the proposed topology and assignments before spawning subagents.
 - Keep recommendations model-agnostic through capability profiles and effort; record actual models in execution data after runs.
 - Treat this migration as the active phase. After migrating and validating, stop before feature work, commits, pull requests, deployment, monitoring, or review handling unless the user explicitly requested it.
@@ -36,7 +37,7 @@ Read:
 - `.agents/skills/spec-library/specs/index.html` or older `.agents/skills/spec-library/specs/INDEX.md`;
 - existing spec folders, including older Markdown artifacts;
 - `.agents/skills/spec-library/decisions/index.html` or older `.agents/skills/spec-library/decisions/INDEX.md`;
-- existing decisions, including older Markdown artifacts;
+- existing decisions and category documents, including older Markdown artifacts;
 - `.agents/skills/spec-library/templates/`;
 - `.agents/skills/spec-library/data/executions.jsonl` and every feature `execution.json` when present;
 - `.claude/skills/spec-library` and its target if present.
@@ -66,6 +67,8 @@ Apply only the migration guidance printed above, from the oldest relevant versio
 
 For an unversioned or missing installation, the printed history includes the full baseline. Reconstruct the current structure conservatively from those steps, preserve unique content, and add the latest schema marker only after the current behavior is present.
 
+When migrating decisions, preserve stable links and history. Consolidate old one-decision documents into living category documents only when ownership, category, and anchors are unambiguous; otherwise keep and index the original artifacts. Never create placeholder category files merely to match an example taxonomy.
+
 If no migration versions are printed because the installed schema is current, validate it and report any drift; do not rewrite files merely to produce a change. Never downgrade an installation whose marker is newer than `{{schemaVersion}}`.
 
 ## 4. Validate
@@ -80,6 +83,8 @@ Before finishing:
 - confirm every new feature has a valid `execution.json`; run `npx simplest-sdd@latest analytics` and rebuild the committed JSONL ledger when records exist;
 - confirm `.claude/skills/spec-library` resolves to `../../.agents/skills/spec-library`;
 - confirm the root library index, current templates, supporting indexes, specs, plans, and decisions are HTML or that old Markdown copies were intentionally preserved to avoid data loss;
+- confirm `decisions/index.html` routes agents to populated category documents, technical specs have a concise Decision impact section, and active-decision changes require explicit approval;
+- confirm decision documents contain only choices whose intent is materially safer to preserve than infer, with no empty categories or routine implementation details;
 - confirm no specs, decisions, unrelated skills, or existing instructions were lost;
 - search for stale references to the previous simplest-sdd behavior;
 - run the repository's relevant formatting or documentation checks;

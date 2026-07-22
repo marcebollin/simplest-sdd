@@ -62,13 +62,13 @@ CLAUDE.md
 │       └── execution.json
 ├── decisions/
 │   ├── index.html
-│   └── export-reuses-active-result-set.html
+│   └── architecture.html
 └── templates/
     ├── business-spec.html
     ├── technical-spec.html
     ├── plan.html
     ├── execution-template.json
-    └── decision-template.html
+    └── decision-category.html
 .claude/skills/spec-library -> ../../.agents/skills/spec-library
 ```
 
@@ -189,6 +189,10 @@ The technical document records durable boundaries and may include a simple diagr
     </svg>
   </figure>
 </section>
+<section>
+  <h2>Decision impact</h2>
+  <p>This feature will create <a href="../../decisions/architecture.html#ARC-001">ARC-001 — Reuse the active result set for exports</a> because the rule will govern future export surfaces.</p>
+</section>
 ```
 
 ## Implementation plan
@@ -228,25 +232,29 @@ The plan carries execution details and explicitly keeps the users visible:
 
 ## Durable decision
 
-Only a choice that affects future features is promoted from the technical spec:
+Only a choice whose cross-feature intent is materially safer to preserve than infer is promoted. It becomes a section in a living category document, not an artifact owned by the feature:
 
 ```html
 <main>
   <header>
-    <h1>Reuse the active result set for exports</h1>
-    <p class="meta">Importance: medium. Status: active.</p>
+    <h1>Architecture decisions</h1>
+    <p class="meta">Only populated categories and durable cross-feature choices belong here.</p>
   </header>
-  <section>
-    <h2>Decision</h2>
+  <section id="ARC-001">
+    <h2>ARC-001 — Reuse the active result set for exports</h2>
+    <p class="meta">Status: active. Last updated: 2026-07-22.</p>
+    <h3>Decision</h3>
     <p>Complete and serialize the active paginated result set.</p>
-  </section>
-  <section>
-    <h2>Over</h2>
-    <p>Maintaining a separate all-record export query.</p>
-  </section>
-  <section>
-    <h2>Why</h2>
+    <h3>Applies to</h3>
+    <p>Current and future exports derived from an interactive result set.</p>
+    <h3>Why</h3>
     <p>It prevents visible results and exports from using different scopes while reusing already loaded data.</p>
+    <h3>How to apply</h3>
+    <p>Complete the active query scope before serialization rather than introducing an independent export query.</p>
+    <h3>Exceptions</h3>
+    <p>None currently.</p>
+    <h3>Change history</h3>
+    <ul><li>2026-07-22: Created by the content discovery and export spec.</li></ul>
   </section>
 </main>
 ```

@@ -12,7 +12,7 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Use `.agents/skills/` as the canonical repository skill directory.
 - For Claude, make `CLAUDE.md` a regular file that imports the canonical instructions with `@AGENTS.md`.
 - Keep the Claude skill compatibility path as a relative symlink: `.claude/skills/spec-library -> ../../.agents/skills/spec-library`.
-- Store the library index, specs, decisions, plans, and supporting indexes as clean static HTML files with readable embedded CSS.
+- Store the library index, specs, category-based project decisions, plans, and supporting indexes as clean static HTML files with readable embedded CSS.
 - Keep the resulting files concise and specific to this project.
 - Do not copy implementation details that the agent can discover from the repository.
 - Do not implement unrelated product code.
@@ -109,7 +109,7 @@ Add or update a concise project guidance section containing:
 | Output whose review would take more than ~5 minutes; meaningful product ambiguity; architectural/security risk; multi-session handoff; or behavior covered by an existing spec | `.agents/skills/spec-library/SKILL.md` |
 | Question about past specs, plans, decisions, or internal specification documentation | `.agents/skills/spec-library/index.html` |
 | Question specifically about a past technical, architectural, product, or style choice | `.agents/skills/spec-library/decisions/index.html` |
-| Clear low-risk change whose output is reviewable within ~5 minutes and no existing spec is implicated | Implement and verify directly |
+| Clear low-risk change whose output is reviewable within ~5 minutes and no existing spec or active decision is implicated | Implement and verify directly |
 
 The spec workflow always starts with one concise request-refinement round with at least five material questions, then generates or updates the spec and waits for explicit approval before implementation. After approval, implementations follow the repository's resolved testing discipline (an installed test-first skill, another defined testing approach, or an intentional test-free stance) recorded in the spec-library skill. The library index, specs, plans, decisions, and supporting indexes are clean static HTML files. After implementation, run its close-out step so durable specs, decisions, and indexes match what shipped.
 ```
@@ -135,7 +135,7 @@ Create or carefully update:
     ├── technical-spec.html
     ├── plan.html
     ├── execution-template.json
-    └── decision-template.html
+    └── decision-category.html
 ```
 
 If a spec library already exists, preserve its useful content and history. Migrate it only as much as needed to establish this structure. Never erase existing specs or decisions.
@@ -154,7 +154,7 @@ Always use the workflow when reviewing the expected output would take more than 
 
 ### Resolve Context
 
-Read the root library index, spec index, and decision index, load only relevant artifacts, inspect code before proposing implementation details, and treat active decisions as constraints. Record the current git commit when available. Discover the repository's exact install/build/test/lint/typecheck commands, applicable conventions with exemplar files, and relevant intent/design documents so detailed tasks and delegated executor packets do not depend on hidden planner-session context.
+Read the root library index, spec index, and decision index. Use the decision index to identify relevant categories, then load only those category documents; do not load every decision by default. Inspect code before proposing implementation details and treat relevant active decisions as constraints. Record the current git commit when available. Discover the repository's exact install/build/test/lint/typecheck commands, applicable conventions with exemplar files, and relevant intent/design documents so detailed tasks and delegated executor packets do not depend on hidden planner-session context.
 
 ### Refine Request: Mandatory First Questions
 
@@ -215,15 +215,31 @@ specs/<domain>-<feature>/
 ```
 
 - `business.html`: durable product contract. Goal, intended users, problem, outcomes, primary flow, clues/examples, scope, acceptance criteria, and open product questions. No file paths or implementation checklist.
-- `technical.html`: durable design. Current system, proposed approach, boundaries, failure/security/compatibility concerns, verification strategy, feature-local choices, and optional diagrams or charts for non-obvious tradeoffs.
+- `technical.html`: durable design. Current system, proposed approach, boundaries, failure/security/compatibility concerns, verification strategy, feature-local choices, decision impact, and optional diagrams or charts for non-obvious tradeoffs.
 - `plan.html`: implementation handoff. Goal and intended users, links to both specs and relevant decisions, ordered tasks, useful starting code surfaces, verification, discoveries, deviations, and completion summary.
 - `execution.json`: machine-readable classification, execution recommendation and user selection, task assignments, actual models, token usage, duration, verification, and outcomes. It complements the single integrated plan; it does not split the feature into independent plans.
 
 Keep all artifacts concise. Let the implementing agent inspect ordinary code details.
 
+### Record Decision Impact Without Creating Ceremony
+
+Every `technical.html` must contain one concise `Decision impact` section. It lists relevant active decisions the feature uses, any general decision it proposes to create, and any active decision it proposes to modify, using direct links to stable decision anchors. Before approval, describe changes as proposed (for example, “This feature will modify DES-003…”). At close-out, change that wording to what actually shipped.
+
+When there is no durable decision impact, write exactly:
+
+> No durable decision impact. The relevant behavior can be inferred from the approved spec and implementation.
+
+The default is not to create a decision. Create or update one only when all of these are true:
+
+- it is likely to affect multiple features, surfaces, or future implementations;
+- different reasonable interpretations could cause meaningful inconsistency, risk, or repeated debate;
+- the intended rule cannot be reliably inferred from code, existing conventions, or an active specification.
+
+Prefer inference for local, obvious, temporary, inexpensive-to-reverse, or implementation-level choices. Do not create empty categories, duplicate decisions, or records for routine details. Extend an existing decision when possible. A decision captures intent that code cannot communicate clearly; it does not reproduce code or the feature spec.
+
 ### Generate Spec And Wait For Approval
 
-After the request-refinement answers, create or update `business.html`, `technical.html`, and `plan.html` before implementing product code. Present the generated spec summary and stop. Require explicit business-spec approval before implementation. Also require explicit technical approval for migrations, auth, billing, security, public contracts, infrastructure boundaries, or changes to active decisions. For ordinary design, business approval and no unresolved technical objection are enough.
+After the request-refinement answers, create or update `business.html`, `technical.html`, and `plan.html` before implementing product code. Present the generated spec summary, including its decision impact, and stop. Require explicit business-spec approval before implementation. Clearly listed new general decisions are approved with the applicable business or technical spec. Also require explicit technical approval for migrations, auth, billing, security, public contracts, infrastructure boundaries, or changes to active decisions. For ordinary design, business approval and no unresolved technical objection are enough.
 
 Do not begin implementation, edit product code, or run implementation tasks until the required spec approval has been given. If approval changes the requested behavior or approved design, update the generated spec and regain the required approval before continuing.
 
@@ -285,7 +301,8 @@ Complete the approved implementation, verification, analytics record, and close-
 - Complete `execution.json` with every distinct planner, orchestrator, executor, verifier, and reviewer run; selected versus recommended strategy; actual model and effort; outcome; revisions; duration; verification evidence; and token usage with its provenance (`measured`, `reported`, `estimated`, or `unavailable`) and scope (`task`, `run`, or `session`). Use `null` for an actual model only when the runtime does not expose it; never guess. Record a redacted `usageId` so the same session total is never counted in multiple run rows. For same-session work, record one orchestrator/executor run when planning and execution usage cannot be separated; keep planner identity in the planning block and mark token scope `session`.
 - When a local Codex session ID is available, use `npx simplest-sdd@latest codex-usage --session <id>` to read model, effort, duration, and token totals without copying conversation content. Do not commit raw session logs or unredacted session IDs.
 - Rebuild the committed analytics ledger with `npx simplest-sdd@latest analytics --format jsonl > .agents/skills/spec-library/data/executions.jsonl`. Generate CSV on demand with `npx simplest-sdd@latest analytics --format csv`; JSONL and each feature's `execution.json` are the durable sources.
-- Create a durable decision only when a choice affects future features, is expensive to reverse, resolves recurring disagreement, or establishes a project-wide convention.
+- Apply only approved general decision changes that actually shipped. Update the canonical category section in place for clarifications or scope extensions, add a compact change-history entry linking back to the feature spec, and change the spec's decision-impact wording from proposed to applied. Create a replacement and mark the old decision superseded only when its meaning is fundamentally reversed.
+- Keep the decision registry sparse. If the behavior remains reliably inferable, preserve the spec's “No durable decision impact” statement and create nothing.
 - Update the root library index, spec index, and decision index. Mark replaced artifacts as superseded instead of deleting history.
 - Improve the skill only when repeated friction reveals a reusable guardrail. Do not add ceremony for a one-off mistake.
 
@@ -305,6 +322,8 @@ The root index must:
 
 Prefer metadata from each artifact, such as `<meta name="last-updated" content="YYYY-MM-DD">`. When older artifacts lack metadata, use the best maintained date visible in the artifact or explain that the date is unknown.
 
+Maintain `decisions/index.html` as a compact routing page for both humans and agents. It must list only categories that contain decisions and provide each decision's stable ID, title, status, one-line summary, last-updated date, and a direct link to its section. Store decisions in living category documents such as `business.html`, `design.html`, or `architecture.html`; create a category document only when its first qualifying decision is approved. Use project-relevant categories rather than pre-creating a fixed taxonomy.
+
 ## 5. Create Concise HTML Templates
 
 Each template should be a complete HTML document with the baseline style from the skill.
@@ -312,12 +331,12 @@ Each template should be a complete HTML document with the baseline style from th
 The templates should provide these sections:
 
 - Business: Goal, Intended users, Problem, Outcomes, User flow, Clues and examples, Scope in/out, Acceptance criteria, Open questions, Related. Include status and last-updated metadata.
-- Technical: Current system, Proposed approach, Boundaries and contracts, Failure/security/compatibility, Verification strategy, Feature-local choices, Open questions, Related. Include status and last-updated metadata.
+- Technical: Current system, Proposed approach, Boundaries and contracts, Failure/security/compatibility, Verification strategy, Feature-local choices, Decision impact, Open questions, Related. Include status and last-updated metadata.
 - Plan: Goal and intended users, Execution boundary, Strategy recommendation and user decision, Read first, one integrated task table (ID, category, effort, risk, plan confidence, delegation confidence, dependencies, parallelizability, recommended profile/effort, selected assignment), detailed task steps, scope, verification, STOP conditions, discoveries and deviations, and completion summary. Include status and last-updated metadata.
 - Execution: create a valid `execution.json` example using schema version `1.0.0`, all supported categories including `design`, capability profiles rather than durable provider model names, a null strategy selection before approval, detailed tasks, and an empty runs array.
-- Decision: Decision, Over, Why, How to apply, Origin. Include importance, active/superseded status, and last-updated metadata.
+- Decision category: a living category document containing concise decision sections with stable IDs/anchors. Each section has Decision, Applies to, Why, How to apply, Exceptions, and Change history. Include active/superseded status and last-updated metadata. Amend in place for compatible changes; supersede only for a fundamental reversal.
 
-Write HTML index instructions that make entries short descriptions used for progressive disclosure. Create a root library index with no fake project documents, an empty latest-documents state, links to the focused spec and decision indexes, and optional filtering/search scaffolding only if it stays small and readable. Do not pre-create fake project decisions.
+Write HTML index instructions that make entries short descriptions used for progressive disclosure. Create a root library index with no fake project documents, an empty latest-documents state, links to the focused spec and decision indexes, and optional filtering/search scaffolding only if it stays small and readable. Do not pre-create fake project decisions or empty decision category documents.
 
 ## 6. Add Claude Compatibility
 
@@ -343,6 +362,7 @@ Before finishing:
 - confirm every feature folder has a valid `execution.json`, and `npx simplest-sdd@latest analytics` validates all records;
 - confirm `.agents/skills/spec-library/data/executions.jsonl` can be rebuilt from the per-spec records and CSV can be generated on demand;
 - confirm the root library index, specs, plans, decisions, supporting indexes, and templates are HTML files with readable focus styles;
+- confirm the decision index routes to only populated category documents, technical specs record decision impact, and routine inferable choices did not create durable decisions;
 - confirm no existing instruction, spec, decision, or skill was lost;
 - search for stale references saying `CLAUDE.md` should be a symlink or that generated artifacts should be Markdown;
 - validate skill frontmatter if a validator is available;

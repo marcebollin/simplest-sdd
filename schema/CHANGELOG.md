@@ -1,6 +1,28 @@
 # Simplest SDD Schema Changelog
 
-This changelog tracks the installed simplest-sdd schema. Schema versions are kept in sync with the npm package version.
+This changelog tracks the installed simplest-sdd schema. Workflow releases advance the schema version; CLI-only releases may leave it unchanged.
+
+## 0.8.0 - 2026-07-22
+
+- Replaces feature-associated decision artifacts with a small project-wide registry organized into living category documents.
+- Keeps `decisions/index.html` as the lightweight entry point, with stable IDs, one-line summaries, statuses, dates, and direct links to decision sections.
+- Requires one concise `Decision impact` section in each technical spec: used, proposed, or modified decisions, or the standard “No durable decision impact” statement.
+- Makes agents read the decision index during context resolution and load only categories relevant to the current request.
+- Promotes a choice only when it has likely cross-feature value, inconsistent interpretations would matter, and the intent cannot be reliably inferred from code, conventions, or an active spec.
+- Creates category documents only on demand, extends existing decisions when possible, and avoids records for routine implementation details.
+- Amends compatible changes in place with compact history and spec links; reserves supersession for fundamental reversals.
+- Preserves explicit technical approval for active-decision changes. Clearly listed new decisions are approved with the applicable business or technical spec.
+
+### Migration from 0.6.0
+
+1. Preserve every existing decision and stable link. Do not delete or blindly combine older one-decision artifacts.
+2. Update `SKILL.md` so context resolution reads `decisions/index.html` and only the populated categories relevant to the request.
+3. Turn `decisions/index.html` into a concise registry with stable decision IDs, title, status, summary, last-updated date, and direct section link.
+4. Store new decisions in living category documents such as `design.html` or `architecture.html`; create no empty categories. Consolidate older files only when ownership and anchors are unambiguous.
+5. Add `Decision impact` to the technical template and new technical specs. List used, proposed, and modified decisions, or use the standard no-impact statement.
+6. Apply the strict promotion threshold: cross-feature value, meaningful inconsistency risk, and intent that cannot be reliably inferred.
+7. Amend compatible decisions in place with compact history and a link to the changing spec. Supersede only fundamental reversals.
+8. Preserve the existing approval gate for changes to active decisions and all stricter local rules.
 
 ## 0.6.0 - 2026-07-12
 

@@ -32,7 +32,7 @@ test("prints init instructions", () => {
 
   assert.match(output, /Simplest SDD Init Instructions/);
   assert.match(output, /@AGENTS\.md/);
-  assert.match(output, /simplest-sdd-schema-version: 0\.6\.0/);
+  assert.match(output, /simplest-sdd-schema-version: 0\.8\.0/);
   assert.match(output, /request-refinement round/);
   assert.match(output, /waits for explicit approval before implementation/);
   assert.match(output, /Inspect And Discover The Testing Discipline/);
@@ -47,6 +47,11 @@ test("prints init instructions", () => {
   assert.match(output, /execution\.json/);
   assert.match(output, /efficient-worker/);
   assert.match(output, /analytics --format jsonl/);
+  assert.match(output, /Decision impact/);
+  assert.match(output, /No durable decision impact/);
+  assert.match(output, /load only those category documents/);
+  assert.match(output, /default is not to create a decision/i);
+  assert.match(output, /decision-category\.html/);
 });
 
 test("prints detected update state", () => {
@@ -64,13 +69,17 @@ test("prints detected update state", () => {
   const output = run(["update", "--cwd", cwd]);
 
   assert.match(output, /Detected Local State/);
-  assert.match(output, /Latest schema version: `0\.6\.0`/);
+  assert.match(output, /Latest schema version: `0\.8\.0`/);
   assert.match(output, /regular file importing @AGENTS\.md/);
   assert.match(output, /found \(0\.2\.0\)/);
   assert.match(output, /wait for explicit approval before implementation/);
   assert.match(output, /resolved testing discipline/);
   assert.match(output, /library index: HTML index found/);
   assert.match(output, /always offer same-session/i);
+  assert.match(output, /### 0\.8\.0/);
+  assert.match(output, /Decision impact/);
+  assert.match(output, /create no empty categories/i);
+  assert.match(output, /reliably inferred/i);
   assert.match(output, /### 0\.6\.0/);
   assert.match(output, /### 0\.3\.0/);
   assert.doesNotMatch(output, /### 0\.2\.0/);
@@ -82,12 +91,13 @@ test("omits migration history for a current installation", () => {
   fs.mkdirSync(skillDir, { recursive: true });
   fs.writeFileSync(
     path.join(skillDir, "SKILL.md"),
-    "---\nname: spec-library\ndescription: Test skill.\n---\n\n<!-- simplest-sdd-schema-version: 0.6.0 -->\n"
+    "---\nname: spec-library\ndescription: Test skill.\n---\n\n<!-- simplest-sdd-schema-version: 0.8.0 -->\n"
   );
 
   const output = run(["update", "--cwd", cwd]);
 
   assert.match(output, /installed schema is current; no migration history is needed/);
+  assert.doesNotMatch(output, /### 0\.8\.0/);
   assert.doesNotMatch(output, /### 0\.6\.0/);
   assert.doesNotMatch(output, /### 0\.5\.0/);
 });
@@ -104,17 +114,41 @@ test("prints conservative removal instructions", () => {
 test("validates and exports execution analytics", () => {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "simplest-sdd-test-"));
   const featureDir = path.join(cwd, ".agents", "skills", "spec-library", "specs", "content-discovery-export");
+  const longFeatureDir = path.join(cwd, ".agents", "skills", "spec-library", "specs", "user-surface-brand-alignment");
   fs.mkdirSync(featureDir, { recursive: true });
   fs.copyFileSync(path.join(root, "examples", "execution-record.json"), path.join(featureDir, "execution.json"));
+  const longRecord = JSON.parse(fs.readFileSync(path.join(root, "examples", "execution-record.json"), "utf8"));
+  longRecord.specId = "user-surface-brand-alignment";
+  longRecord.title = "User Surface Brand Alignment";
+  longRecord.classification.primaryCategory = "design";
+  longRecord.classification.overallEffort = "XL";
+  longRecord.tasks[0].effort = "XL";
+  fs.mkdirSync(longFeatureDir, { recursive: true });
+  fs.writeFileSync(path.join(longFeatureDir, "execution.json"), `${JSON.stringify(longRecord, null, 2)}\n`);
 
   const summary = run(["analytics", "--cwd", cwd]);
   const csv = run(["analytics", "--cwd", cwd, "--format", "csv"]);
   const jsonl = run(["analytics", "--cwd", cwd, "--format=jsonl"]);
 
   assert.match(summary, /content-discovery-export\s+feature\s+M\s+high\s+high\s+hybrid\s+2\s+184200\s+complete/);
+  const tableRows = summary.split("\n").slice(2);
+  const columnStarts = ["SPEC", "CATEGORY", "EFFORT", "PLAN CONF", "DELEG CONF", "STRATEGY", "RUNS", "TOKENS", "OUTCOME"]
+    .map((header) => tableRows[0].indexOf(header));
+  const expectedRows = [
+    ["content-discovery-export", "feature", "M", "high", "high", "hybrid", "2", "184200", "complete"],
+    ["user-surface-brand-alignment", "design", "XL", "high", "high", "hybrid", "2", "184200", "complete"]
+  ];
+  for (const [rowIndex, expected] of expectedRows.entries()) {
+    const actual = columnStarts.map((start, columnIndex) => {
+      const end = columnStarts[columnIndex + 1] ?? tableRows[rowIndex + 1].length;
+      return tableRows[rowIndex + 1].slice(start, end).trim();
+    });
+    assert.deepEqual(actual, expected);
+  }
+  assert.doesNotMatch(summary, /\t/);
   assert.match(csv, /actualModel/);
   assert.match(csv, /efficient-model-example/);
-  assert.equal(jsonl.trim().split("\n").length, 2);
+  assert.equal(jsonl.trim().split("\n").length, 4);
   assert.equal(JSON.parse(jsonl.trim().split("\n")[1]).totalTokens, 74200);
 });
 
