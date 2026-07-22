@@ -2,7 +2,7 @@
 
 An npx-ready CLI for installing, updating, operating, and analyzing a small, self-improving spec-driven development system in an existing project.
 
-Project website: [sd2.marcebollin.com](https://sd2.marcebollin.com). Build locally with `pnpm dev`, create the static bundle with `pnpm build`, or deploy the generated `dist` directory with Cloudflare's static-assets runtime using `pnpm deploy`. The checked-in Cloudflare configuration contains only public project metadata; credentials stay in Wrangler's local login or Cloudflare's encrypted CI secrets.
+Project website: [sd2.marcebollin.com](https://sd2.marcebollin.com). Build locally with `pnpm dev`, create the static bundle with `pnpm build`, or deploy the generated `dist` directory with Cloudflare's static-assets runtime using `pnpm run deploy`. The checked-in Cloudflare configuration contains only public project metadata; credentials stay in Wrangler's local login or Cloudflare's encrypted CI secrets.
 
 It keeps the useful guardrails:
 
