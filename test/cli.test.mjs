@@ -16,6 +16,7 @@ test("ships a parseable execution schema and matching example", () => {
   assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema");
   assert.equal(example.schemaVersion, "1.0.0");
   assert.ok(schema.$defs.category.enum.includes("design"));
+  assert.ok(schema.$defs.effort.enum.includes("XL"));
   assert.ok(example.classification.tags.includes("design"));
 });
 
@@ -115,6 +116,20 @@ test("validates and exports execution analytics", () => {
   assert.match(csv, /efficient-model-example/);
   assert.equal(jsonl.trim().split("\n").length, 2);
   assert.equal(JSON.parse(jsonl.trim().split("\n")[1]).totalTokens, 74200);
+});
+
+test("accepts XL overall and task effort", () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "simplest-sdd-test-"));
+  const featureDir = path.join(cwd, ".agents", "skills", "spec-library", "specs", "large-feature");
+  const record = JSON.parse(fs.readFileSync(path.join(root, "examples", "execution-record.json"), "utf8"));
+  record.classification.overallEffort = "XL";
+  record.tasks[0].effort = "XL";
+  fs.mkdirSync(featureDir, { recursive: true });
+  fs.writeFileSync(path.join(featureDir, "execution.json"), `${JSON.stringify(record, null, 2)}\n`);
+
+  const output = run(["analytics", "--cwd", cwd]);
+
+  assert.match(output, /content-discovery-export\s+feature\s+XL\s+high\s+high\s+hybrid/);
 });
 
 test("rejects invalid execution analytics", () => {

@@ -95,7 +95,7 @@
     "category": {
       "enum": ["feature", "bug", "security", "performance", "tests", "tech-debt", "migration", "dx", "docs", "research", "design"]
     },
-    "effort": { "enum": ["S", "M", "L"] },
+    "effort": { "enum": ["S", "M", "L", "XL"] },
     "confidence": { "enum": ["low", "medium", "high"] },
     "risk": { "enum": ["low", "medium", "high"] },
     "profile": { "enum": ["strong-planner", "strong-worker", "efficient-worker", "strong-reviewer", "efficient-reviewer"] },
