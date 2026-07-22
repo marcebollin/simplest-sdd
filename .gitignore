@@ -1,1 +1,10 @@
 agent/docs/*
+.DS_Store
+node_modules/
+dist/
+.wrangler/
+.dev.vars
+.env
+.env.*
+!.env.example
+*.local

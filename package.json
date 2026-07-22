@@ -26,6 +26,10 @@
     "LICENSE"
   ],
   "scripts": {
+    "dev": "rsbuild dev --port 3010",
+    "build": "rsbuild build",
+    "preview": "rsbuild preview",
+    "deploy": "rsbuild build && wrangler deploy",
     "test": "node --test"
   },
   "keywords": [
@@ -41,5 +45,12 @@
   "license": "MIT",
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "@rsbuild/core": "^2.1.6",
+    "@rsbuild/plugin-react": "^2.1.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "wrangler": "^4.112.0"
   }
 }

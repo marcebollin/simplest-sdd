@@ -1,0 +1,421 @@
+@font-face {
+  font-family: "Averia Serif Libre";
+  src: url("../public/fonts/averia-serif-libre-regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+  background: #070809;
+  color: #f2f0e9;
+  font-family: "Averia Serif Libre";
+  font-synthesis: weight;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100svh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 50% 24%, #131516 0, #0b0c0d 34%, #070809 72%);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #f2f0e9;
+  color: #070809;
+}
+
+.landing {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: 100svh;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  overflow: hidden;
+}
+
+.hero {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.wordmark {
+  --title-size-base: clamp(
+    1.35rem,
+    min(calc(5vw + 1rem), 6.8vw),
+    8rem
+  );
+  position: relative;
+  width: min(100% - 2rem, 100rem);
+  height: 100%;
+  margin: 0;
+  color: #f2f0e9;
+  font: 900 1rem/.88 "Averia Serif Libre";
+  letter-spacing: -.075em;
+  text-align: center;
+}
+
+.title-phase {
+  --phase-delay: 0s;
+  --phase-tracking: -.065em;
+  --size-delta: 0rem;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  font-size: calc(var(--title-size-base) + var(--size-delta));
+  letter-spacing: var(--phase-tracking);
+  white-space: nowrap;
+  opacity: 0;
+  filter: blur(1.1rem);
+  animation: title-morph 12s cubic-bezier(.22, 1, .36, 1) var(--phase-delay) infinite both;
+  animation-play-state: paused;
+  will-change: filter, opacity, letter-spacing;
+}
+
+.wordmark--ready .title-phase {
+  animation-play-state: running;
+}
+
+.landing--capture .title-phase {
+  display: none;
+  animation: none;
+}
+
+.landing--capture {
+  padding: 0;
+}
+
+.landing--capture .hero {
+  height: 100svh;
+}
+
+.landing--capture .title-phase--final {
+  display: flex;
+  font-size: min(46vw, 70vh);
+  opacity: 1;
+  filter: none;
+  letter-spacing: var(--phase-tracking);
+}
+
+.title-phase--long {
+  --size-delta: 0rem;
+}
+
+.title-hyphen {
+  display: inline-block;
+  margin-inline: .065em;
+}
+
+.title-phase--short {
+  --phase-tracking: -.02em;
+  --size-delta: clamp(4rem, 10vw, 9rem);
+}
+
+.title-phase--math {
+  --phase-tracking: -.015em;
+  --size-delta: clamp(4.75rem, 12vw, 11rem);
+}
+
+.title-phase--final {
+  --phase-tracking: -.01em;
+  --size-delta: clamp(5.5rem, 14vw, 13rem);
+}
+
+.title-exponent {
+  position: relative;
+  top: -.48em;
+  display: inline-block;
+  margin-left: .025em;
+  font-size: .38em;
+  line-height: 1;
+  vertical-align: baseline;
+  letter-spacing: 0;
+}
+
+.title-exponent--spacer {
+  margin-right: .025em;
+  margin-left: 0;
+  visibility: hidden;
+}
+
+.usage {
+  position: absolute;
+  z-index: 1;
+  bottom: clamp(1rem, 3vw, 2.25rem);
+  left: clamp(1rem, 3vw, 2.25rem);
+  width: min(calc(100% - clamp(2rem, 6vw, 4.5rem)), 58rem);
+  text-align: left;
+}
+
+.usage-options {
+  width: min(100%, 30rem);
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid #36393a;
+  background: #090a0b;
+}
+
+.usage-option {
+  min-height: 2.75rem;
+  border: 0;
+  border-right: 1px solid #36393a;
+  background: transparent;
+  color: #a9abaa;
+  font: 700 .84rem/1 "Averia Serif Libre";
+  letter-spacing: .06em;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.usage-option:last-child {
+  border-right: 0;
+}
+
+.usage-option:hover {
+  color: #f2f0e9;
+}
+
+.usage-option[aria-pressed="true"] {
+  background: #f2f0e9;
+  color: #070809;
+}
+
+.usage-option:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid #f2f0e9;
+  outline-offset: 3px;
+}
+
+.usage-message {
+  width: min(100%, 56rem);
+  margin: clamp(.9rem, 2vw, 1.3rem) 0 0;
+  text-align: left;
+}
+
+.usage-lead {
+  margin: 0 0 .275rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .12rem;
+  color: #b6b7b3;
+  font-size: clamp(1rem, 1.7vw, 1.15rem);
+  letter-spacing: .015em;
+  line-height: 1.35;
+}
+
+.usage-instruction {
+  margin: 0;
+  color: #d7d6d0;
+  font-size: clamp(.95rem, 2vw, 1.2rem);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.command-action {
+  display: inline-block;
+  animation: command-action-change 180ms ease-out both;
+}
+
+.command-button {
+  width: 1.65rem;
+  height: 1.5em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-left: .075rem;
+  border: 0;
+  background: transparent;
+  color: #9a9d9b;
+  font: inherit;
+  cursor: pointer;
+  transition: color 160ms ease;
+  vertical-align: top;
+}
+
+.command-button:hover,
+.command-button--confirmed {
+  color: #f2f0e9;
+}
+
+.command-button:focus-visible {
+  outline: 1px solid #f2f0e9;
+  outline-offset: .25rem;
+}
+
+.command-icon {
+  position: relative;
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: 0 0 auto;
+}
+
+.command-icon-square {
+  position: absolute;
+  width: .78rem;
+  height: .78rem;
+  border: 1px solid currentColor;
+  transition:
+    opacity 260ms ease,
+    transform 340ms cubic-bezier(.22, 1.45, .36, 1);
+}
+
+.command-icon-square--back {
+  top: .05rem;
+  left: .05rem;
+}
+
+.command-icon-square--front {
+  top: .37rem;
+  left: .37rem;
+}
+
+.command-button--confirmed .command-icon-square--back {
+  opacity: 0;
+  transform: translate(.135rem, .135rem) scale(.82);
+}
+
+.command-button--confirmed .command-icon-square--front {
+  transform: translate(-.135rem, -.135rem);
+}
+
+.command-icon-check {
+  position: absolute;
+  top: .33rem;
+  left: .36rem;
+  width: .6rem;
+  height: .6rem;
+  overflow: visible;
+}
+
+.command-icon-check-path {
+  fill: none;
+  stroke: currentColor;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  opacity: 0;
+}
+
+.command-button--confirmed .command-icon-check-path {
+  animation: command-check-draw 380ms cubic-bezier(.22, .8, .36, 1) both;
+}
+
+@keyframes command-check-draw {
+  from {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes command-action-change {
+  from {
+    opacity: 0;
+    filter: blur(.25rem);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes title-morph {
+  0% {
+    opacity: 0;
+    filter: blur(1.1rem);
+    letter-spacing: calc(var(--phase-tracking) - .05em);
+  }
+
+  2%,
+  22% {
+    opacity: 1;
+    filter: blur(0);
+    letter-spacing: var(--phase-tracking);
+  }
+
+  24.5%,
+  100% {
+    opacity: 0;
+    filter: blur(.85rem);
+    letter-spacing: calc(var(--phase-tracking) - .05em);
+  }
+}
+
+@media (max-width: 640px) {
+  .landing {
+    padding: .75rem;
+  }
+
+  .wordmark {
+    width: calc(100% - .5rem);
+  }
+
+  .usage {
+    right: .75rem;
+    bottom: .75rem;
+    left: .75rem;
+    width: auto;
+  }
+
+  .usage-message {
+    margin-top: .85rem;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title-phase {
+    display: none;
+    animation: none;
+  }
+
+  .title-phase--final {
+    display: flex;
+    opacity: 1;
+    filter: none;
+    letter-spacing: var(--phase-tracking);
+  }
+
+  .command-icon-square {
+    transition: none;
+  }
+
+  .command-button--confirmed .command-icon-check-path {
+    animation: none;
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
