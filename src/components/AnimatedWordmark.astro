@@ -45,7 +45,6 @@ const {
   .animated-wordmark {
     --phase-delay: 0s;
     --phase-tracking: -.065em;
-    --phase-transition-tracking: -.05em;
     --size-delta: 0rem;
     position: relative;
     display: grid;
@@ -90,7 +89,6 @@ const {
   .title-phase {
     --phase-delay: 0s;
     --phase-tracking: -.065em;
-    --phase-transition-tracking: -.05em;
     --size-delta: 0rem;
     position: relative;
     grid-area: 1 / 1;
@@ -102,38 +100,31 @@ const {
     letter-spacing: var(--phase-tracking);
     white-space: nowrap;
     opacity: 0;
-    filter: blur(1.1rem);
     animation: title-morph 12s cubic-bezier(.22, 1, .36, 1)
-      calc(var(--phase-delay) + var(--wordmark-clock-delay, 0ms)) infinite both;
-    animation-play-state: paused;
-    will-change: filter, opacity, letter-spacing;
-  }
-
-  .wordmark-frame--ready .title-phase {
-    animation-play-state: running;
+      var(--phase-delay) infinite both;
+    will-change: opacity;
   }
 
   .title-phase--long {
     --phase-tracking: 0em;
-    --phase-transition-tracking: 0em;
     --size-delta: 0rem;
     font-weight: 700;
   }
 
   .title-phase--one {
-    --phase-delay: 0s;
+    --phase-delay: -.18s;
   }
 
   .title-phase--two {
-    --phase-delay: 3s;
+    --phase-delay: -9.18s;
   }
 
   .title-phase--three {
-    --phase-delay: 6s;
+    --phase-delay: -6.18s;
   }
 
   .title-phase--four {
-    --phase-delay: 9s;
+    --phase-delay: -3.18s;
   }
 
   .title-phase--final {
@@ -213,22 +204,16 @@ const {
   @keyframes title-morph {
     0% {
       opacity: 0;
-      filter: blur(1.1rem);
-      letter-spacing: calc(var(--phase-tracking) + var(--phase-transition-tracking));
     }
 
-    2%,
-    22% {
+    1.5%,
+    23.5% {
       opacity: 1;
-      filter: blur(0);
-      letter-spacing: var(--phase-tracking);
     }
 
-    24.5%,
+    26.5%,
     100% {
       opacity: 0;
-      filter: blur(.85rem);
-      letter-spacing: calc(var(--phase-tracking) + var(--phase-transition-tracking));
     }
   }
 

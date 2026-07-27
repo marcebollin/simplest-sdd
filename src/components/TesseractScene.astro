@@ -136,6 +136,15 @@
     const pointerTarget = { x: 0, y: 0 };
     const pointerPosition = { x: 0, y: 0 };
     let previousFrameTime = 0;
+    let revealScheduled = false;
+
+    const revealScene = () => {
+      if (revealScheduled) return;
+      revealScheduled = true;
+      requestAnimationFrame(() => {
+        root.classList.add("tesseract-scene--ready");
+      });
+    };
 
     const renderFrame = (time: number) => {
       const seconds = time * 0.001;
@@ -215,6 +224,7 @@
         0
       );
       renderer.render(scene, camera);
+      revealScene();
     };
 
     const resize = () => {
@@ -280,6 +290,7 @@
 
 <style>
   .tesseract-scene {
+    --tesseract-opacity: .96;
     position: absolute;
     z-index: 0;
     top: 50%;
@@ -288,10 +299,15 @@
     aspect-ratio: 1;
     pointer-events: none;
     transform: translate(-50%, -50%);
-    opacity: .96;
+    opacity: 0;
     filter: drop-shadow(0 0 .65rem rgb(255 255 255 / 12%));
     -webkit-mask-image: radial-gradient(circle, #000 64%, transparent 86%);
     mask-image: radial-gradient(circle, #000 64%, transparent 86%);
+    transition: opacity 520ms ease-out;
+  }
+
+  .tesseract-scene--ready {
+    opacity: var(--tesseract-opacity);
   }
 
   .tesseract-scene :global(canvas) {
@@ -302,8 +318,14 @@
 
   @media (max-width: 640px) {
     .tesseract-scene {
+      --tesseract-opacity: .8;
       width: min(138vw, 46rem);
-      opacity: .8;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tesseract-scene {
+      transition: none;
     }
   }
 </style>
