@@ -4,15 +4,9 @@ import GitHubLink from "./GitHubLink.astro";
 
 interface Props {
   current?: "about" | "how";
-  maxWidth?: string;
-  minHeight?: string;
 }
 
-const {
-  current,
-  maxWidth = "88rem",
-  minHeight = "5.25rem"
-} = Astro.props;
+const { current } = Astro.props;
 const isLanding = !current;
 ---
 
@@ -21,7 +15,6 @@ const isLanding = !current;
     "site-header",
     isLanding ? "site-header--landing" : "site-header--internal"
   ]}
-  style={!isLanding ? `--site-header-max-width:${maxWidth};--site-header-min-height:${minHeight}` : undefined}
 >
   {!isLanding && (
     <a class="site-header__brand" href="/" aria-label="Simplest SDD home">
@@ -45,8 +38,8 @@ const isLanding = !current;
   }
 
   .site-header--internal {
-    width: min(100% - 2rem, var(--site-header-max-width));
-    min-height: var(--site-header-min-height);
+    width: min(100% - 2rem, 92rem);
+    min-height: 4.75rem;
     margin-inline: auto;
     display: flex;
     align-items: center;
