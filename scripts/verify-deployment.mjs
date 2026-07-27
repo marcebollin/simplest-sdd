@@ -8,8 +8,8 @@ const deploymentUrl = new URL(
   process.env.DEPLOYMENT_URL ?? "https://sd2.marcebollin.com"
 );
 const verificationToken = Date.now().toString(36);
-const retryCount = 6;
-const retryDelayMs = 2_000;
+const retryCount = 12;
+const retryDelayMs = 3_000;
 
 const pages = [
   { path: "/", file: "index.html", status: 200 },
@@ -35,9 +35,12 @@ const assetExtensions = new Set([
 const digest = (value) => createHash("sha256").update(value).digest("hex");
 const wait = (duration) => new Promise((resolve) => setTimeout(resolve, duration));
 
-const fetchBytes = async (pathname) => {
+const fetchBytes = async (pathname, attempt) => {
   const url = new URL(pathname, deploymentUrl);
-  url.searchParams.set("deployment-verification", verificationToken);
+  url.searchParams.set(
+    "deployment-verification",
+    `${verificationToken}-${attempt}`
+  );
 
   const response = await fetch(url, {
     headers: {
@@ -71,12 +74,23 @@ const assetPathsFromHtml = (html) => {
   return paths;
 };
 
-const verify = async () => {
+const withoutCloudflareManagedScripts = (html) =>
+  html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, (script) =>
+    script.includes("__CF$cv$params") &&
+    script.includes("/cdn-cgi/challenge-platform/")
+      ? ""
+      : script
+  );
+
+const verify = async (attempt) => {
   const assets = new Set();
 
   for (const page of pages) {
     const localBytes = await readFile(join(distDirectory, page.file));
-    const { bytes: liveBytes, response, url } = await fetchBytes(page.path);
+    const { bytes: liveBytes, response, url } = await fetchBytes(
+      page.path,
+      attempt
+    );
 
     if (response.status !== page.status) {
       throw new Error(
@@ -84,7 +98,11 @@ const verify = async () => {
       );
     }
 
-    if (digest(liveBytes) !== digest(localBytes)) {
+    const normalizedLiveBytes = Buffer.from(
+      withoutCloudflareManagedScripts(liveBytes.toString("utf8"))
+    );
+
+    if (digest(normalizedLiveBytes) !== digest(localBytes)) {
       throw new Error(
         `${url.pathname} does not match the freshly built ${page.file}`
       );
@@ -97,7 +115,7 @@ const verify = async () => {
 
   for (const pathname of assets) {
     const localBytes = await readFile(join(distDirectory, pathname));
-    const { bytes: liveBytes, response } = await fetchBytes(pathname);
+    const { bytes: liveBytes, response } = await fetchBytes(pathname, attempt);
 
     if (!response.ok) {
       throw new Error(`${pathname} returned ${response.status}`);
@@ -115,7 +133,7 @@ let lastError;
 
 for (let attempt = 1; attempt <= retryCount; attempt += 1) {
   try {
-    const assetCount = await verify();
+    const assetCount = await verify(attempt);
     console.log(
       `Verified ${pages.length} live pages and ${assetCount} deployed assets against dist.`
     );
