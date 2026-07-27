@@ -29,7 +29,8 @@
     "dev": "astro dev --port 3010",
     "build": "astro build && node scripts/audit-production-html.mjs",
     "preview": "astro preview --port 3010",
-    "deploy": "pnpm run build && wrangler deploy",
+    "deploy": "pnpm run build && wrangler deploy && pnpm run verify:deployment",
+    "verify:deployment": "node scripts/verify-deployment.mjs",
     "test": "node --test"
   },
   "keywords": [

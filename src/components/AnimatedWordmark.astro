@@ -81,7 +81,9 @@ const {
   .wordmark-frame {
     position: relative;
     display: grid;
-    width: max-content;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    min-width: 0;
     max-width: 100%;
     place-items: center;
   }
@@ -93,6 +95,8 @@ const {
     position: relative;
     grid-area: 1 / 1;
     display: flex;
+    width: 100%;
+    min-width: 0;
     align-items: center;
     justify-content: center;
     max-width: 100%;
