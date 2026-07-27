@@ -98,6 +98,14 @@ const verify = async (attempt) => {
       );
     }
 
+    const cacheControl = response.headers.get("cache-control") ?? "";
+
+    if (page.status === 200 && !cacheControl.includes("no-store")) {
+      throw new Error(
+        `${url.pathname} returned an unsafe HTML Cache-Control: ${cacheControl}`
+      );
+    }
+
     const normalizedLiveBytes = Buffer.from(
       withoutCloudflareManagedScripts(liveBytes.toString("utf8"))
     );
@@ -119,6 +127,13 @@ const verify = async (attempt) => {
 
     if (!response.ok) {
       throw new Error(`${pathname} returned ${response.status}`);
+    }
+
+    if (
+      pathname.endsWith(".css") &&
+      !(response.headers.get("cache-control") ?? "").includes("immutable")
+    ) {
+      throw new Error(`${pathname} is not served with immutable caching`);
     }
 
     if (digest(liveBytes) !== digest(localBytes)) {
