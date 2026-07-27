@@ -13,7 +13,7 @@ Captured area: 1257 × 786px
    Element: `<section class="how-hero" aria-labelledby="how-title" data-astro-cid-xddc5n57="">Because we should read the skills we install, I added colors.CLI packagev0.8.0Schemav0.8.0Released2026-07-22Turns durabl</section>`
    Selector: `main > section.how-hero`
    Component tree: React component metadata unavailable (DOM fallback included)
-   Visible text: Because we should read the skills we install, I added colors.CLI packagev0.8.0Schemav0.8.0Released2026-07-22Turns durable decisions into a small project-wide registry organized by 
+   Visible text: Because we should read the skills we install, I added colors.CLI packagev0.8.0Schemav0.8.0Released2026-07-22Turns durable decisions into a small project-wide registry organized by
 
 ## Image 2 — How Simplest SDD works
 
