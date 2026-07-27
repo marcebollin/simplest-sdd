@@ -1,60 +1,104 @@
-# simplest-sdd
+# Simplest SDD
 
-An npx-ready CLI for installing, updating, operating, and analyzing a small, self-improving spec-driven development system in an existing project.
+**A small spec-driven development framework for building software with AI coding agents.**
 
-Project website: [sd2.marcebollin.com](https://sd2.marcebollin.com). Build locally with `pnpm dev`, create the static bundle with `pnpm build`, or deploy the generated `dist` directory with Cloudflare's static-assets runtime using `pnpm run deploy`. The checked-in Cloudflare configuration contains only public project metadata; credentials stay in Wrangler's local login or Cloudflare's encrypted CI secrets.
+Simplest SDD turns a feature request into a clear agreement between you and your agent: what to build, why it matters, how it should work, and how you will know it is done.
 
-It keeps the useful guardrails:
+It adds structure when a change is large, ambiguous, or risky—and stays out of the way when a change is small and obvious.
 
-- one required request-refinement conversation before writing the spec;
-- explicit approval of the generated spec before implementation;
-- one integrated feature plan with detailed tasks classified by category, effort, risk, plan confidence, and delegation confidence;
-- an approval-gated choice between same-session, delegated, hybrid, or custom execution when the plan supports it;
-- model-agnostic capability recommendations with the actual models, tokens, duration, outcomes, and user overrides recorded after execution;
-- implementations follow the repository's resolved testing discipline (an installed test-first skill, another defined testing approach, or an intentional test-free stance), recorded by name in the spec-library skill;
-- inferred end users plus conditional goal and example questions;
-- separate business, technical, and implementation documents;
-- durable decisions without documenting every small choice;
-- `AGENTS.md` and `.agents/skills` as the source of truth;
-- Claude compatibility through `CLAUDE.md` importing `@AGENTS.md`;
-- a root library index for all internal spec documentation, with latest documents easy to reach;
-- clean static HTML specs, plans, decisions, indexes, and templates.
+## Why Simplest SDD?
 
-It avoids turning the workflow into a ceremony. The skill is required when reviewing the expected output would take more than about five minutes; smaller clear changes can still be implemented directly.
+AI agents can write code quickly. The harder problem is confidence: did the agent understand the request, respect the project, make the right tradeoffs, and verify the result?
 
-## Use It
+Long prompts do not solve that problem. They disappear into conversation history, mix product intent with implementation details, and are difficult for the next session to reuse. Heavy specification systems solve part of the problem, but can turn every change into a ceremony.
 
-Run one of these from the project you want your coding agent to modify:
+Simplest SDD keeps the smallest useful loop:
 
-```sh
-npx simplest-sdd@latest init
-npx simplest-sdd@latest update
-npx simplest-sdd@latest remove
+> Understand → specify → approve → plan → execute → verify → learn
+
+The result is less guessing, clearer human control, and project knowledge that improves instead of resetting with every agent session.
+
+## What It Does
+
+For work that deserves a spec, Simplest SDD:
+
+1. **Understands the project.** The agent inspects the repository, existing instructions, intended users, product goals, and testing approach before proposing changes.
+2. **Refines the request.** It asks one focused round of questions to resolve outcomes, scope, behavior, constraints, and proof.
+3. **Creates a shared contract.** It writes a concise business spec, technical spec, and integrated implementation plan.
+4. **Waits for approval.** No implementation starts until you approve the spec. Sensitive technical changes receive an additional approval gate.
+5. **Chooses an execution approach with you.** It can recommend working in the current session, delegating bounded tasks, using a hybrid approach, or following a custom assignment. No subagent starts without your approval.
+6. **Implements and verifies.** The approved plan follows the repository's existing testing discipline and records what actually happened.
+7. **Keeps useful memory.** Specs, important decisions, verification results, execution strategy, models, tokens, and outcomes remain in a browsable project library for future work.
+
+## Why It Is Useful
+
+- **Fewer expensive misunderstandings.** You review the intended outcome before reviewing a large code change.
+- **Better continuity.** Future agents can find the product intent, technical boundaries, and important decisions without replaying old conversations.
+- **Human control at the right moments.** You approve both what will be built and how the work will be executed.
+- **Focused context.** Agents load the relevant spec and decisions instead of carrying the entire project history into every task.
+- **Safer delegation.** Parallel work is recommended only when tasks have clear boundaries and independent verification.
+- **Provider independence.** The framework recommends capabilities and reasoning effort, not hard-coded model names.
+- **A feedback loop.** Execution records make it possible to compare plans, routing choices, cost, verification, and outcomes over time.
+
+## When It Activates
+
+Use the full workflow when:
+
+- reviewing the expected result would take more than about five minutes;
+- product behavior is meaningfully ambiguous;
+- a misunderstanding would be expensive;
+- architecture, data, authentication, billing, security, or public contracts are involved;
+- work will cross sessions or be delegated; or
+- the behavior is already covered by an existing spec.
+
+Clear, low-risk changes that are easy to review can still be implemented directly. Simplest SDD is a guardrail, not a requirement to write a document for every edit.
+
+## How To Use It
+
+Copy the instruction you need and give it to your coding agent.
+
+### Install
+
+```text
+Run npx simplest-sdd@latest init and follow the instructions
 ```
 
-Then paste the printed instructions into your AI coding agent.
+### Update
 
-The CLI does not edit files directly. It inspects a few local paths so the printed instructions can include useful state, then the agent performs the repository-specific work.
+```text
+Run npx simplest-sdd@latest update and follow the instructions
+```
 
-## Planned Execution
+### Remove
 
-After generating one integrated plan, Simplest SDD classifies its tasks and evaluates whether delegation is worthwhile. It does not automatically fan out:
+```text
+Run npx simplest-sdd@latest remove and follow the instructions
+```
 
-- same-session execution is always available and may edit the current checkout after approval;
-- delegated and hybrid options appear only when the planner recommends them, with the reason and proposed task assignments;
-- every recommendation uses portable capability profiles such as `efficient-worker` or `strong-reviewer` plus a reasoning-effort level;
-- the planner always shows a concrete custom assignment example;
-- no subagent starts until the user explicitly selects or customizes the strategy.
+## What It Adds To A Project
 
-Delegated writers use isolated worktrees. Their diffs are reviewed before changed code is executed, verification is repeated, and merging remains a separate user decision. Same-session mode stays intentionally simple: the current model executes the approved plan in the current checkout.
+```text
+AGENTS.md                         # canonical project instructions
+CLAUDE.md                         # imports AGENTS.md for Claude
+.agents/skills/spec-library/
+├── SKILL.md                      # the project-specific SDD workflow
+├── index.html                    # browsable specification library
+├── specs/<feature>/
+│   ├── business.html             # why and what
+│   ├── technical.html            # how and boundaries
+│   ├── plan.html                 # tasks and verification
+│   └── execution.json            # execution facts and outcomes
+├── decisions/                    # durable decisions only
+└── templates/                    # reusable document structure
+```
 
-Simplest SDD does not pin provider-specific models. Available models change, and an unpinned custom subagent can inherit its parent settings. The durable record stores the recommended capability and effort, then captures the actual model used so execution quality and cost can be compared later. See the official [Codex subagent guide](https://developers.openai.com/codex/subagents).
+The library uses plain, static files that remain readable by people and agents. `AGENTS.md` and `.agents/skills` are the source of truth, with a compatibility link for Claude skills.
+
+See the [examples](examples/) for an anonymized request-refinement conversation, generated specs, and an execution record.
 
 ## Execution Analytics
 
-Each feature stores an `execution.json` record conforming to the shipped [execution schema](schema/execution.schema.json). It includes classification, the recommended and selected strategy, per-task assignments, actual models, token provenance, duration, verification, outcomes, revisions, and commit/worktree context. The spec-library index exposes the useful summary fields.
-
-Validate and inspect the committed records:
+Simplest SDD can validate and summarize the execution records stored with each feature:
 
 ```sh
 npx simplest-sdd@latest analytics
@@ -62,79 +106,34 @@ npx simplest-sdd@latest analytics --format jsonl
 npx simplest-sdd@latest analytics --format csv
 ```
 
-JSONL is the committed aggregate history; CSV is generated on demand for charts or spreadsheet analysis. For a local Codex run, inspect model, effort, duration, and token totals without printing conversation content:
+For a local Codex session, it can also read model, effort, duration, and token totals without printing the conversation:
 
 ```sh
 npx simplest-sdd@latest codex-usage --session <session-id>
 ```
 
-## Commands
+Analytics are there to help the workflow learn from real results—not to add reporting work for its own sake.
 
-- `init`: prints agent instructions for adding simplest-sdd to a project, including discovering the repository's testing discipline and adapting the spec-library skill's implementation guidance to it (offering `npx skills add https://github.com/mattpocock/skills --skill tdd -y` only when no discipline is discoverable).
-- `update`: prints agent instructions for comparing the installed skill schema version against the changelog and migrating conservatively.
-- `remove`: prints agent instructions for deactivating simplest-sdd without deleting user-owned specs, decisions, or unrelated instructions.
-- `analytics`: validates every feature `execution.json` and prints summary, JSON, JSONL, or CSV data without modifying the project.
-- `codex-usage`: reads model, effort, duration, and token totals from a local Codex session without printing its conversation.
+## Inspiration
 
-You can inspect another directory with:
+Simplest SDD combines a few ideas into a deliberately small framework.
 
-```sh
-npx simplest-sdd@latest update --cwd ../some-project
-```
+### Concepts
 
-`init` also tells the agent to add a short maintenance note to `AGENTS.md` so future agents know to use `npx simplest-sdd@latest update` or `npx simplest-sdd@latest remove` for current instructions.
+- **Spec-driven development:** treat the spec as a living contract that guides implementation and verification, rather than documentation written once and forgotten.
+- **Skill graphs:** prefer small, reusable instructions and connected, relevant context over one giant prompt.
 
-## Versioning
+### Sources
 
-The npm package and the installed simplest-sdd schema each expose their own version.
+- [Augment Code](https://www.augmentcode.com/blog)
+- [Theo's videos](https://www.youtube.com/@t3dotgg)
+- [shadcn/improve](https://github.com/shadcn/improve)
+- Small refinements shaped by my own experience working with coding agents.
 
-- The npm package version in `package.json` is the release version.
-- `schema/versions.json` contains the current installed schema version used in `.agents/skills/spec-library/SKILL.md`.
-- Releases that change the installed workflow bump both versions; package-only maintenance releases can leave the schema version unchanged.
-- `schema/CHANGELOG.md` records schema changes and migrations.
-- Each package release is tagged as `v<version>` (e.g. `v0.4.0`), pushed with `git push origin v<version>`, and published as a GitHub Release with `gh release create v<version> --latest --notes "<changelog>"` so the "Releases" sidebar shows the latest version. A tag alone is not enough — the GitHub Release entry is what populates the sidebar.
+> **A friendly disclaimer:** I have not read up on loop engineering yet, so it has not shaped this framework. Give me a chance—I will get there.
 
-## What Init Creates
+## The Short Version
 
-```text
-AGENTS.md
-CLAUDE.md                         # regular file containing @AGENTS.md
-.agents/skills/spec-library/
-├── SKILL.md                      # includes simplest-sdd schema version
-├── index.html                    # root library entry point
-├── data/
-│   └── executions.jsonl          # committed, derived execution history
-├── specs/
-│   └── index.html
-├── decisions/
-│   └── index.html
-└── templates/
-    ├── business-spec.html
-    ├── technical-spec.html
-    ├── plan.html
-    ├── execution-template.json
-    └── decision-template.html
-.claude/skills/spec-library -> ../../.agents/skills/spec-library
-```
+Simplest SDD helps an AI agent understand before it builds, asks you to approve before it acts, verifies before it declares success, and leaves the project smarter for the next session.
 
-Feature work creates:
-
-```text
-.agents/skills/spec-library/specs/<domain>-<feature>/
-├── business.html
-├── technical.html
-├── plan.html                     # one integrated plan with detailed tasks
-└── execution.json                # structured strategy and run telemetry
-```
-
-The HTML artifacts are plain, readable static documents with embedded focus styles and optional simple charts or diagrams when they clarify decisions or technical tradeoffs.
-
-The root library index links to all internal spec-library documentation, keeps a latest-documents section ordered by last-updated date, and surfaces category, effort, confidence, selected strategy, actual models, tokens, and outcome for filtering. It is a static catalog, not a router; small client-side filtering/search is allowed when it keeps the library easier to read.
-
-See [examples](examples/) for an anonymized read-later product case showing the discovery conversation and resulting document architecture.
-
-## Why
-
-Agents work best when they understand the product and can talk through unclear work. They work worse when every change requires a large process.
-
-Simplest SDD keeps context and guardrails where they help, then gets out of the way.
+Project website: [sd2.marcebollin.com](https://sd2.marcebollin.com)

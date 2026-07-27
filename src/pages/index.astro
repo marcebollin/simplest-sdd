@@ -1,0 +1,223 @@
+---
+import CopyButton from "../components/CopyButton.astro";
+import AnimatedWordmark from "../components/AnimatedWordmark.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import TesseractScene from "../components/TesseractScene.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const initialInstruction = "Run npx simplest-sdd@latest init and follow the instructions";
+---
+
+<BaseLayout
+  title="simplest — (sd)²"
+  description="Simplest spec-driven development, simplified to (sd)²."
+  bodyClass="landing-body"
+>
+  <main class="landing" data-landing>
+    <SiteHeader />
+
+    <section class="hero" aria-label="Simplest spec-driven development">
+      <h1
+        class="sr-only"
+      >
+        Simplest spec-driven development
+      </h1>
+      <TesseractScene />
+      <AnimatedWordmark variant="hero" decorative />
+    </section>
+
+    <section class="usage" aria-label="Usage">
+      <div class="usage-options" aria-label="Choose an action">
+        <button aria-pressed="true" class="usage-option" data-action="init" type="button">install</button>
+        <button aria-pressed="false" class="usage-option" data-action="update" type="button">update</button>
+        <button aria-pressed="false" class="usage-option" data-action="remove" type="button">remove</button>
+      </div>
+
+      <div class="usage-message">
+        <p class="usage-lead">Tell this to your agent:</p>
+        <p class="usage-instruction">
+          Run npx simplest-sdd@latest <span class="command-action command-action--changing" data-command-action
+            >init</span
+          > and
+          follow the instructions
+          <CopyButton text={initialInstruction} />
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script is:inline src="/scripts/landing.js" defer></script>
+</BaseLayout>
+
+<style>
+  :global(.landing-body) {
+    background:
+      radial-gradient(circle at 50% 24%, #202324 0, #161819 34%, var(--black) 72%);
+  }
+
+  .landing {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    min-height: 100svh;
+    padding: clamp(1rem, 2.5vw, 2rem);
+    overflow: hidden;
+  }
+
+  .hero {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+  }
+
+  .hero :global(.animated-wordmark--hero) {
+    z-index: 1;
+  }
+
+  .landing--capture {
+    padding: 0;
+  }
+
+  .landing--capture .hero {
+    height: 100svh;
+  }
+
+  .landing--capture .usage {
+    display: none;
+  }
+
+  .usage {
+    position: absolute;
+    z-index: 1;
+    bottom: clamp(1rem, 3vw, 2.25rem);
+    left: clamp(1rem, 3vw, 2.25rem);
+    width: min(calc(100% - clamp(2rem, 6vw, 4.5rem)), 58rem);
+    text-align: left;
+  }
+
+  .usage-options {
+    width: min(100%, 30rem);
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid #36393a;
+    background: #090a0b;
+  }
+
+  .usage-option {
+    min-height: 2.75rem;
+    border: 0;
+    border-right: 1px solid #36393a;
+    background: transparent;
+    color: #a9abaa;
+    font: 700 .84rem/1 var(--font-serif);
+    letter-spacing: .06em;
+    text-transform: lowercase;
+    cursor: pointer;
+    transition: background-color 140ms ease, color 140ms ease;
+  }
+
+  .usage-option:last-child {
+    border-right: 0;
+  }
+
+  .usage-option:hover {
+    color: var(--ink);
+  }
+
+  .usage-option[aria-pressed="true"] {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .usage-option[data-action="init"]:hover {
+    color: var(--vinaceous-cinnamon);
+  }
+
+  .usage-option[data-action="update"]:hover {
+    color: var(--orange);
+  }
+
+  .usage-option[data-action="remove"]:hover {
+    color: var(--dull-viridian-green);
+  }
+
+  .usage-option[aria-pressed="true"]:hover {
+    color: var(--bg);
+  }
+
+  .usage-option:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  .usage-message {
+    width: min(100%, 56rem);
+    margin: clamp(.9rem, 2vw, 1.3rem) 0 0;
+    text-align: left;
+  }
+
+  .usage-lead {
+    margin: 0 0 .275rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .12rem;
+    color: #b6b7b3;
+    font-size: clamp(1rem, 1.7vw, 1.15rem);
+    letter-spacing: .015em;
+    line-height: 1.35;
+  }
+
+  .usage-instruction {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: clamp(.95rem, 2vw, 1.2rem);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .command-action {
+    display: inline-block;
+  }
+
+  .command-action--changing {
+    animation: command-action-change 180ms ease-out both;
+  }
+
+  @keyframes command-action-change {
+    from {
+      opacity: 0;
+      filter: blur(.25rem);
+    }
+
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .landing {
+      padding: .75rem;
+    }
+
+    .usage {
+      right: .75rem;
+      bottom: .75rem;
+      left: .75rem;
+      width: auto;
+    }
+
+    .usage-message {
+      margin-top: .85rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+interface Props {
+  text?: string;
+  url?: string;
+  label?: string;
+  className?: string;
+  displayText?: string;
+  confirmedText?: string;
+}
+
+const {
+  text = "",
+  url,
+  label = "Copy instruction to clipboard",
+  className = "",
+  displayText,
+  confirmedText = "Copied"
+} = Astro.props;
+---
+
+<button
+  aria-label={label}
+  class:list={["command-button", className]}
+  data-copy-button
+  data-copy-text={text}
+  data-copy-url={url}
+  type="button"
+>
+  {displayText && (
+    <span aria-hidden="true" class="command-labels">
+      <span class="command-label command-label--idle">{displayText}</span>
+      <span class="command-label command-label--confirmed">{confirmedText}</span>
+    </span>
+  )}
+  <span aria-hidden="true" class="command-icon">
+    <span class="command-icon-square command-icon-square--back"></span>
+    <span class="command-icon-square command-icon-square--front"></span>
+    <svg class="command-icon-check" focusable="false" viewBox="0 0 12 12">
+      <path
+        class="command-icon-check-path"
+        d="M2.25 6.15 4.85 8.65 9.85 3.7"
+        pathLength="1"
+      ></path>
+    </svg>
+  </span>
+</button>

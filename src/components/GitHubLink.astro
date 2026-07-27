@@ -1,0 +1,57 @@
+---
+interface Props {
+  className?: string;
+}
+
+const { className = "" } = Astro.props;
+---
+
+<a
+  class:list={["github-link", className]}
+  href="https://github.com/marcebollin/simplest-sdd"
+  aria-label="View Simplest SDD on GitHub"
+  title="View Simplest SDD on GitHub"
+>
+  <img alt="" aria-hidden="true" height="18" src="/github-mark.svg" width="18" />
+</a>
+
+<style>
+  .github-link {
+    width: 1.125rem;
+    height: 1.125rem;
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 0;
+    color: var(--muted);
+    text-decoration: none;
+    transition:
+      filter 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .github-link img {
+    width: 100%;
+    height: 100%;
+    filter: invert(1);
+    opacity: .68;
+    transition: opacity 160ms ease;
+  }
+
+  .github-link:hover img {
+    opacity: 1;
+  }
+
+  .github-link:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: .25rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .github-link,
+    .github-link img {
+      transition: none;
+    }
+  }
+</style>

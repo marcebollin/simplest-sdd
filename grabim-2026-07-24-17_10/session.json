@@ -1,0 +1,202 @@
+{
+  "version": 1,
+  "entrypoint": "README.md",
+  "exportedAt": "2026-07-24T21:10:18.282Z",
+  "title": "How Simplest SDD works",
+  "images": [
+    {
+      "file": "image-01.png",
+      "pageTitle": "How Simplest SDD works",
+      "pageUrl": "http://localhost:3010/how#init-7-validate",
+      "width": 1257,
+      "height": 786,
+      "annotations": [
+        {
+          "id": "1784926462961-57id4",
+          "type": "pin",
+          "comment": "reduce the padding top at half",
+          "resolved": false,
+          "label": "<section>",
+          "source": "react",
+          "context": "Element: `<section class=\"how-hero\" aria-labelledby=\"how-title\" data-astro-cid-xddc5n57=\"\">Because we should read the skills we install, I added colors.CLI packagev0.8.0Schemav0.8.0Released2026-07-22Turns durabl</section>`\nSelector: `main > section.how-hero`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: Because we should read the skills we install, I added colors.CLI packagev0.8.0Schemav0.8.0Released2026-07-22Turns durable decisions into a small project-wide registry organized by ",
+          "location": {
+            "x1": 0.2171837708830549,
+            "y1": 0.05855676664810248,
+            "x2": 0.2171837708830549,
+            "y2": 0.05855676664810248
+          }
+        }
+      ]
+    },
+    {
+      "file": "image-02.png",
+      "pageTitle": "How Simplest SDD works",
+      "pageUrl": "http://localhost:3010/how",
+      "width": 1224,
+      "height": 159,
+      "annotations": [
+        {
+          "id": "1784926571841-0ho7o",
+          "type": "area",
+          "comment": "",
+          "resolved": false,
+          "label": "Captured area",
+          "source": "capture",
+          "location": {
+            "x1": 0,
+            "y1": 0,
+            "x2": 1,
+            "y2": 1
+          }
+        },
+        {
+          "id": "1784926584322-xq39h",
+          "type": "rectangle",
+          "comment": "Remove this space, should only keep the padding of the element above and should be the same as it is on the padding top of that component",
+          "resolved": false,
+          "location": {
+            "x1": 0.023624401913875596,
+            "y1": 0.3142510775862069,
+            "x2": 0.9326779306220095,
+            "y2": 0.5406788793103449
+          }
+        }
+      ]
+    },
+    {
+      "file": "image-03.png",
+      "pageTitle": "How Simplest SDD works",
+      "pageUrl": "http://localhost:3010/how",
+      "width": 799,
+      "height": 179,
+      "annotations": [
+        {
+          "id": "1784926825968-fsymb",
+          "type": "area",
+          "comment": "",
+          "resolved": false,
+          "label": "Captured area",
+          "source": "capture",
+          "location": {
+            "x1": 0,
+            "y1": 0,
+            "x2": 1,
+            "y2": 1
+          }
+        },
+        {
+          "id": "1784926835309-5np2p",
+          "type": "pin",
+          "comment": "add a gap between the text and the icon",
+          "resolved": false,
+          "label": "<a>",
+          "source": "react",
+          "context": "Element: `<a href=\"https://github.com/marcebollin/simplest-sdd/blob/main/prompts/init.md\" data-astro-cid-xddc5n57=\"\">GitHub source ↗</a>`\nSelector: `section:nth-of-type(2) > div.prompt-overview > div.hero-bottom > div.prompt-actions > a:nth-of-type(2)`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: GitHub source ↗",
+          "location": {
+            "x1": 0.3061292373917722,
+            "y1": 0.6816683763668507,
+            "x2": 0.3061292373917722,
+            "y2": 0.6816683763668507
+          }
+        },
+        {
+          "id": "1784926847389-u4v4d",
+          "type": "pin",
+          "comment": "In this interaction, when clicking on the copy ptompt full botton should trigger the copy action. Also, the copy prompt text should change to be copied with a blur transition but also that moves a bit to the center because the icon and the label change its size for a smaller one and the full label + icon maintains centered on the button",
+          "resolved": false,
+          "label": "<div>",
+          "source": "react",
+          "context": "Element: `<div class=\"copy-full-prompt\" data-astro-cid-xddc5n57=\"\">Copy prompt</div>`\nSelector: `section:nth-of-type(2) > div.prompt-overview > div.hero-bottom > div.prompt-actions > div.copy-full-prompt`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: Copy prompt",
+          "location": {
+            "x1": 0.4839504965024703,
+            "y1": 0.7766549534015759,
+            "x2": 0.4839504965024703,
+            "y2": 0.7766549534015759
+          }
+        },
+        {
+          "id": "1784927011573-jrydp",
+          "type": "pin",
+          "comment": "this button should have the same fixed size, use display grid to achieve that in a flexible way so it's responsive version looks good",
+          "resolved": false,
+          "label": "<div>",
+          "source": "react",
+          "context": "Element: `<div class=\"prompt-actions\" data-astro-cid-xddc5n57=\"\">View raw promptGitHub source ↗Copy prompt</div>`\nSelector: `main > section:nth-of-type(2) > div.prompt-overview > div.hero-bottom > div.prompt-actions`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: View raw promptGitHub source ↗Copy prompt",
+          "location": {
+            "x1": 0.1783984738052145,
+            "y1": 0.8325294104808258,
+            "x2": 0.1783984738052145,
+            "y2": 0.8325294104808258
+          }
+        }
+      ]
+    },
+    {
+      "file": "image-04.png",
+      "pageTitle": "How Simplest SDD works",
+      "pageUrl": "http://localhost:3010/how",
+      "width": 1257,
+      "height": 354,
+      "annotations": [
+        {
+          "id": "1784927255355-bk9u7",
+          "type": "pin",
+          "comment": "reduce the bottom padding of this section\n",
+          "resolved": false,
+          "label": "<section>",
+          "source": "react",
+          "context": "Element: `<section class=\"guide-intro\" aria-labelledby=\"init-guide-title\" data-astro-cid-xddc5n57=\"\">The whole prompt, with the why attached.i Why this part exists↗ Existing reference+ Reference to add</section>`\nSelector: `main > section:nth-of-type(2) > section.guide-intro`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: The whole prompt, with the why attached.i Why this part exists↗ Existing reference+ Reference to add",
+          "location": {
+            "x1": 0.3054892601431981,
+            "y1": 0.7957578435704816,
+            "x2": 0.3054892601431981,
+            "y2": 0.7957578435704816
+          }
+        }
+      ]
+    },
+    {
+      "file": "image-05.png",
+      "pageTitle": "How Simplest SDD works",
+      "pageUrl": "http://localhost:3010/how",
+      "width": 1287,
+      "height": 146,
+      "annotations": []
+    },
+    {
+      "file": "image-06.png",
+      "pageTitle": "How Simplest SDD works",
+      "pageUrl": "http://localhost:3010/how",
+      "width": 1282,
+      "height": 512,
+      "annotations": [
+        {
+          "id": "1784927391957-6wpbc",
+          "type": "area",
+          "comment": "remove this footer, the content of the footer should be at last after the last section of the prompts explanation sections",
+          "resolved": false,
+          "label": "Captured area",
+          "source": "capture",
+          "location": {
+            "x1": 0,
+            "y1": 0,
+            "x2": 1,
+            "y2": 1
+          }
+        },
+        {
+          "id": "1784927404517-v9pbz",
+          "type": "arrow",
+          "comment": "",
+          "resolved": false,
+          "location": {
+            "x1": 0.36648324819711536,
+            "y1": 0.8382202602230483,
+            "x2": 0.4109450120192308,
+            "y2": 0.6656598513011153
+          }
+        }
+      ]
+    }
+  ]
+}

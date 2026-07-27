@@ -1,0 +1,102 @@
+---
+import CopyButton from "./CopyButton.astro";
+
+interface Props {
+  label: string;
+  action: "init" | "update" | "remove";
+  description: string;
+}
+
+const { label, action, description } = Astro.props;
+const instruction = `Run npx simplest-sdd@latest ${action} and follow the instructions`;
+---
+
+<article class="copy-instruction">
+  <div class="copy-instruction__heading">
+    <h3>{label}</h3>
+    <span>{action}</span>
+  </div>
+  <p>{description}</p>
+  <div class="copy-instruction__command">
+    <code>{instruction}</code>
+    <CopyButton text={instruction} label={`Copy ${label.toLowerCase()} instruction`} />
+  </div>
+</article>
+
+<style>
+  .copy-instruction {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+    padding: clamp(1.2rem, 2.5vw, 1.75rem);
+    border: 1px solid var(--line);
+    border-top-color: var(--card-accent, var(--line));
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--card-accent, var(--line)) 8%, transparent),
+        transparent 55%
+      ),
+      var(--surface);
+  }
+
+  .copy-instruction__heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  h3 {
+    color: var(--ink);
+    font-size: 1.15rem;
+  }
+
+  .copy-instruction__heading span {
+    padding: .3rem .55rem;
+    border: 1px solid color-mix(in srgb, var(--card-accent, var(--line)) 55%, var(--line));
+    color: var(--card-accent, var(--muted));
+    font: 700 .68rem/1 var(--font-sans);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  p {
+    min-height: 3em;
+    color: var(--muted);
+    font: 400 .93rem/1.55 var(--font-sans);
+  }
+
+  .copy-instruction__command {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    min-width: 0;
+    padding: .85rem .95rem;
+    border: 1px solid var(--line-strong);
+    background: var(--bg);
+  }
+
+  code {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    color: var(--ink-soft);
+    font: 500 .78rem/1.5 var(--font-mono);
+  }
+
+  :global(.copy-instruction .command-button) {
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 760px) {
+    p {
+      min-height: auto;
+    }
+  }
+</style>

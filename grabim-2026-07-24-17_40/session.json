@@ -1,0 +1,173 @@
+{
+  "version": 1,
+  "entrypoint": "README.md",
+  "exportedAt": "2026-07-24T21:40:29.179Z",
+  "title": "How Simplest SDD works",
+  "images": [
+    {
+      "file": "image-01.png",
+      "pageTitle": "How Simplest SDD works",
+      "pageUrl": "http://localhost:3010/how",
+      "width": 1270,
+      "height": 461,
+      "annotations": [
+        {
+          "id": "1784928257671-43d1i",
+          "type": "area",
+          "comment": "I want to reduce spaces and integrate the type selector from install, update and remove to the bottom component",
+          "resolved": false,
+          "label": "Captured area",
+          "source": "capture",
+          "location": {
+            "x1": 0,
+            "y1": 0,
+            "x2": 1,
+            "y2": 1
+          }
+        },
+        {
+          "id": "1784928295293-6d6fw",
+          "type": "pin",
+          "comment": "reduce the gap at half between the bottom 3 informational data cells and the buttons to see prompt info\n\nRemove the divider and move the mode selector (install, update, remove)\n\nto be above the explanation paragraph and beign part of that component while having the same gap that the paragraph component and buttons has with the bottom 3 cells explanation",
+          "resolved": false,
+          "label": "<div>",
+          "source": "react",
+          "context": "Element: `<div class=\"prompt-overview\" data-astro-cid-xddc5n57=\"\">Install: Creates the project-specific skill, its approval gates, and the reusable specification workflow future agents w</div>`\nSelector: `main > section:nth-of-type(2) > div.prompt-overview`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: Install: Creates the project-specific skill, its approval gates, and the reusable specification workflow future agents will follow. Every color marks a different responsibility. Ho",
+          "location": {
+            "x1": 0.3234972038856454,
+            "y1": 0.7409578342848431,
+            "x2": 0.3234972038856454,
+            "y2": 0.7409578342848431
+          }
+        },
+        {
+          "id": "1784928333673-9mr7k",
+          "type": "arrow",
+          "comment": "",
+          "resolved": false,
+          "location": {
+            "x1": 0.4086444561298077,
+            "y1": 0.18583984375,
+            "x2": 0.23908879206730768,
+            "y2": 0.2961181640625
+          }
+        }
+      ]
+    },
+    {
+      "file": "image-02.png",
+      "pageTitle": "How Simplest SDD works",
+      "pageUrl": "http://localhost:3010/how",
+      "width": 1311,
+      "height": 427,
+      "annotations": []
+    },
+    {
+      "file": "image-03.png",
+      "pageTitle": "How Simplest SDD works",
+      "pageUrl": "http://localhost:3010/how",
+      "width": 1581,
+      "height": 466,
+      "annotations": [
+        {
+          "id": "1784928852859-0gf3n",
+          "type": "area",
+          "comment": "Currently when reaching the end of the scroll of the component, if the sidebar has also an scrollbar because it is bigger than the viewport Y it isnt scrolling more to reach the latest part of the sidebar elements, please fix it to be sync and when reaching the end of the scroll page should also scroll to the end of the sidebar",
+          "resolved": false,
+          "label": "Captured area",
+          "source": "capture",
+          "location": {
+            "x1": 0,
+            "y1": 0,
+            "x2": 1,
+            "y2": 1
+          }
+        },
+        {
+          "id": "1784929002243-28z93",
+          "type": "pin",
+          "comment": "this a is to big, should be fit content so the only clickable part is the logo\n",
+          "resolved": false,
+          "label": "<a>",
+          "source": "react",
+          "context": "Element: `<a href=\"/\" class=\"footer-mark\" data-astro-cid-xddc5n57=\"\">(sd)2</a>`\nSelector: `section:nth-of-type(2) > div.prompt-layout > div.prompt-sections > div.prompt-end > a.footer-mark`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: (sd)2",
+          "location": {
+            "x1": 0.26226446325910957,
+            "y1": 0.7805796420844305,
+            "x2": 0.26226446325910957,
+            "y2": 0.7805796420844305
+          }
+        },
+        {
+          "id": "1784929037241-wbj2s",
+          "type": "pin",
+          "comment": "",
+          "resolved": false,
+          "label": "<div>",
+          "source": "react",
+          "context": "Element: `<div class=\"prompt-end\" data-astro-cid-xddc5n57=\"\">(sd)2Read the skill. Then let the agent read it.What is this? →</div>`\nSelector: `main > section:nth-of-type(2) > div.prompt-layout > div.prompt-sections > div.prompt-end`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: (sd)2Read the skill. Then let the agent read it.What is this? →",
+          "location": {
+            "x1": 0.4893185462253593,
+            "y1": 0.7934605772939973,
+            "x2": 0.4893185462253593,
+            "y2": 0.7934605772939973
+          }
+        },
+        {
+          "id": "1784929071681-ff290",
+          "type": "pin",
+          "comment": "reduce the padding of this component and half on top and remove it directly on the bottom, also reduce the divider above of it",
+          "resolved": false,
+          "label": "<div>",
+          "source": "react",
+          "context": "Element: `<div class=\"prompt-end\" data-astro-cid-xddc5n57=\"\">(sd)2Read the skill. Then let the agent read it.What is this? →</div>`\nSelector: `main > section:nth-of-type(2) > div.prompt-layout > div.prompt-sections > div.prompt-end`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: (sd)2Read the skill. Then let the agent read it.What is this? →",
+          "location": {
+            "x1": 0.4311319845738412,
+            "y1": 0.7870201096892139,
+            "x2": 0.4311319845738412,
+            "y2": 0.7870201096892139
+          }
+        },
+        {
+          "id": "1784929077643-esi9x",
+          "type": "pin",
+          "comment": "change this to bring me up button that should scroll to the top of the page (make sure that the label sounds naturally)",
+          "resolved": false,
+          "label": "<p>",
+          "source": "react",
+          "context": "Element: `<p data-astro-cid-xddc5n57=\"\">Read the skill. Then let the agent read it.</p>`\nSelector: `section:nth-of-type(2) > div.prompt-layout > div.prompt-sections > div.prompt-end > p`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: Read the skill. Then let the agent read it.",
+          "location": {
+            "x1": 0.5367532432238794,
+            "y1": 0.7719923519447193,
+            "x2": 0.5367532432238794,
+            "y2": 0.7719923519447193
+          }
+        }
+      ]
+    },
+    {
+      "file": "image-04.png",
+      "pageTitle": "How Simplest SDD works",
+      "pageUrl": "http://localhost:3010/how",
+      "width": 1119,
+      "height": 505,
+      "annotations": [
+        {
+          "id": "1784929120122-pksx2",
+          "type": "pin",
+          "comment": "change this copy. Something like: because we should read the skills we install, i made it easy for you (tune it to sound naturally)",
+          "resolved": false,
+          "label": "<h1>",
+          "source": "react",
+          "context": "Element: `<h1 id=\"how-title\" data-astro-cid-xddc5n57=\"\">Because we should read the skills we install, I added colors.</h1>`\nSelector: `#how-title`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: Because we should read the skills we install, I added colors.",
+          "location": {
+            "x1": 0.44388567597016176,
+            "y1": 0.5720648274155635,
+            "x2": 0.44388567597016176,
+            "y2": 0.5720648274155635
+          }
+        }
+      ]
+    }
+  ]
+}

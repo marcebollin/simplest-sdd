@@ -1,0 +1,1193 @@
+---
+import initPromptRaw from "../../prompts/init.md?raw";
+import removePromptRaw from "../../prompts/remove.md?raw";
+import updatePromptRaw from "../../prompts/update.md?raw";
+import packageInfo from "../../package.json";
+import schemaVersions from "../../schema/versions.json";
+import AnnotationIcon from "../components/AnnotationIcon.astro";
+import AnimatedWordmark from "../components/AnimatedWordmark.astro";
+import CopyButton from "../components/CopyButton.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+type Reference = {
+  label: string;
+  url: string;
+};
+
+type Annotation = {
+  explanation: string;
+  tone: string;
+  reference?: Reference;
+};
+
+const initAnnotations: Record<string, Annotation> = {
+  "Start here": {
+    explanation: "Names the job, pins the schema version, and tells the agent exactly which repository it is changing before any decisions are made.",
+    tone: "slate"
+  },
+  "Rules": {
+    explanation: "Sets the non-negotiable safety and compatibility boundaries. These rules stop installation work from erasing local instructions, expanding scope, or quietly starting product work.",
+    tone: "rose"
+  },
+  "1. Inspect And Discover The Testing Discipline": {
+    explanation: "Makes the framework adapt to the repository instead of imposing a universal testing ritual. Existing instructions win; new tooling is offered only when no discipline can be found.",
+    tone: "blue"
+  },
+  "2. Ask The Project Discovery Questions": {
+    explanation: "Turns repository clues and the user’s answers into stable product context. The questions are intentionally material: they should change the generated guidance, not merely make the conversation feel thorough.",
+    tone: "violet"
+  },
+  "3. Make `AGENTS.md` Canonical Without Losing Content": {
+    explanation: "Creates one durable source of project truth while preserving instructions that already exist. Compatibility files point back to that source instead of becoming competing copies.",
+    tone: "amber"
+  },
+  "4. Create The Canonical Spec Skill": {
+    explanation: "Installs the reusable workflow itself. Everything below this point becomes the project-specific skill that future agents load when work is ambiguous, risky, or expensive to review.",
+    tone: "indigo"
+  },
+  "Gate": {
+    explanation: "Keeps the framework lightweight. A spec is required when review cost, ambiguity, risk, or handoff justifies it—not merely because a change touches several files.",
+    tone: "amber",
+    reference: {
+      label: "Augment Code: What Is Spec-Driven Development?",
+      url: "https://www.augmentcode.com/guides/what-is-spec-driven-development"
+    }
+  },
+  "Resolve Context": {
+    explanation: "Forces the plan to begin with repository reality: current decisions, real commands, existing conventions, and the exact code surfaces involved. This reduces hidden planner-session context.",
+    tone: "blue",
+    reference: {
+      label: "shadcn/improve",
+      url: "https://github.com/shadcn/improve"
+    }
+  },
+  "Refine Request: Mandatory First Questions": {
+    explanation: "Separates understanding from implementation. The agent must resolve outcome, scope, behavior, constraints, and proof before it turns the request into an approvable spec.",
+    tone: "violet"
+  },
+  "HTML Artifacts": {
+    explanation: "Makes every generated artifact pleasant for people to read while remaining plain text an agent can parse. The constraints favor durable, portable pages over an internal documentation app.",
+    tone: "teal"
+  },
+  "Create One Feature Folder": {
+    explanation: "Separates the product contract, technical design, implementation handoff, and execution facts. Each reader can load the layer it needs without carrying the whole history.",
+    tone: "teal"
+  },
+  "Record Decision Impact Without Creating Ceremony": {
+    explanation: "Preserves choices only when future work genuinely depends on them. Local or easily inferred details stay in the spec and code instead of inflating a decision registry.",
+    tone: "green"
+  },
+  "Generate Spec And Wait For Approval": {
+    explanation: "Turns the spec into a human checkpoint. The agent can prepare the contract and plan, but it cannot change product code until the user approves what will be built.",
+    tone: "rose",
+    reference: {
+      label: "Augment Code: What Is Spec-Driven Development?",
+      url: "https://www.augmentcode.com/guides/what-is-spec-driven-development"
+    }
+  },
+  "Recommend An Execution Strategy And Wait": {
+    explanation: "Treats model choice and delegation as part of the plan. The agent recommends a topology from the task boundaries, then waits for the user to choose before any subagent starts.",
+    tone: "cyan",
+    reference: {
+      label: "shadcn/improve",
+      url: "https://github.com/shadcn/improve"
+    }
+  },
+  "Implement And Verify": {
+    explanation: "Connects execution to the approved plan, the repository’s real testing discipline, explicit STOP conditions, and scoped review. Delegation does not remove verification or human merge control.",
+    tone: "yellow",
+    reference: {
+      label: "shadcn/improve",
+      url: "https://github.com/shadcn/improve"
+    }
+  },
+  "Close Out And Self-Improve": {
+    explanation: "Reconciles what was planned with what actually shipped. It updates durable artifacts, records execution facts, and changes the skill only when repeated friction reveals a reusable guardrail.",
+    tone: "green"
+  },
+  "Root Library Index": {
+    explanation: "Provides progressive disclosure for humans and agents. The index helps a reader choose the relevant artifact without loading every spec, decision, plan, and execution record.",
+    tone: "teal"
+  },
+  "5. Create Concise HTML Templates": {
+    explanation: "Gives every future feature a consistent starting shape while keeping the documents concise. Templates carry the contract; project-specific content supplies the meaning.",
+    tone: "indigo"
+  },
+  "6. Add Claude Compatibility": {
+    explanation: "Keeps the canonical instructions and skill usable from Claude without maintaining a second copy. The relative link makes both agent environments resolve the same workflow.",
+    tone: "violet"
+  },
+  "7. Validate": {
+    explanation: "Checks that installation produced a coherent system: the links resolve, the schema marker is current, history survived, analytics validate, and the agent stops at the requested boundary.",
+    tone: "lime"
+  }
+};
+
+const updateAnnotations: Record<string, Annotation> = {
+  "Start here": {
+    explanation: "Defines the migration target and explains that the CLI has already inspected the current repository. The state and changelog blocks are generated for this installation, not copied blindly from a generic upgrade guide.",
+    tone: "slate"
+  },
+  "Rules": {
+    explanation: "Protects local instructions, custom workflow choices, specifications, decisions, and execution history while an older installation is brought forward.",
+    tone: "rose"
+  },
+  "1. Inspect Current Installation": {
+    explanation: "Establishes what is actually installed before changing it: schema marker, compatibility links, document formats, testing discipline, local customizations, and durable project data.",
+    tone: "blue"
+  },
+  "2. Compare Against The Changelog": {
+    explanation: "Turns version history into a repository-specific gap analysis. Each migration is checked against local reality so already-completed work is not repeated and conflicting customizations are surfaced.",
+    tone: "violet"
+  },
+  "3. Apply The Migration Conservatively": {
+    explanation: "Applies only the missing migrations, in order, while preserving ownership and history. It explicitly avoids downgrades, empty rewrites, and destructive consolidation.",
+    tone: "amber"
+  },
+  "4. Validate": {
+    explanation: "Proves that the upgraded workflow is coherent and current without losing project knowledge, changing unrelated behavior, or continuing into feature delivery.",
+    tone: "lime"
+  }
+};
+
+const removeAnnotations: Record<string, Annotation> = {
+  "Start here": {
+    explanation: "Defines removal as deactivation, not erasure. The goal is to stop Simplest SDD from loading while treating project-specific documents as user-owned work.",
+    tone: "slate"
+  },
+  "Rules": {
+    explanation: "Creates a strict ownership boundary: clearly generated configuration can be removed, but durable or ambiguous content is preserved unless the user explicitly confirms deletion.",
+    tone: "rose"
+  },
+  "1. Inspect Ownership": {
+    explanation: "Classifies every relevant file before editing so the agent can distinguish framework activation from specifications, decisions, plans, and history that now belong to the project.",
+    tone: "blue"
+  },
+  "2. Remove Agent Activation": {
+    explanation: "Stops agents from loading the Simplest SDD workflow by removing only its activation instructions and compatibility link, while leaving unrelated agent guidance intact.",
+    tone: "violet"
+  },
+  "3. Deactivate The Skill Without Losing User Data": {
+    explanation: "Removes the reusable skill and untouched templates when safe, but keeps specifications, decisions, execution records, and any customized material by default.",
+    tone: "amber"
+  },
+  "4. Validate": {
+    explanation: "Confirms that the framework is inactive and that user-owned knowledge survived. Any remaining references are reported instead of silently deleted.",
+    tone: "lime"
+  }
+};
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/`/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+type PromptSection = {
+  title: string;
+  id: string;
+  level: number;
+  startLine: number;
+  lines: string[];
+  annotation: Annotation;
+};
+
+function parsePrompt(promptId: string, rawPrompt: string, annotations: Record<string, Annotation>) {
+  const source = rawPrompt.replace(/\r\n/g, "\n").replace(/\n$/, "");
+  const lines = source.split("\n");
+  const sections: PromptSection[] = [];
+  let inFence = false;
+  let current: PromptSection = {
+    title: "Start here",
+    id: `${promptId}-start-here`,
+    level: 1,
+    startLine: 1,
+    lines: [],
+    annotation: annotations["Start here"]
+  };
+
+  for (const [index, line] of lines.entries()) {
+    const fenceLine = line.trimStart().startsWith("```");
+    const heading = !inFence ? line.match(/^(##|###)\s+(.+)$/) : null;
+
+    if (heading && current.lines.length > 0) {
+      sections.push(current);
+      const title = heading[2];
+      current = {
+        title,
+        id: `${promptId}-${slugify(title)}`,
+        level: heading[1].length,
+        startLine: index + 1,
+        lines: [],
+        annotation: annotations[title] ?? {
+          explanation: "This section is part of the workflow. Refine this explanation as the framework evolves.",
+          tone: "slate"
+        }
+      };
+    }
+
+    current.lines.push(line);
+    if (fenceLine) inFence = !inFence;
+  }
+
+  sections.push(current);
+  return {
+    source,
+    lines,
+    sections,
+    wordCount: source.trim().split(/\s+/).length
+  };
+}
+
+const promptDefinitions = [
+  {
+    id: "init",
+    tabLabel: "Install",
+    actionLabel: "installation",
+    summary: "Creates the project-specific skill, its approval gates, and the reusable specification workflow future agents will follow.",
+    instruction: "Run npx simplest-sdd@latest init and follow the instructions",
+    rawUrl: "/init-prompt.txt",
+    githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/init.md",
+    prompt: parsePrompt("init", initPromptRaw, initAnnotations)
+  },
+  {
+    id: "update",
+    tabLabel: "Update",
+    actionLabel: "migration",
+    summary: "Migrates an existing installation without flattening local customizations, rewriting current work, or losing project history.",
+    instruction: "Run npx simplest-sdd@latest update and follow the instructions",
+    rawUrl: "/update-prompt.txt",
+    githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/update.md",
+    prompt: parsePrompt("update", updatePromptRaw, updateAnnotations)
+  },
+  {
+    id: "remove",
+    tabLabel: "Remove",
+    actionLabel: "removal",
+    summary: "Deactivates the framework conservatively while preserving specifications, decisions, plans, and execution history owned by the project.",
+    instruction: "Run npx simplest-sdd@latest remove and follow the instructions",
+    rawUrl: "/remove-prompt.txt",
+    githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/remove.md",
+    prompt: parsePrompt("remove", removePromptRaw, removeAnnotations)
+  }
+];
+
+const currentRelease = schemaVersions.versions.find(
+  (release) => release.version === schemaVersions.currentSchemaVersion
+);
+---
+
+<BaseLayout
+  title="How Simplest SDD works"
+  description="A color-coded, annotated tour of the install, update, and removal prompts used by the Simplest SDD CLI."
+  canonicalPath="/how/"
+  bodyClass="how-body"
+>
+  <SiteHeader current="how" maxWidth="var(--page-width)" minHeight="4.75rem" />
+
+  <main>
+    <section class="how-hero" aria-labelledby="how-title">
+      <h1 id="how-title">
+        Because we should read the <span class="title-highlight title-highlight--orange">skills</span> we install, I made this one easy to{" "}
+        <span class="title-highlight title-highlight--orange">explore</span>.
+      </h1>
+
+      <div class="version-strip" aria-label="Current Simplest SDD version">
+        <div>
+          <span>CLI package</span>
+          <strong>v{packageInfo.version}</strong>
+        </div>
+        <div>
+          <span>Schema</span>
+          <strong>v{schemaVersions.currentSchemaVersion}</strong>
+        </div>
+        <div>
+          <span>Released</span>
+          <strong>{currentRelease?.date ?? "Current"}</strong>
+        </div>
+        <p>
+          {currentRelease?.summary} These views import the same Markdown templates used by the CLI. At runtime,
+          the CLI fills version, detected installation state, and relevant migration history for the repository
+          where it runs.
+        </p>
+      </div>
+    </section>
+
+    <section class="prompt-overview" aria-label="Prompt overview">
+      <div class="prompt-tabs" role="tablist" aria-label="Choose a Simplest SDD prompt">
+        {promptDefinitions.map((definition, index) => (
+          <button
+            aria-controls={`${definition.id}-prompt-panel`}
+            aria-selected={index === 0 ? "true" : "false"}
+            data-prompt-tab={definition.id}
+            id={`${definition.id}-prompt-tab`}
+            role="tab"
+            tabindex={index === 0 ? 0 : -1}
+            type="button"
+          >
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            {definition.tabLabel}
+          </button>
+        ))}
+      </div>
+
+      {promptDefinitions.map((definition, definitionIndex) => {
+        const { prompt } = definition;
+
+        return (
+          <div data-prompt-summary={definition.id} hidden={definitionIndex !== 0}>
+            <div class="hero-bottom">
+              <p>
+                <strong>{definition.tabLabel}:</strong> {definition.summary} Every color marks a different
+                responsibility. Hover, focus, or click the <strong>i</strong> to see why a section exists.
+              </p>
+              <div class="prompt-actions">
+                <a href={definition.rawUrl}>View raw prompt</a>
+                <a href={definition.githubUrl}>GitHub source <span aria-hidden="true">↗</span></a>
+                <CopyButton
+                  text={definition.instruction}
+                  label={`Copy the ${definition.id} CLI instruction`}
+                  className="copy-full-prompt"
+                  displayText="Copy prompt"
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </section>
+
+    {promptDefinitions.map((definition, definitionIndex) => {
+      const { prompt } = definition;
+      const guideTitleId = `${definition.id}-guide-title`;
+
+      return (
+        <section
+          aria-labelledby={`${definition.id}-prompt-tab`}
+          data-prompt-panel={definition.id}
+          hidden={definitionIndex !== 0}
+          id={`${definition.id}-prompt-panel`}
+          role="tabpanel"
+          tabindex="0"
+        >
+          <section class="guide-intro" aria-labelledby={guideTitleId}>
+            <div class="guide-intro__content">
+              <div class="guide-intro__heading">
+                <h2 id={guideTitleId}>
+                  The whole <span class="title-highlight title-highlight--orange">prompt</span>, with the{" "}
+                  <span class="title-highlight title-highlight--orange">why</span> attached.
+                </h2>
+                <div class="legend" aria-label="Annotation legend">
+                  <span><AnnotationIcon kind="why" /> Why this part exists</span>
+                  <span><AnnotationIcon kind="reference" /> Inspiration source</span>
+                </div>
+              </div>
+              <div
+                class="prompt-facts"
+                aria-label={`${definition.tabLabel} prompt facts`}
+                data-prompt-summary={definition.id}
+                hidden={definitionIndex !== 0}
+              >
+                <span>{prompt.lines.length} lines</span>
+                <span>{prompt.wordCount.toLocaleString("en-US")} words</span>
+                <span>{prompt.sections.length} explained parts</span>
+              </div>
+            </div>
+          </section>
+
+          <div class="prompt-layout">
+            <aside class="prompt-map">
+              <ol>
+                {prompt.sections.map((section, index) => (
+                  <li class:list={[section.level === 3 && "prompt-map__subsection"]}>
+                    <a href={`#${section.id}`}>
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      {section.title}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </aside>
+
+            <div class="prompt-sections">
+              {prompt.sections.map((section, index) => {
+                const endLine = section.startLine + section.lines.length - 1;
+                const explanationId = `${section.id}-explanation`;
+
+                return (
+                  <article
+                    class:list={["prompt-section", `prompt-section--accent-${(index % 3) + 1}`]}
+                    id={section.id}
+                  >
+                    <header class="prompt-section__header">
+                      <div>
+                        <span class="prompt-section__index">{String(index + 1).padStart(2, "0")}</span>
+                        <h3>{section.title}</h3>
+                      </div>
+                      <div class="prompt-section__meta">
+                        <span class="line-range">Lines {section.startLine}–{endLine}</span>
+                        <div class="annotation-control" data-annotation-control>
+                          <AnnotationIcon
+                            as="button"
+                            context="control"
+                            kind="why"
+                            aria-controls={explanationId}
+                            aria-expanded="false"
+                            aria-label={`Why ${section.title} exists in the ${definition.id} prompt`}
+                            type="button"
+                          />
+                          <div class="annotation-popover" id={explanationId} role="tooltip">
+                            <span>Why this exists</span>
+                            <p>{section.annotation.explanation}</p>
+                          </div>
+                        </div>
+                        {section.annotation.reference ? (
+                          <AnnotationIcon
+                            as="a"
+                            class="reference-control reference-control--linked"
+                            context="control"
+                            href={section.annotation.reference.url}
+                            kind="reference"
+                            aria-label={`Reference: ${section.annotation.reference.label}`}
+                            title={section.annotation.reference.label}
+                          />
+                        ) : null}
+                      </div>
+                    </header>
+
+                    <ol class="prompt-lines" start={section.startLine} aria-label={`${section.title} prompt lines`}>
+                      {section.lines.map((line) => (
+                        <li><code>{line || "\u00a0"}</code></li>
+                      ))}
+                    </ol>
+                  </article>
+                );
+              })}
+
+              <div class="prompt-end">
+                <a href="/" class="footer-mark" aria-label="Simplest SDD home">
+                  <AnimatedWordmark variant="compact" decorative />
+                </a>
+                <button class="back-to-top" data-back-to-top type="button">
+                  Back to top <span aria-hidden="true">↑</span>
+                </button>
+                <a href="/about">What is this? <span aria-hidden="true">→</span></a>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    })}
+
+  </main>
+
+  <script is:inline src="/scripts/how.js" defer></script>
+</BaseLayout>
+
+<style>
+  :global(.how-body) {
+    --page-width: 92rem;
+    background:
+      radial-gradient(circle at 70% 0, #1b1e1f 0, transparent 28rem),
+      var(--bg);
+  }
+
+  main {
+    width: min(100% - 2rem, var(--page-width));
+    margin-inline: auto;
+  }
+
+  .prompt-end a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .prompt-end a:hover {
+    color: var(--ink);
+  }
+
+  .prompt-end a:focus-visible,
+  .back-to-top:focus-visible,
+  .prompt-actions a:focus-visible,
+  .prompt-map a:focus-visible,
+  .annotation-control button:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: .3rem;
+  }
+
+  .eyebrow {
+    margin: 0 0 1.3rem;
+    color: var(--muted);
+    font: 700 .7rem/1 var(--font-sans);
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+
+  .how-hero h1,
+  .guide-intro h2 {
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: -.05em;
+  }
+
+  .how-hero h1 {
+    font-size: clamp(3.3rem, 7.4vw, 7rem);
+    line-height: .9;
+    text-wrap: pretty;
+  }
+
+  .how-hero {
+    padding-top: 3rem;
+  }
+
+  .guide-intro h2 {
+    line-height: .94;
+  }
+
+  .title-highlight {
+    color: var(--vinaceous-cinnamon);
+  }
+
+  .title-highlight--orange {
+    color: var(--orange);
+  }
+
+  .title-highlight--green {
+    color: var(--dull-viridian-green);
+  }
+
+  .prompt-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 44rem;
+    margin-top: 0;
+    border-top: 1px solid var(--line-strong);
+    border-left: 1px solid var(--line-strong);
+  }
+
+  .prompt-overview {
+    margin-top: 3rem;
+    margin-bottom: 8rem;
+  }
+
+  .prompt-tabs button {
+    min-height: 4.25rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .9rem 1rem;
+    border: 0;
+    border-right: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--muted);
+    font: 650 .82rem/1 var(--font-sans);
+    text-align: left;
+    cursor: pointer;
+    transition: background 160ms ease, color 160ms ease;
+  }
+
+  .prompt-tabs button span {
+    color: #606462;
+    font: 600 .62rem/1 var(--font-mono);
+  }
+
+  .prompt-tabs button:hover {
+    color: var(--ink);
+  }
+
+  .prompt-tabs button[aria-selected="true"] {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .prompt-tabs button[aria-selected="true"] span {
+    color: #555957;
+  }
+
+  .prompt-tabs button:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: 1px solid var(--ink);
+    outline-offset: .25rem;
+  }
+
+  .version-strip {
+    display: grid;
+    grid-template-columns: auto auto auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 0;
+    margin-top: 3rem;
+    border: 1px solid var(--line);
+    background: rgba(10, 11, 12, .62);
+  }
+
+  .version-strip > div {
+    min-width: 9rem;
+    display: grid;
+    gap: .4rem;
+    align-content: center;
+    padding: 1rem 1.2rem;
+    border-right: 1px solid var(--line);
+  }
+
+  .version-strip span {
+    color: var(--muted);
+    font: 600 .62rem/1 var(--font-sans);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .version-strip strong {
+    color: var(--ink-soft);
+    font: 600 .85rem/1 var(--font-mono);
+  }
+
+  .version-strip p {
+    align-self: center;
+    margin: 0;
+    padding: 1rem 1.2rem;
+    color: var(--muted);
+    font: 400 .78rem/1.55 var(--font-sans);
+    text-wrap: pretty;
+  }
+
+  .hero-bottom {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-top: 2rem;
+  }
+
+  .hero-bottom > p {
+    max-width: 48rem;
+    margin: 0;
+    color: var(--ink-soft);
+    font: 400 clamp(1rem, 1.5vw, 1.2rem)/1.7 var(--font-sans);
+  }
+
+  .prompt-actions {
+    width: min(100%, 27.75rem);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+    gap: .75rem;
+  }
+
+  .prompt-actions > a,
+  :global(.copy-full-prompt.command-button) {
+    width: 100%;
+    min-height: 2.8rem;
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    padding: .75rem .9rem;
+    margin-left: 0;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--ink-soft);
+    font: 650 .75rem/1 var(--font-sans);
+    text-decoration: none;
+  }
+
+  .prompt-actions > a:nth-child(2) {
+    gap: .4rem;
+  }
+
+  :global(.copy-full-prompt:hover),
+  :global(.copy-full-prompt.command-button--confirmed) {
+    color: var(--ink);
+  }
+
+  :global(.copy-full-prompt .command-labels) {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+  }
+
+  :global(.copy-full-prompt .command-label) {
+    grid-area: 1 / 1;
+    white-space: nowrap;
+    transition:
+      opacity 180ms ease,
+      filter 180ms ease,
+      transform 240ms cubic-bezier(.22, .8, .36, 1);
+  }
+
+  :global(.copy-full-prompt .command-label--idle) {
+    position: relative;
+  }
+
+  :global(.copy-full-prompt .command-label--confirmed) {
+    opacity: 0;
+    filter: blur(.18rem);
+    transform: translateX(-.2rem);
+  }
+
+  :global(.copy-full-prompt.command-button--confirmed .command-label--idle) {
+    opacity: 0;
+    filter: blur(.18rem);
+    transform: translateX(.2rem);
+  }
+
+  :global(.copy-full-prompt.command-button--confirmed .command-label--confirmed) {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
+  }
+
+  :global(.copy-full-prompt.command-button--confirmed .command-icon-square--back),
+  :global(.copy-full-prompt.command-button--confirmed .command-icon-square--front) {
+    transform: none;
+  }
+
+  .prompt-facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-bottom: 3rem;
+    border-top: 1px solid var(--line-strong);
+    border-left: 1px solid var(--line-strong);
+  }
+
+  [data-prompt-panel][hidden],
+  [data-prompt-summary][hidden] {
+    display: none;
+  }
+
+  .prompt-facts span {
+    padding: 1rem;
+    border-right: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    color: var(--muted);
+    font: 600 .74rem/1 var(--font-sans);
+    text-align: center;
+  }
+
+  .guide-intro__heading {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .guide-intro h2 {
+    width: 100%;
+    flex: 1;
+    max-width: none;
+    font-size: clamp(2.8rem, 5vw, 5.5rem);
+  }
+
+  .legend {
+    display: grid;
+    gap: .65rem;
+    color: var(--muted);
+    font: 500 .75rem/1.2 var(--font-sans);
+  }
+
+  .legend > span {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+  }
+
+  .prompt-layout {
+    display: grid;
+    grid-template-columns: minmax(13rem, 18rem) minmax(0, 1fr);
+    align-items: start;
+    gap: 3rem;
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .prompt-map {
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100svh - 2rem);
+    overflow-y: auto;
+    padding: .6rem 1.2rem;
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    scrollbar-color: color-mix(in srgb, var(--ink) 14%, transparent) transparent;
+    scrollbar-width: thin;
+  }
+
+  .prompt-map::-webkit-scrollbar {
+    width: .25rem;
+  }
+
+  .prompt-map::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .prompt-map::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ink) 14%, transparent);
+  }
+
+  .prompt-map:hover::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--ink) 24%, transparent);
+  }
+
+  .prompt-map ol {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .prompt-map li + li {
+    border-top: 1px solid var(--line);
+  }
+
+  .prompt-map a {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.65rem 1fr;
+    gap: .5rem;
+    padding: .68rem 0;
+    color: var(--muted);
+    font: 500 .72rem/1.35 var(--font-sans);
+    text-decoration: none;
+  }
+
+  .prompt-map a:hover,
+  .prompt-map a[aria-current="location"] {
+    color: var(--ink);
+  }
+
+  .prompt-map a[aria-current="location"]::before {
+    position: absolute;
+    top: .65rem;
+    bottom: .65rem;
+    left: -.55rem;
+    width: 1px;
+    background: var(--ink);
+    content: "";
+  }
+
+  .prompt-map a span {
+    color: #5f6361;
+    font-family: var(--font-mono);
+    font-size: .63rem;
+  }
+
+  .prompt-map__subsection a {
+    padding-left: .7rem;
+  }
+
+  .prompt-sections {
+    min-width: 0;
+    display: grid;
+    gap: 3rem;
+  }
+
+  .prompt-section {
+    --tone: var(--vinaceous-cinnamon);
+    min-width: 0;
+    scroll-margin-top: 1rem;
+    border: 1px solid color-mix(in srgb, var(--tone) 45%, var(--line));
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--tone) 10%, transparent), transparent 34rem),
+      var(--surface);
+  }
+
+  .prompt-section--accent-1 { --tone: var(--vinaceous-cinnamon); }
+  .prompt-section--accent-2 { --tone: var(--orange); }
+  .prompt-section--accent-3 { --tone: var(--dull-viridian-green); }
+
+  .prompt-section__header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1rem 1.15rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--tone) 30%, var(--line));
+  }
+
+  .prompt-section__header > div:first-child {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .prompt-section__index {
+    width: 2rem;
+    flex: 0 0 auto;
+    color: var(--tone);
+    font: 700 .68rem/1 var(--font-mono);
+  }
+
+  .prompt-section__header h3 {
+    margin: 0;
+  }
+
+  .prompt-section__header h3 {
+    overflow-wrap: anywhere;
+    color: var(--ink);
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .prompt-section__meta {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+  }
+
+  .line-range {
+    margin-right: .3rem;
+    color: var(--muted);
+    font: 600 .65rem/1 var(--font-mono);
+    white-space: nowrap;
+  }
+
+  .annotation-control {
+    position: relative;
+  }
+
+  .annotation-popover {
+    position: absolute;
+    z-index: 5;
+    top: calc(100% + .65rem);
+    right: 0;
+    width: min(24rem, calc(100vw - 3rem));
+    padding: 1rem;
+    border: 1px solid color-mix(in srgb, var(--tone) 65%, var(--line));
+    background: var(--black);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, .45);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-.3rem);
+    transition: opacity 140ms ease, transform 140ms ease, visibility 140ms ease;
+    pointer-events: none;
+  }
+
+  .annotation-control:hover .annotation-popover,
+  .annotation-control:focus-within .annotation-popover,
+  .annotation-control--open .annotation-popover {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .annotation-popover span {
+    display: block;
+    margin-bottom: .6rem;
+    color: var(--tone);
+    font: 700 .64rem/1 var(--font-sans);
+    letter-spacing: .12em;
+    text-transform: none;
+  }
+
+  .annotation-popover p {
+    margin: 0;
+    color: var(--ink-soft);
+    font: 400 .82rem/1.55 var(--font-sans);
+    text-transform: none;
+  }
+
+  .prompt-lines {
+    padding: .8rem 0 1rem 4rem;
+    margin: 0;
+    overflow-x: hidden;
+    color: #626765;
+    font: 500 .68rem/1.65 var(--font-mono);
+  }
+
+  .prompt-lines li {
+    min-width: 0;
+    padding: .05rem 1.2rem .05rem .8rem;
+    border-left: 2px solid transparent;
+  }
+
+  .prompt-lines li::marker {
+    color: #525654;
+  }
+
+  .prompt-lines li:hover {
+    border-left-color: var(--tone);
+    background: color-mix(in srgb, var(--tone) 8%, transparent);
+  }
+
+  .prompt-lines code {
+    display: block;
+    min-width: 0;
+    color: #c8cbc8;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  .prompt-end {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 2rem;
+    margin-top: -.625rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+  }
+
+  .back-to-top {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font: 400 .78rem/1 var(--font-sans);
+    cursor: pointer;
+    transition: color 180ms ease;
+  }
+
+  .back-to-top:hover {
+    color: var(--ink);
+  }
+
+  .prompt-end > a:last-child {
+    justify-self: end;
+    font: 600 .75rem/1 var(--font-sans);
+  }
+
+  .footer-mark {
+    width: fit-content;
+    display: inline-block;
+    justify-self: start;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  @media (max-width: 980px) {
+    .guide-intro__heading {
+      flex-direction: column;
+    }
+
+    .prompt-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .prompt-map {
+      position: relative;
+      top: auto;
+      max-height: none;
+    }
+
+    .prompt-map ol {
+      columns: 2;
+      column-gap: 2rem;
+    }
+
+    .prompt-map li {
+      break-inside: avoid;
+    }
+
+    .version-strip {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .version-strip > div {
+      min-width: 0;
+    }
+
+    .version-strip p {
+      grid-column: 1 / -1;
+      border-top: 1px solid var(--line);
+    }
+  }
+
+  @media (max-width: 680px) {
+    .how-hero h1 {
+      font-size: clamp(3rem, 14vw, 5rem);
+    }
+
+    .prompt-tabs button {
+      min-height: 3.7rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: .45rem;
+      padding: .8rem;
+    }
+
+    .version-strip {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .prompt-actions {
+      width: 100%;
+      grid-template-columns: 1fr;
+    }
+
+    .prompt-actions > a,
+    :global(.copy-full-prompt.command-button) {
+      justify-content: center;
+    }
+
+    .prompt-facts {
+      grid-template-columns: 1fr;
+    }
+
+    .prompt-map ol {
+      columns: 1;
+    }
+
+    .prompt-section__header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .prompt-section__meta {
+      width: 100%;
+      justify-content: flex-end;
+    }
+
+    .line-range {
+      margin-right: auto;
+    }
+
+    .annotation-control {
+      position: static;
+    }
+
+    .annotation-popover {
+      top: calc(100% - .35rem);
+      right: 1rem;
+      left: 1rem;
+      width: auto;
+    }
+
+    .prompt-lines {
+      padding-left: 3.2rem;
+    }
+
+    .prompt-end {
+      grid-template-columns: 1fr auto;
+      gap: 1.25rem;
+    }
+
+    .back-to-top {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      justify-self: center;
+    }
+
+    .prompt-end .footer-mark,
+    .prompt-end > a:last-child {
+      grid-row: 2;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .annotation-popover,
+    :global(.copy-full-prompt .command-label) {
+      transition: none;
+    }
+  }
+</style>

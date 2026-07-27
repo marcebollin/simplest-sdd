@@ -1,0 +1,78 @@
+---
+interface Props {
+  kind: "why" | "reference";
+  as?: "span" | "button" | "a";
+  context?: "legend" | "control";
+  href?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  kind,
+  as = "span",
+  context = "legend",
+  href,
+  class: className = "",
+  ...attributes
+} = Astro.props;
+
+const glyph = kind === "why" ? "i" : "↗";
+const classes = ["annotation-icon", `annotation-icon--${kind}`, `annotation-icon--${context}`, className];
+---
+
+{as === "button" ? (
+  <button class:list={classes} {...attributes}>{glyph}</button>
+) : as === "a" ? (
+  <a class:list={classes} href={href} {...attributes}>{glyph}</a>
+) : (
+  <span class:list={classes} {...attributes}>{glyph}</span>
+)}
+
+<style>
+  .annotation-icon {
+    width: 1.6rem;
+    height: 1.6rem;
+    display: grid;
+    flex: 0 0 1.6rem;
+    place-items: center;
+    padding: 0;
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-style: normal;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .annotation-icon--why {
+    font-size: .66rem;
+    font-weight: 700;
+  }
+
+  .annotation-icon--reference {
+    padding-bottom: .05rem;
+    font-size: .9rem;
+    font-weight: 600;
+  }
+
+  .annotation-icon--legend {
+    border: 1px solid var(--line-strong);
+  }
+
+  .annotation-icon--control {
+    border: 1px solid color-mix(in srgb, var(--tone) 55%, var(--line));
+    background: var(--bg);
+    color: var(--tone);
+  }
+
+  button.annotation-icon--control,
+  a.annotation-icon--control {
+    cursor: pointer;
+  }
+
+  button.annotation-icon--control:focus-visible,
+  a.annotation-icon--control:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: .3rem;
+  }
+</style>

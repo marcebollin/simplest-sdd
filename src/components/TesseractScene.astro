@@ -1,0 +1,309 @@
+<div class="tesseract-scene" data-tesseract-scene aria-hidden="true"></div>
+
+<script>
+  import {
+    AdditiveBlending,
+    BufferAttribute,
+    BufferGeometry,
+    Color,
+    LineBasicMaterial,
+    LineSegments,
+    PerspectiveCamera,
+    Points,
+    PointsMaterial,
+    Scene,
+    WebGLRenderer
+  } from "three";
+
+  type Vertex4 = [number, number, number, number];
+
+  const motion = {
+    rotationSpeed: 0.42,
+    driftX: 0.11,
+    driftY: 0.085,
+    driftZ: 0.07,
+    followStrength: 5.25,
+    followX: 0.9,
+    followY: 0.62,
+    tiltX: 0.12,
+    tiltY: 0.16
+  };
+
+  const vertices: Vertex4[] = Array.from({ length: 16 }, (_, index) => [
+    index & 1 ? 1 : -1,
+    index & 2 ? 1 : -1,
+    index & 4 ? 1 : -1,
+    index & 8 ? 1 : -1
+  ]);
+
+  const edges: [number, number][] = [];
+  for (let vertex = 0; vertex < vertices.length; vertex += 1) {
+    for (let dimension = 0; dimension < 4; dimension += 1) {
+      const neighbour = vertex ^ (1 << dimension);
+      if (vertex < neighbour) edges.push([vertex, neighbour]);
+    }
+  }
+
+  const rotateInPlane = (
+    point: Vertex4,
+    firstAxis: number,
+    secondAxis: number,
+    angle: number
+  ) => {
+    const cosine = Math.cos(angle);
+    const sine = Math.sin(angle);
+    const first = point[firstAxis];
+    const second = point[secondAxis];
+
+    point[firstAxis] = first * cosine - second * sine;
+    point[secondAxis] = first * sine + second * cosine;
+  };
+
+  const nearLine = new Color(0xffffff);
+  const farLine = new Color(0x929a98);
+  const nearPoint = new Color(0xf3741f);
+  const farPoint = new Color(0xeea78c);
+  const colorScratch = new Color();
+
+  document.querySelectorAll<HTMLElement>("[data-tesseract-scene]").forEach((root) => {
+    if (root.dataset.tesseractReady) return;
+    root.dataset.tesseractReady = "true";
+
+    const scene = new Scene();
+    const camera = new PerspectiveCamera(40, 1, 0.1, 20);
+    camera.position.set(0, 0, 7.6);
+
+    const renderer = new WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      powerPreference: "high-performance"
+    });
+    renderer.setClearColor(0x000000, 0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.domElement.setAttribute("aria-hidden", "true");
+    root.append(renderer.domElement);
+
+    const positions = new Float32Array(edges.length * 2 * 3);
+    const lineColors = new Float32Array(edges.length * 2 * 3);
+    const projected = new Float32Array(vertices.length * 3);
+    const projectionDepth = new Float32Array(vertices.length);
+    const geometry = new BufferGeometry();
+    geometry.setAttribute("position", new BufferAttribute(positions, 3));
+    geometry.setAttribute("color", new BufferAttribute(lineColors, 3));
+
+    const material = new LineBasicMaterial({
+      opacity: 0.82,
+      transparent: true,
+      vertexColors: true,
+      depthTest: false
+    });
+    const tesseract = new LineSegments(geometry, material);
+    tesseract.rotation.set(-0.42, 0.5, -0.1);
+    scene.add(tesseract);
+
+    const pointPositions = new Float32Array(vertices.length * 3);
+    const pointColors = new Float32Array(vertices.length * 3);
+    const pointGeometry = new BufferGeometry();
+    pointGeometry.setAttribute("position", new BufferAttribute(pointPositions, 3));
+    pointGeometry.setAttribute("color", new BufferAttribute(pointColors, 3));
+
+    const pointMaterial = new PointsMaterial({
+      size: 0.065,
+      sizeAttenuation: true,
+      opacity: 0.94,
+      transparent: true,
+      vertexColors: true,
+      depthTest: false,
+      depthWrite: false
+    });
+    const vertexPoints = new Points(pointGeometry, pointMaterial);
+    tesseract.add(vertexPoints);
+
+    const glowMaterial = new PointsMaterial({
+      color: 0xf3741f,
+      size: 0.18,
+      sizeAttenuation: true,
+      opacity: 0.16,
+      transparent: true,
+      blending: AdditiveBlending,
+      depthTest: false,
+      depthWrite: false
+    });
+    const vertexGlow = new Points(pointGeometry, glowMaterial);
+    tesseract.add(vertexGlow);
+
+    const pointerDestination = { x: 0, y: 0 };
+    const pointerTarget = { x: 0, y: 0 };
+    const pointerPosition = { x: 0, y: 0 };
+    let previousFrameTime = 0;
+
+    const renderFrame = (time: number) => {
+      const seconds = time * 0.001;
+      const primaryRotation = seconds * motion.rotationSpeed;
+      const frameSeconds = previousFrameTime
+        ? Math.min((time - previousFrameTime) * 0.001, 0.1)
+        : 1 / 60;
+      const followAmount = 1 - Math.exp(-motion.followStrength * frameSeconds);
+      previousFrameTime = time;
+
+      pointerTarget.x += (pointerDestination.x - pointerTarget.x) * followAmount;
+      pointerTarget.y += (pointerDestination.y - pointerTarget.y) * followAmount;
+      pointerPosition.x += (pointerTarget.x - pointerPosition.x) * followAmount;
+      pointerPosition.y += (pointerTarget.y - pointerPosition.y) * followAmount;
+
+      vertices.forEach((source, index) => {
+        const point: Vertex4 = [...source];
+        rotateInPlane(point, 0, 1, primaryRotation);
+        rotateInPlane(point, 2, 3, primaryRotation);
+
+        const perspective = 1.55 / (2.65 - point[3]);
+        const offset = index * 3;
+        projected[offset] = point[0] * perspective;
+        projected[offset + 1] = point[1] * perspective;
+        projected[offset + 2] = point[2] * perspective;
+        projectionDepth[index] = (point[3] + 2) * 0.25;
+
+        pointPositions[offset] = projected[offset];
+        pointPositions[offset + 1] = projected[offset + 1];
+        pointPositions[offset + 2] = projected[offset + 2];
+
+        colorScratch.copy(farPoint).lerp(nearPoint, projectionDepth[index]);
+        pointColors[offset] = colorScratch.r;
+        pointColors[offset + 1] = colorScratch.g;
+        pointColors[offset + 2] = colorScratch.b;
+      });
+
+      edges.forEach(([start, end], edgeIndex) => {
+        const positionOffset = edgeIndex * 6;
+        const startOffset = start * 3;
+        const endOffset = end * 3;
+
+        positions[positionOffset] = projected[startOffset];
+        positions[positionOffset + 1] = projected[startOffset + 1];
+        positions[positionOffset + 2] = projected[startOffset + 2];
+        positions[positionOffset + 3] = projected[endOffset];
+        positions[positionOffset + 4] = projected[endOffset + 1];
+        positions[positionOffset + 5] = projected[endOffset + 2];
+
+        colorScratch.copy(farLine).lerp(nearLine, projectionDepth[start]);
+        lineColors[positionOffset] = colorScratch.r;
+        lineColors[positionOffset + 1] = colorScratch.g;
+        lineColors[positionOffset + 2] = colorScratch.b;
+
+        colorScratch.copy(farLine).lerp(nearLine, projectionDepth[end]);
+        lineColors[positionOffset + 3] = colorScratch.r;
+        lineColors[positionOffset + 4] = colorScratch.g;
+        lineColors[positionOffset + 5] = colorScratch.b;
+      });
+
+      geometry.attributes.position.needsUpdate = true;
+      geometry.attributes.color.needsUpdate = true;
+      pointGeometry.attributes.position.needsUpdate = true;
+      pointGeometry.attributes.color.needsUpdate = true;
+      tesseract.rotation.set(
+        -0.42 +
+          Math.sin(seconds * motion.driftX) * 0.08 +
+          pointerPosition.y * motion.tiltX,
+        0.5 +
+          Math.sin(seconds * motion.driftY + 0.8) * 0.1 +
+          pointerPosition.x * motion.tiltY,
+        -0.1 + Math.sin(seconds * motion.driftZ + 1.9) * 0.05
+      );
+      tesseract.position.set(
+        pointerPosition.x * motion.followX,
+        pointerPosition.y * motion.followY,
+        0
+      );
+      renderer.render(scene, camera);
+    };
+
+    const resize = () => {
+      const { width, height } = root.getBoundingClientRect();
+      if (!width || !height) return;
+
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    };
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const finePointer = window.matchMedia("(pointer: fine)");
+    let animationFrame = 0;
+
+    const updatePointerTarget = (event: PointerEvent) => {
+      if (reducedMotion.matches || !finePointer.matches) return;
+
+      pointerDestination.x = (event.clientX / window.innerWidth) * 2 - 1;
+      pointerDestination.y = -((event.clientY / window.innerHeight) * 2 - 1);
+    };
+
+    const resetPointerTarget = () => {
+      pointerDestination.x = 0;
+      pointerDestination.y = 0;
+    };
+
+    const animate = (time: number) => {
+      renderFrame(time);
+      animationFrame = requestAnimationFrame(animate);
+    };
+
+    const start = () => {
+      cancelAnimationFrame(animationFrame);
+      previousFrameTime = 0;
+      if (reducedMotion.matches) {
+        resetPointerTarget();
+        pointerTarget.x = 0;
+        pointerTarget.y = 0;
+        pointerPosition.x = 0;
+        pointerPosition.y = 0;
+        renderFrame(0);
+      } else if (!document.hidden) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(() => {
+      resize();
+      if (reducedMotion.matches) renderFrame(0);
+    });
+
+    resizeObserver.observe(root);
+    window.addEventListener("pointermove", updatePointerTarget, { passive: true });
+    document.documentElement.addEventListener("pointerleave", resetPointerTarget);
+    window.addEventListener("blur", resetPointerTarget);
+    reducedMotion.addEventListener("change", start);
+    document.addEventListener("visibilitychange", start);
+    resize();
+    start();
+  });
+</script>
+
+<style>
+  .tesseract-scene {
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    left: 50%;
+    width: clamp(31rem, 112vmin, 76rem);
+    aspect-ratio: 1;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    opacity: .96;
+    filter: drop-shadow(0 0 .65rem rgb(255 255 255 / 12%));
+    -webkit-mask-image: radial-gradient(circle, #000 64%, transparent 86%);
+    mask-image: radial-gradient(circle, #000 64%, transparent 86%);
+  }
+
+  .tesseract-scene :global(canvas) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .tesseract-scene {
+      width: min(138vw, 46rem);
+      opacity: .8;
+    }
+  }
+</style>

@@ -1,0 +1,284 @@
+---
+interface Props {
+  variant?: "hero" | "compact";
+  ariaLabel?: string;
+  decorative?: boolean;
+}
+
+const {
+  variant = "compact",
+  ariaLabel = "Simplest spec-driven development",
+  decorative = false
+} = Astro.props;
+---
+
+<span
+  class:list={["animated-wordmark", `animated-wordmark--${variant}`]}
+  aria-hidden={decorative ? "true" : undefined}
+  aria-label={decorative ? undefined : ariaLabel}
+>
+  <span class="wordmark-frame" data-animated-wordmark>
+    <span aria-hidden="true" class="title-phase title-phase--long title-phase--one">
+      simplest spec<span class="title-hyphen">-</span>driven development
+    </span>
+    <span aria-hidden="true" class="title-phase title-phase--short title-phase--two">
+      ssdd
+    </span>
+    <span
+      aria-hidden="true"
+      class="title-phase title-phase--short title-phase--math title-phase--three"
+    >
+      s<span class="title-exponent">2</span>d<span
+        class="title-exponent title-exponent--after-d">2</span
+      >
+    </span>
+    <span
+      aria-hidden="true"
+      class="title-phase title-phase--short title-phase--math title-phase--final title-phase--four"
+    >
+      (sd)<span class="title-exponent">2</span>
+    </span>
+  </span>
+</span>
+
+<script>
+  const wordmarkDuration = 12_000;
+
+  const syncAnimatedWordmarks = () => {
+    const phase = Date.now() % wordmarkDuration;
+
+    document.querySelectorAll("[data-animated-wordmark]").forEach((wordmark) => {
+      if (wordmark.classList.contains("wordmark-frame--ready")) return;
+
+      if (wordmark instanceof HTMLElement) {
+        wordmark.style.setProperty("--wordmark-clock-delay", `-${phase}ms`);
+      }
+      wordmark.classList.add("wordmark-frame--ready");
+    });
+  };
+
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(syncAnimatedWordmarks);
+  } else {
+    syncAnimatedWordmarks();
+  }
+</script>
+
+<style>
+  .animated-wordmark {
+    --phase-delay: 0s;
+    --phase-tracking: -.065em;
+    --phase-transition-tracking: -.05em;
+    --size-delta: 0rem;
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    margin: 0;
+    color: var(--ink);
+    font: 900 1rem/.88 var(--font-serif);
+    text-align: center;
+  }
+
+  .animated-wordmark--hero {
+    --title-size-base: clamp(1.35rem, min(calc(5vw + 1rem), 6.8vw), 8rem);
+    width: min(100% - 2rem, 100rem);
+    height: 100%;
+  }
+
+  .animated-wordmark--compact {
+    --title-size-base: 1.25rem;
+    width: clamp(8.5rem, 17vw, 11rem);
+    height: 2.5rem;
+    place-items: center start;
+    text-align: left;
+  }
+
+  .animated-wordmark--compact .wordmark-frame {
+    place-items: center start;
+  }
+
+  .animated-wordmark--compact .title-phase {
+    justify-content: flex-start;
+  }
+
+  .wordmark-frame {
+    position: relative;
+    display: grid;
+    width: max-content;
+    max-width: 100%;
+    place-items: center;
+  }
+
+  .title-phase {
+    --phase-delay: 0s;
+    --phase-tracking: -.065em;
+    --phase-transition-tracking: -.05em;
+    --size-delta: 0rem;
+    position: relative;
+    grid-area: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    font-size: calc(var(--title-size-base) + var(--size-delta));
+    letter-spacing: var(--phase-tracking);
+    white-space: nowrap;
+    opacity: 0;
+    filter: blur(1.1rem);
+    animation: title-morph 12s cubic-bezier(.22, 1, .36, 1)
+      calc(var(--phase-delay) + var(--wordmark-clock-delay, 0ms)) infinite both;
+    animation-play-state: paused;
+    will-change: filter, opacity, letter-spacing;
+  }
+
+  .wordmark-frame--ready .title-phase {
+    animation-play-state: running;
+  }
+
+  .title-phase--long {
+    --phase-tracking: 0em;
+    --phase-transition-tracking: 0em;
+    --size-delta: 0rem;
+    font-weight: 700;
+  }
+
+  .title-phase--one {
+    --phase-delay: 0s;
+  }
+
+  .title-phase--two {
+    --phase-delay: 3s;
+  }
+
+  .title-phase--three {
+    --phase-delay: 6s;
+  }
+
+  .title-phase--four {
+    --phase-delay: 9s;
+  }
+
+  .title-hyphen {
+    display: inline-block;
+    margin-inline: .065em;
+  }
+
+  .animated-wordmark--hero .title-phase--short {
+    --phase-tracking: -.02em;
+    --size-delta: clamp(4rem, 10vw, 9rem);
+  }
+
+  .animated-wordmark--hero .title-phase--math {
+    --phase-tracking: -.015em;
+    --size-delta: clamp(4.75rem, 12vw, 11rem);
+  }
+
+  .animated-wordmark--hero .title-phase--final {
+    --phase-tracking: -.01em;
+    --size-delta: clamp(5.5rem, 14vw, 13rem);
+  }
+
+  .animated-wordmark--compact .title-phase--long {
+    font-size: clamp(.46rem, .76vw, .6rem);
+    letter-spacing: .005em;
+  }
+
+  .animated-wordmark--compact .title-phase--short {
+    --phase-tracking: -.02em;
+    --size-delta: .2rem;
+  }
+
+  .animated-wordmark--compact .title-phase--math {
+    --phase-tracking: -.015em;
+    --size-delta: .4rem;
+  }
+
+  .animated-wordmark--compact .title-phase--final {
+    --phase-tracking: -.01em;
+    --size-delta: .55rem;
+  }
+
+  .title-exponent {
+    position: relative;
+    top: -.48em;
+    display: inline-block;
+    margin-left: .025em;
+    font-size: .38em;
+    line-height: 1;
+    vertical-align: baseline;
+    letter-spacing: 0;
+  }
+
+  .title-exponent--after-d {
+    margin-left: -.06em;
+  }
+
+  :global(.landing--capture) .title-phase {
+    display: none;
+    animation: none;
+  }
+
+  :global(.landing--capture) .title-phase--final {
+    display: flex;
+    font-size: min(42vw, 68vh);
+    opacity: 1;
+    filter: none;
+    letter-spacing: var(--phase-tracking);
+  }
+
+  @keyframes title-morph {
+    0% {
+      opacity: 0;
+      filter: blur(1.1rem);
+      letter-spacing: calc(var(--phase-tracking) + var(--phase-transition-tracking));
+    }
+
+    2%,
+    22% {
+      opacity: 1;
+      filter: blur(0);
+      letter-spacing: var(--phase-tracking);
+    }
+
+    24.5%,
+    100% {
+      opacity: 0;
+      filter: blur(.85rem);
+      letter-spacing: calc(var(--phase-tracking) + var(--phase-transition-tracking));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .animated-wordmark--hero {
+      width: calc(100% - .5rem);
+    }
+
+    .animated-wordmark--hero .title-phase--long {
+      font-size: clamp(1rem, 5.7vw, 2.4rem);
+    }
+
+    .animated-wordmark--compact {
+      width: clamp(7.75rem, 38vw, 8.5rem);
+    }
+
+    .animated-wordmark--compact .title-phase--long {
+      font-size: clamp(.42rem, 1.9vw, .46rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .title-phase {
+      display: none;
+      animation: none;
+    }
+
+    .title-phase--final {
+      display: flex;
+      opacity: 1;
+      filter: none;
+      letter-spacing: var(--phase-tracking);
+    }
+
+  }
+</style>

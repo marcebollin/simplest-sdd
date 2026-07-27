@@ -1,0 +1,136 @@
+---
+import AnimatedWordmark from "./AnimatedWordmark.astro";
+import GitHubLink from "./GitHubLink.astro";
+
+interface Props {
+  current?: "about" | "how";
+  maxWidth?: string;
+  minHeight?: string;
+}
+
+const {
+  current,
+  maxWidth = "88rem",
+  minHeight = "5.25rem"
+} = Astro.props;
+const isLanding = !current;
+---
+
+<header
+  class:list={[
+    "site-header",
+    isLanding ? "site-header--landing" : "site-header--internal"
+  ]}
+  style={!isLanding ? `--site-header-max-width:${maxWidth};--site-header-min-height:${minHeight}` : undefined}
+>
+  {!isLanding && (
+    <a class="site-header__brand" href="/" aria-label="Simplest SDD home">
+      <AnimatedWordmark variant="compact" decorative />
+    </a>
+  )}
+
+  <nav class="site-header__nav" aria-label="Learn about Simplest SDD">
+    <a href="/about" aria-current={current === "about" ? "page" : undefined}>What is this?</a>
+    <a href="/how" aria-current={current === "how" ? "page" : undefined}>How it works</a>
+    <GitHubLink />
+  </nav>
+</header>
+
+<style>
+  .site-header--landing {
+    position: absolute;
+    z-index: 2;
+    top: clamp(1rem, 3vw, 2.25rem);
+    right: clamp(1rem, 3vw, 2.25rem);
+  }
+
+  .site-header--internal {
+    width: min(100% - 2rem, var(--site-header-max-width));
+    min-height: var(--site-header-min-height);
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .site-header__brand {
+    display: inline-flex;
+    align-items: center;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .site-header__nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(.625rem, 1.5vw, 1.25rem);
+  }
+
+  .site-header__nav > a {
+    display: inline-flex;
+    align-items: center;
+    padding: .65rem 0;
+    color: #b6b7b3;
+    font: 700 .82rem/1 var(--font-sans);
+    letter-spacing: .04em;
+    text-decoration: none;
+    transition:
+      color 180ms ease,
+      filter 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .site-header__nav > a:hover,
+  .site-header__nav > a[aria-current="page"] {
+    color: var(--ink);
+  }
+
+  .site-header__nav > a[aria-current="page"] {
+    border-bottom: 1px solid var(--ink);
+  }
+
+  :global(.site-header__nav:has(> a:hover) > a:not(:hover)) {
+    filter: blur(.1rem);
+    opacity: .62;
+  }
+
+  .site-header__nav > a:focus-visible,
+  .site-header__brand:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: .25rem;
+  }
+
+  :global(.landing--capture) .site-header--landing {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    .site-header--internal {
+      min-height: 4.5rem;
+      gap: 1rem;
+    }
+
+    .site-header__nav {
+      gap: .75rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .site-header--landing {
+      top: .75rem;
+      right: .75rem;
+    }
+
+    .site-header--landing .site-header__nav > a {
+      padding: .55rem .5rem;
+      font-size: .75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header__nav > a {
+      transition: none;
+    }
+  }
+</style>

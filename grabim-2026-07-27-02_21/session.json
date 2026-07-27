@@ -1,0 +1,196 @@
+{
+  "version": 1,
+  "entrypoint": "README.md",
+  "exportedAt": "2026-07-27T06:21:06.298Z",
+  "title": "What is Simplest SDD?",
+  "styleImplementationGuidance": "## Style implementation guidance\n\nConfirmed style values describe the intended visual result and scope; the temporary element-level overrides used for preview are not a literal source-code patch.\n\n- Keep each change scoped to the named component or element. Do not redefine shared utility classes, design-system primitives, or broad selectors just to reproduce one local preview.\n- Use the project’s existing styling conventions and the narrowest durable source: an existing utility or token, a component variant or prop, a CSS Module/local selector, or another component-scoped rule.\n- Do not preserve an inline preview mechanically when the codebase has a better native representation. For example, if the preview sets `padding-top: 0.75rem` and this project’s Tailwind configuration maps that value to `pt-3`, use the appropriate `pt-3` class on this component instead of adding `style={{ paddingTop: \"0.75rem\" }}`.\n- Treat inherited edits as intent for the named ancestor only. Avoid changing a global typography or alignment rule unless the surrounding React context proves that the change is meant to be global.\n- Preserve responsive breakpoints, interaction states, theme variants, and design tokens. Use responsive or state utilities such as `md:` or `hover:` when the intended change belongs to those conditions.\n- Match the confirmed computed result, then verify nearby instances remain unchanged.",
+  "styleModifications": [
+    {
+      "id": "1785133252310-70oov",
+      "type": "style",
+      "label": "<section>",
+      "resolved": false,
+      "source": "react",
+      "pageUrl": "http://localhost:3010/about#use-it",
+      "pageTitle": "What is Simplest SDD?",
+      "selector": "main > section.closing-section",
+      "context": "Element: `<section class=\"closing-section\" aria-labelledby=\"closing-title\" data-astro-cid-ta2fbyqs=\"\" style=\"border-top-width: medium; border-top-style: none; border-top-color: currentcolor;\">The short versionUnderstand before building.Approve before acting.Verify before declaring success.Then leave the project</section>`\nSelector: `main > section.closing-section`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: The short versionUnderstand before building.Approve before acting.Verify before declaring success.Then leave the project smarter for the next session.Try Simplest SDD ↑",
+      "changes": [
+        {
+          "property": "padding-top",
+          "from": "",
+          "to": "0px",
+          "priority": "",
+          "sourceKind": "inline",
+          "sourceLabel": "Added scoped property",
+          "selector": "main > section.closing-section",
+          "inherited": false,
+          "ownerLabel": "<section>",
+          "ownerSelector": "main > section.closing-section",
+          "scope": "element"
+        }
+      ]
+    }
+  ],
+  "generalChanges": [
+    {
+      "id": "1785132986401-h74ws",
+      "comment": "make this full width",
+      "resolved": false,
+      "label": "<h2>",
+      "source": "react",
+      "context": "Element: `<h2 id=\"closing-title\" data-astro-cid-ta2fbyqs=\"\">Understand before building.Approve before acting.Verify before declaring success.</h2>`\nSelector: `#closing-title`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: Understand before building.Approve before acting.Verify before declaring success.",
+      "pageUrl": "http://localhost:3010/about#use-it",
+      "pageTitle": "What is Simplest SDD?",
+      "documentX": 731,
+      "documentY": 6211
+    },
+    {
+      "id": "1785133096621-2kvju",
+      "comment": "Make this title the full width",
+      "resolved": false,
+      "label": "<h2>",
+      "source": "react",
+      "context": "Element: `<h2 id=\"guide-title\" data-astro-cid-ta2fbyqs=\"\">The whole framework, without the ceremony.</h2>`\nSelector: `#guide-title`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: The whole framework, without the ceremony.",
+      "pageUrl": "http://localhost:3010/about#use-it",
+      "pageTitle": "What is Simplest SDD?",
+      "documentX": 551,
+      "documentY": 961
+    },
+    {
+      "id": "1785133147875-sp7y8",
+      "comment": "remove this",
+      "resolved": false,
+      "label": "Container <div>",
+      "source": "react",
+      "context": "Element: `<div class=\"legend\" aria-label=\"Page legend\" data-astro-cid-ta2fbyqs=\"\">01 The problem04 The guardrail08 The influences</div>`\nSelector: `main > section.guide-intro > div.legend`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: 01 The problem04 The guardrail08 The influences",
+      "pageUrl": "http://localhost:3010/about#use-it",
+      "pageTitle": "What is Simplest SDD?",
+      "documentX": 1520,
+      "documentY": 1081
+    }
+  ],
+  "images": [
+    {
+      "file": "image-01.png",
+      "pageTitle": "What is Simplest SDD?",
+      "pageUrl": "http://localhost:3010/about",
+      "width": 1975,
+      "height": 118,
+      "annotations": [
+        {
+          "id": "1785132863449-yjh08",
+          "type": "pin",
+          "comment": "remove this",
+          "resolved": false,
+          "label": "<p>",
+          "source": "react",
+          "context": "Element: `<p class=\"eyebrow\" data-astro-cid-ta2fbyqs=\"\">What is this?</p>`\nSelector: `main > section.about-hero > div.about-hero__copy > p.eyebrow`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: What is this?",
+          "location": {
+            "x1": 0.12606398126760118,
+            "y1": 0.45605700712589076,
+            "x2": 0.12606398126760118,
+            "y2": 0.45605700712589076
+          }
+        }
+      ]
+    },
+    {
+      "file": "image-02.png",
+      "pageTitle": "What is Simplest SDD?",
+      "pageUrl": "http://localhost:3010/about#use-it",
+      "width": 3265,
+      "height": 1798,
+      "annotations": [
+        {
+          "id": "1785132934889-gx7lj",
+          "type": "area",
+          "comment": "",
+          "resolved": false,
+          "label": "Captured area",
+          "source": "capture",
+          "location": {
+            "x1": 0,
+            "y1": 0,
+            "x2": 1,
+            "y2": 1
+          }
+        },
+        {
+          "id": "1785132941389-4klt2",
+          "type": "arrow",
+          "comment": "move the try button to the bottom right on the footer",
+          "resolved": false,
+          "location": {
+            "x1": 0.1534423828125,
+            "y1": 0.7606071875316948,
+            "x2": 0.8773287259615384,
+            "y2": 0.9461273200581494
+          }
+        },
+        {
+          "id": "1785132996918-nsqvy",
+          "type": "pin",
+          "comment": "remove this",
+          "resolved": false,
+          "label": "<p>",
+          "source": "react",
+          "context": "Element: `<p class=\"eyebrow\" data-astro-cid-ta2fbyqs=\"\">The short version</p>`\nSelector: `main > section.closing-section > p.eyebrow`\nComponent tree: React component metadata unavailable (DOM fallback included)\nVisible text: The short version",
+          "location": {
+            "x1": 0.09544940231991254,
+            "y1": 0.04581830820697745,
+            "x2": 0.09544940231991254,
+            "y2": 0.04581830820697745
+          }
+        }
+      ]
+    },
+    {
+      "file": "image-03.png",
+      "pageTitle": "What is Simplest SDD?",
+      "pageUrl": "http://localhost:3010/about#use-it",
+      "width": 3090,
+      "height": 1291,
+      "annotations": [
+        {
+          "id": "1785133036695-34tbq",
+          "type": "area",
+          "comment": "I want the title to be single line but then the \"Nothing when it doesnt it should be aligned with the steps one so it keeps aligned",
+          "resolved": false,
+          "label": "Captured area",
+          "source": "capture",
+          "location": {
+            "x1": 0,
+            "y1": 0,
+            "x2": 1,
+            "y2": 1
+          }
+        },
+        {
+          "id": "1785133040949-e8sqr",
+          "type": "arrow",
+          "comment": "",
+          "resolved": false,
+          "location": {
+            "x1": 0.6109149639423077,
+            "y1": 0.13316594080526176,
+            "x2": 0.8795635516826923,
+            "y2": 0.1606523864545374
+          }
+        },
+        {
+          "id": "1785133076840-esfe8",
+          "type": "highlight",
+          "comment": "",
+          "resolved": false,
+          "location": {
+            "x1": 0.03892164963942308,
+            "y1": 0.3189494267176251,
+            "x2": 0.9823843149038461,
+            "y2": 0.9263398808994756
+          }
+        }
+      ]
+    }
+  ]
+}
