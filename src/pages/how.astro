@@ -13,6 +13,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 type Reference = {
   label: string;
   url: string;
+  explanation?: string;
 };
 
 type Annotation = {
@@ -40,7 +41,12 @@ const initAnnotations: Record<string, Annotation> = {
   },
   "3. Make `AGENTS.md` Canonical Without Losing Content": {
     explanation: "Creates one durable source of project truth while preserving instructions that already exist. Compatibility files point back to that source instead of becoming competing copies.",
-    tone: "amber"
+    tone: "amber",
+    reference: {
+      label: "Theo’s spec-driven development video",
+      url: "https://youtu.be/xJaMTo2YgO8?si=o9SUsf9VfLzoF1SL",
+      explanation: "Theo’s video helped shape the product and business discovery questions, including the prompt’s explicit model of the project’s intended users."
+    }
   },
   "4. Create The Canonical Spec Skill": {
     explanation: "Installs the reusable workflow itself. Everything below this point becomes the project-specific skill that future agents load when work is ambiguous, risky, or expensive to review.",
@@ -112,7 +118,12 @@ const initAnnotations: Record<string, Annotation> = {
   },
   "5. Create Concise HTML Templates": {
     explanation: "Gives every future feature a consistent starting shape while keeping the documents concise. Templates carry the contract; project-specific content supplies the meaning.",
-    tone: "indigo"
+    tone: "indigo",
+    reference: {
+      label: "Theo’s spec-driven development video",
+      url: "https://youtu.be/xJaMTo2YgO8?si=o9SUsf9VfLzoF1SL",
+      explanation: "Theo’s video directly informed the HTML-first artifact strategy: readable, self-contained documents instead of basic Markdown templates."
+    }
   },
   "6. Add Claude Compatibility": {
     explanation: "Keeps the canonical instructions and skill usable from Claude without maintaining a second copy. The relative link makes both agent environments resolve the same workflow.",
@@ -346,12 +357,15 @@ const currentRelease = schemaVersions.versions.find(
               </p>
               <div class="prompt-actions">
                 <a href={definition.rawUrl}>View raw prompt</a>
-                <a href={definition.githubUrl}>GitHub source <span aria-hidden="true">↗</span></a>
+                <a href={definition.githubUrl} rel="noopener noreferrer" target="_blank">
+                  GitHub source <span aria-hidden="true">↗</span>
+                </a>
                 <CopyButton
                   text={definition.instruction}
                   label={`Copy the ${definition.id} CLI instruction`}
                   className="copy-full-prompt"
                   displayText="Copy prompt"
+                  confirmedText="Copy prompt"
                 />
               </div>
             </div>
@@ -416,6 +430,13 @@ const currentRelease = schemaVersions.versions.find(
               {prompt.sections.map((section, index) => {
                 const endLine = section.startLine + section.lines.length - 1;
                 const explanationId = `${section.id}-explanation`;
+                const referenceId = `${section.id}-reference`;
+                const referenceExplanation = section.annotation.reference?.explanation
+                  ?? (section.annotation.reference?.url.includes("augmentcode.com")
+                    ? "Augment Code’s guide provides the spec-driven development model behind this approval-gated workflow."
+                    : section.annotation.reference?.url.includes("shadcn/improve")
+                      ? "shadcn/improve informed the framework’s approach to focused context, explicit execution strategy, and verification."
+                      : "This source directly informed the design of this part of the workflow.");
 
                 return (
                   <article
@@ -445,15 +466,23 @@ const currentRelease = schemaVersions.versions.find(
                           </div>
                         </div>
                         {section.annotation.reference ? (
-                          <AnnotationIcon
-                            as="a"
-                            class="reference-control reference-control--linked"
-                            context="control"
-                            href={section.annotation.reference.url}
-                            kind="reference"
-                            aria-label={`Reference: ${section.annotation.reference.label}`}
-                            title={section.annotation.reference.label}
-                          />
+                          <div class="annotation-control reference-popover-control">
+                            <AnnotationIcon
+                              as="a"
+                              class="reference-control reference-control--linked"
+                              context="control"
+                              href={section.annotation.reference.url}
+                              kind="reference"
+                              rel="noopener noreferrer"
+                              target="_blank"
+                              aria-describedby={referenceId}
+                              aria-label={`Reference: ${section.annotation.reference.label}`}
+                            />
+                            <div class="annotation-popover" id={referenceId} role="tooltip">
+                              <span>{section.annotation.reference.label}</span>
+                              <p>{referenceExplanation}</p>
+                            </div>
+                          </div>
                         ) : null}
                       </div>
                     </header>
@@ -740,11 +769,6 @@ const currentRelease = schemaVersions.versions.find(
     opacity: 1;
     filter: blur(0);
     transform: translateX(0);
-  }
-
-  :global(.copy-full-prompt.command-button--confirmed .command-icon-square--back),
-  :global(.copy-full-prompt.command-button--confirmed .command-icon-square--front) {
-    transform: none;
   }
 
   .prompt-facts {
