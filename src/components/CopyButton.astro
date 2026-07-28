@@ -2,6 +2,7 @@
 interface Props {
   text?: string;
   url?: string;
+  sectionId?: string;
   label?: string;
   className?: string;
   displayText?: string;
@@ -11,6 +12,7 @@ interface Props {
 const {
   text = "",
   url,
+  sectionId,
   label = "Copy instruction to clipboard",
   className = "",
   displayText,
@@ -24,6 +26,7 @@ const {
   data-copy-button
   data-copy-text={text}
   data-copy-url={url}
+  data-copy-section={sectionId}
   type="button"
 >
   {displayText && (

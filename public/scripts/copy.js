@@ -33,6 +33,11 @@ document.querySelectorAll("[data-copy-button]").forEach((button) => {
         if (!response.ok) throw new Error("Copy source could not be loaded");
         text = await response.text();
       }
+      if (button.dataset.copySection) {
+        const url = new URL(window.location.href);
+        url.hash = button.dataset.copySection;
+        text = url.href;
+      }
 
       await sendToClipboard(text);
       window.clearTimeout(Number(button.dataset.copyTimer));

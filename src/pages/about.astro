@@ -114,6 +114,7 @@ npx simplest-sdd@latest analytics --format csv`;
         <p class="section-number">01</p>
         <div>
           <h2 id="why-title">Why Simplest SDD?</h2>
+          <CopyButton sectionId="why" label="Copy link to Why Simplest SDD?" className="section-copy-button" />
         </div>
       </div>
       <div class="why-grid">
@@ -139,6 +140,7 @@ npx simplest-sdd@latest analytics --format csv`;
         <p class="section-number">02</p>
         <div>
           <h2 id="how-title">What it does</h2>
+          <CopyButton sectionId="what-it-does" label="Copy link to What it does" className="section-copy-button" />
         </div>
         <span>Seven steps for work that deserves a spec.</span>
       </div>
@@ -160,6 +162,7 @@ npx simplest-sdd@latest analytics --format csv`;
         <p class="section-number">03</p>
         <div>
           <h2 id="useful-title">Why it is useful</h2>
+          <CopyButton sectionId="why-useful" label="Copy link to Why it is useful" className="section-copy-button" />
         </div>
       </div>
       <div class="benefit-grid">
@@ -177,6 +180,7 @@ npx simplest-sdd@latest analytics --format csv`;
         <p class="section-number">04</p>
         <div>
           <h2 id="activation-title">When it activates</h2>
+          <CopyButton sectionId="when-it-activates" label="Copy link to When it activates" className="section-copy-button" />
         </div>
       </div>
       <div class="activation-grid">
@@ -202,6 +206,7 @@ npx simplest-sdd@latest analytics --format csv`;
         <p class="section-number">05</p>
         <div>
           <h2 id="use-title">How to use it</h2>
+          <CopyButton sectionId="use-it" label="Copy link to How to use it" className="section-copy-button" />
         </div>
         <span>Copy one instruction and give it to your coding agent.</span>
       </div>
@@ -229,6 +234,7 @@ npx simplest-sdd@latest analytics --format csv`;
         <p class="section-number">06</p>
         <div>
           <h2 id="project-title">What it adds to a project</h2>
+          <CopyButton sectionId="project-output" label="Copy link to What it adds to a project" className="section-copy-button" />
         </div>
       </div>
       <div class="artifact-grid">
@@ -264,6 +270,7 @@ npx simplest-sdd@latest analytics --format csv`;
         <p class="section-number">07</p>
         <div>
           <h2 id="analytics-title">Execution analytics</h2>
+          <CopyButton sectionId="analytics" label="Copy link to Execution analytics" className="section-copy-button" />
         </div>
       </div>
       <div class="analytics-grid">
@@ -293,6 +300,7 @@ npx simplest-sdd@latest analytics --format csv`;
         <p class="section-number">08</p>
         <div>
           <h2 id="inspiration-title">Inspiration</h2>
+          <CopyButton sectionId="inspiration" label="Copy link to Inspiration" className="section-copy-button" />
         </div>
       </div>
       <div class="inspiration-grid">
@@ -1223,7 +1231,6 @@ npx simplest-sdd@latest analytics --format csv`;
   }
 
   .section-heading {
-    min-height: 5.2rem;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -1242,6 +1249,9 @@ npx simplest-sdd@latest analytics --format csv`;
 
   .section-heading > div {
     min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
   .section-heading > div > p,
@@ -1271,10 +1281,6 @@ npx simplest-sdd@latest analytics --format csv`;
     color: var(--muted);
     font: 500 .72rem/1.45 var(--font-sans);
     text-align: right;
-  }
-
-  .why-section .section-heading {
-    min-height: 4rem;
   }
 
   .why-grid,

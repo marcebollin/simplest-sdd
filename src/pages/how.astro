@@ -447,6 +447,11 @@ const currentRelease = schemaVersions.versions.find(
                       <div>
                         <span class="prompt-section__index">{String(index + 1).padStart(2, "0")}</span>
                         <h3>{section.title}</h3>
+                        <CopyButton
+                          sectionId={section.id}
+                          label={`Copy link to ${section.title}`}
+                          className="section-copy-button"
+                        />
                       </div>
                       <div class="prompt-section__meta">
                         <span class="line-range">Lines {section.startLine}–{endLine}</span>
