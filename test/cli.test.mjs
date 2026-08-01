@@ -32,9 +32,23 @@ test("prints init instructions", () => {
 
   assert.match(output, /Simplest SDD Init Instructions/);
   assert.match(output, /@AGENTS\.md/);
-  assert.match(output, /simplest-sdd-schema-version: 0\.8\.0/);
-  assert.match(output, /request-refinement round/);
-  assert.match(output, /waits for explicit approval before implementation/);
+  assert.match(output, /simplest-sdd-schema-version: 0\.12\.0/);
+  assert.match(output, /purely presentational design, styling, spacing, or layout change/i);
+  assert.match(output, /must not activate the workflow solely because reviewing/i);
+  assert.match(output, /mandatory discovery/i);
+  assert.match(output, /Documentation impact/);
+  assert.match(output, /Existing spec likely to update automatically/);
+  assert.match(output, /Automatically update the existing owning business and technical spec files/);
+  assert.match(output, /without requiring business-spec approval/);
+  assert.match(output, /Any existing spec classified `changed` is maintained automatically/);
+  assert.match(output, /Create a new spec/);
+  assert.match(output, /Continue without a new spec/);
+  assert.match(output, /Mark exactly one option with `\(Recommended\)`/);
+  assert.match(output, /Discovery answers never imply consent to create a new spec/);
+  assert.match(output, /do not create `business\.html`.*`execution\.json`/s);
+  assert.match(output, /No independent technical approval required/);
+  assert.match(output, /Creating no new spec does not imply technical approval/);
+  assert.match(output, /Every discovery message.*final result must expose.*exact path or anchor/s);
   assert.match(output, /Inspect And Discover The Testing Discipline/);
   assert.match(output, /resolved testing discipline/);
   assert.match(output, /npx skills add https:\/\/github\.com\/mattpocock\/skills --skill tdd -y/);
@@ -52,6 +66,14 @@ test("prints init instructions", () => {
   assert.match(output, /load only those category documents/);
   assert.match(output, /default is not to create a decision/i);
   assert.match(output, /decision-category\.html/);
+  assert.match(output, /data-artifact="business-spec"/);
+  assert.match(output, /body\[data-artifact="technical-spec"\]/);
+  assert.match(output, /\.keyword, mark/);
+  assert.match(output, /Document relationships/);
+  assert.match(output, /\| Role \| Document \| Why it matters \|/);
+  assert.match(output, /direct behavior dependency, owns a shared contract, overlaps scope.*or is superseded/i);
+  assert.match(output, /Do not add a direct link because two documents share keywords/i);
+  assert.match(output, /plan also links to `execution\.json`/i);
 });
 
 test("prints detected update state", () => {
@@ -69,7 +91,7 @@ test("prints detected update state", () => {
   const output = run(["update", "--cwd", cwd]);
 
   assert.match(output, /Detected Local State/);
-  assert.match(output, /Latest schema version: `0\.8\.0`/);
+  assert.match(output, /Latest schema version: `0\.12\.0`/);
   assert.match(output, /regular file importing @AGENTS\.md/);
   assert.match(output, /found \(0\.2\.0\)/);
   assert.match(output, /wait for explicit approval before implementation/);
@@ -77,6 +99,18 @@ test("prints detected update state", () => {
   assert.match(output, /library index: HTML index found/);
   assert.match(output, /always offer same-session/i);
   assert.match(output, /### 0\.8\.0/);
+  assert.match(output, /### 0\.9\.0/);
+  assert.match(output, /### 0\.10\.0/);
+  assert.match(output, /### 0\.11\.0/);
+  assert.match(output, /### 0\.12\.0/);
+  assert.match(output, /Create a new spec.*Continue without a new spec/s);
+  assert.match(output, /automatically (?:refresh|update) an existing spec/i);
+  assert.match(output, /provisional documentation-impact/i);
+  assert.match(output, /Preserve explicit technical approvals in every branch/i);
+  assert.match(output, /semantic artifact accents/i);
+  assert.match(output, /Document relationships table/i);
+  assert.match(output, /topic similarity/i);
+  assert.match(output, /no business requirement or behavior change/i);
   assert.match(output, /Decision impact/);
   assert.match(output, /create no empty categories/i);
   assert.match(output, /reliably inferred/i);
@@ -91,13 +125,17 @@ test("omits migration history for a current installation", () => {
   fs.mkdirSync(skillDir, { recursive: true });
   fs.writeFileSync(
     path.join(skillDir, "SKILL.md"),
-    "---\nname: spec-library\ndescription: Test skill.\n---\n\n<!-- simplest-sdd-schema-version: 0.8.0 -->\n"
+    "---\nname: spec-library\ndescription: Test skill.\n---\n\n<!-- simplest-sdd-schema-version: 0.12.0 -->\n"
   );
 
   const output = run(["update", "--cwd", cwd]);
 
   assert.match(output, /installed schema is current; no migration history is needed/);
   assert.doesNotMatch(output, /### 0\.8\.0/);
+  assert.doesNotMatch(output, /### 0\.10\.0/);
+  assert.doesNotMatch(output, /### 0\.11\.0/);
+  assert.doesNotMatch(output, /### 0\.12\.0/);
+  assert.doesNotMatch(output, /### 0\.9\.0/);
   assert.doesNotMatch(output, /### 0\.6\.0/);
   assert.doesNotMatch(output, /### 0\.5\.0/);
 });

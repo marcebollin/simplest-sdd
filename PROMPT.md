@@ -8,7 +8,7 @@ npx simplest-sdd@latest init
 
 Copy the printed instructions into a coding agent opened at the root of the project you want to configure.
 
-The maintained init prompt lives at [prompts/init.md](prompts/init.md). It installs the current schema, keeps `AGENTS.md` canonical, creates `CLAUDE.md` as a regular file that imports `@AGENTS.md`, keeps the Claude skill compatibility symlink, and uses clean static HTML for the root library index, specs, plans, decisions, supporting indexes, and templates. It also installs approval-gated orchestration: one integrated classified task plan, model-agnostic execution recommendations, same-session/delegated/hybrid/custom selection, isolated delegated worktrees, and structured post-execution analytics.
+The maintained init prompt lives at [prompts/init.md](prompts/init.md). It installs the current schema, keeps `AGENTS.md` canonical, creates `CLAUDE.md` as a regular file that imports `@AGENTS.md`, keeps the Claude skill compatibility symlink, and uses clean static HTML with semantic document colors, restrained keyword highlights, and explicit cross-document relationships. Activated requests always receive discovery with visible spec and decision impact. An existing owning spec updates automatically; the user is asked only before a new spec is created.
 
 For update and removal flows, use:
 

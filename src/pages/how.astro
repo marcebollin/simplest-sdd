@@ -53,7 +53,7 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "indigo"
   },
   "Gate": {
-    explanation: "Keeps the framework lightweight. A spec is required when review cost, ambiguity, risk, or handoff justifies it—not merely because a change touches several files.",
+    explanation: "Keeps the framework lightweight. Substantive, ambiguous, risky, or handed-off work receives discovery, while small and presentation-only changes proceed directly.",
     tone: "amber",
     reference: {
       label: "Augment Code: What Is Spec-Driven Development?",
@@ -61,16 +61,24 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "Resolve Context": {
-    explanation: "Forces the plan to begin with repository reality: current decisions, real commands, existing conventions, and the exact code surfaces involved. This reduces hidden planner-session context.",
+    explanation: "Begins with repository reality and classifies the spec that owns the behavior separately from specs and decisions that are merely consulted or may change.",
     tone: "blue",
     reference: {
       label: "shadcn/improve",
       url: "https://github.com/shadcn/improve"
     }
   },
-  "Refine Request: Mandatory First Questions": {
-    explanation: "Separates understanding from implementation. The agent must resolve outcome, scope, behavior, constraints, and proof before it turns the request into an approvable spec.",
+  "Refine Request: Mandatory Discovery Questions": {
+    explanation: "Separates understanding from implementation and makes documentation impact visible. The discovery message names provisional owning, consulted, and potentially changed specs and decisions.",
     tone: "violet"
+  },
+  "Resolve The Spec Branch After Discovery": {
+    explanation: "Refreshes an existing owning spec automatically. Only when no spec owns the behavior does the agent label one of the new-spec or no-new-spec choices as recommended and wait.",
+    tone: "amber"
+  },
+  "Preserve Independent Technical Approvals": {
+    explanation: "Keeps sensitive change approval separate from documentation choice. Migrations, data, auth, billing, security, public contracts, infrastructure, and active decisions require approval in every branch.",
+    tone: "rose"
   },
   "HTML Artifacts": {
     explanation: "Makes every generated artifact pleasant for people to read while remaining plain text an agent can parse. The constraints favor durable, portable pages over an internal documentation app.",
@@ -80,12 +88,16 @@ const initAnnotations: Record<string, Annotation> = {
     explanation: "Separates the product contract, technical design, implementation handoff, and execution facts. Each reader can load the layer it needs without carrying the whole history.",
     tone: "teal"
   },
+  "Connect Documents With Explicit Relationships": {
+    explanation: "Makes cross-document context deliberate. Every link names the target’s role and why it matters, while precise criteria prevent topic similarity from turning the library into a noisy web.",
+    tone: "cyan"
+  },
   "Record Decision Impact Without Creating Ceremony": {
-    explanation: "Preserves choices only when future work genuinely depends on them. Local or easily inferred details stay in the spec and code instead of inflating a decision registry.",
+    explanation: "Preserves choices only when future work genuinely depends on them and requires every user-facing checkpoint to name the exact decisions consulted or changed.",
     tone: "green"
   },
-  "Generate Spec And Wait For Approval": {
-    explanation: "Turns the spec into a human checkpoint. The agent can prepare the contract and plan, but it cannot change product code until the user approves what will be built.",
+  "Generate A New Spec Only When Selected And Wait For Approval": {
+    explanation: "Creates a new contract only after the user selects it, records every consulted or changed spec and decision, then waits for the required approvals.",
     tone: "rose",
     reference: {
       label: "Augment Code: What Is Spec-Driven Development?",

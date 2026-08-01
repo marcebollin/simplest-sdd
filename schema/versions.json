@@ -1,6 +1,102 @@
 {
-  "currentSchemaVersion": "0.8.0",
+  "currentSchemaVersion": "0.12.0",
   "versions": [
+    {
+      "version": "0.12.0",
+      "date": "2026-07-30",
+      "summary": "Reuses an existing owning spec automatically, asks only before creating a new spec, and makes spec and decision impact visible throughout the workflow.",
+      "changes": [
+        "Inspect specs and decisions before discovery and include their exact paths or anchors in a provisional documentation-impact block with the discovery questions.",
+        "After discovery, automatically refresh an existing spec that already owns the changed behavior without requiring business-spec approval.",
+        "Automatically maintain every other existing spec whose durable contract must change, regardless of whether the user creates a new feature spec.",
+        "Ask Create a new spec versus Continue without a new spec only when no existing spec owns the behavior, with exactly one Recommended label.",
+        "Keep independent explicit technical approvals for migrations, data, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes in every branch.",
+        "Show every spec and decision consulted, used, automatically updated, or changed in discovery, approval, generated-artifact, automatic-update, and final messages."
+      ],
+      "migrations": [
+        {
+          "from": "0.11.0",
+          "steps": [
+            "Update SKILL.md context resolution to classify an existing owning spec separately from merely related or consulted specs and decisions.",
+            "Add a provisional documentation-impact block with exact spec paths and decision anchors to the mandatory discovery message.",
+            "When an existing spec owns the behavior, update it automatically after discovery, preserve its history, report exact files changed, and do not require business-spec approval.",
+            "Automatically update other existing specs classified changed when the selected branch becomes authoritative; do not treat maintenance of an existing contract as creation of a new spec.",
+            "When no existing spec owns the behavior, ask Create a new spec versus Continue without a new spec, label exactly one option Recommended, and create a feature spec only after the user selects it.",
+            "Preserve explicit technical approvals in every branch, including the no-new-spec and automatic existing-spec branches.",
+            "Require discovery, branch-selection, approval, generated-spec, automatic-update, and final messages to distinguish specs and decisions consulted, unchanged, pending, and changed."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.11.0",
+      "date": "2026-07-30",
+      "summary": "Makes discovery mandatory whenever the workflow activates, then gives the user an explicit recommended choice to create a spec or continue without one.",
+      "changes": [
+        "Always run the request-refinement discovery round when the spec-library skill activates, including when the agent expects to recommend continuing without a spec.",
+        "After discovery, present Create or update a spec and Continue without a spec, label exactly one option Recommended, and wait for the user's selection.",
+        "Generate or update spec, plan, execution, decision, and index artifacts only when the user explicitly selects the spec path.",
+        "When the user continues without a spec, implement and verify the refined request directly in the current session without spec approval, execution-strategy selection, analytics recording, or artifact close-out."
+      ],
+      "migrations": [
+        {
+          "from": "0.10.0",
+          "steps": [
+            "Update the AGENTS.md workflow note so every activated request runs mandatory discovery before any spec decision.",
+            "Update SKILL.md so it asks Create or update a spec versus Continue without a spec after discovery, labels exactly one option (Recommended), and waits for the user's selection.",
+            "Move all spec generation and updates behind the explicit spec choice; discovery answers alone must never authorize artifact creation.",
+            "Define the no-spec path as direct same-session implementation and verification with no new or changed spec-library artifacts, spec approval, execution-strategy selection, analytics record, or artifact close-out.",
+            "Preserve the existing five-minute and presentation-only activation rules, independent risk and handoff triggers, resolved testing discipline, and any stricter local gates."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.10.0",
+      "date": "2026-07-29",
+      "summary": "Adds a restrained semantic color system for scannable HTML artifacts and replaces vague related links with explicit, reasoned document relationships.",
+      "changes": [
+        "Give business specs, technical specs, plans, and decision documents stable artifact-specific accent colors while preserving high contrast in light and dark modes.",
+        "Add reusable status badge, keyword highlight, callout, and relationship-table styles so important contract language is easier to scan without relying on color alone.",
+        "Replace vague Related sections with Document relationships tables that identify each linked artifact's role and explain why the current document needs it.",
+        "Require direct sibling links among each feature's business, technical, and plan documents, plus the execution record from the plan.",
+        "Define when decisions, related specs, exact anchors, indexes, and external sources deserve explicit links, and prohibit links based only on topic similarity."
+      ],
+      "migrations": [
+        {
+          "from": "0.9.0",
+          "steps": [
+            "Preserve project-customized palettes; otherwise update generated HTML templates with the semantic artifact accents, badges, restrained keyword highlights, callouts, and accessible light/dark colors.",
+            "Add data-artifact to template body elements so business, technical, plan, decision, and index documents receive a stable labeled visual identity.",
+            "Replace each template's vague Related section with a Document relationships table containing Role, Document, and Why it matters columns.",
+            "Add direct relative links among sibling business.html, technical.html, and plan.html documents; add execution.json to the plan; link decisions to exact stable anchors.",
+            "Add related specs only for a direct behavior dependency, shared contract, scope interaction, or supersession, and state the reason; do not link documents merely because their topics are similar.",
+            "Apply the new styling and relationship contract to existing active generated artifacts when ownership and link targets are clear; preserve customized or historical artifacts rather than rewriting them blindly."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.9.0",
+      "date": "2026-07-29",
+      "summary": "Limits the five-minute review trigger to business or product behavior changes so presentation-only design and layout work can proceed directly.",
+      "changes": [
+        "Apply the five-minute review threshold only when a request introduces or changes a business requirement, product behavior, business logic, rule, workflow, or externally observable functional outcome.",
+        "Implement purely presentational design, styling, spacing, and layout changes directly when they contain no business requirement or behavior change, regardless of review time.",
+        "Preserve independent workflow triggers for meaningful product ambiguity, expensive misunderstandings, architecture/data/auth/security/billing/public-contract risk, multi-session handoffs, behavior covered by an existing spec, and stricter local rules."
+      ],
+      "migrations": [
+        {
+          "from": "0.8.0",
+          "steps": [
+            "Update the AGENTS.md workflow resolver so its five-minute row applies only to business requirements and product behavior changes.",
+            "Add a direct-execution row for purely presentational design, styling, spacing, or layout changes with no business requirement or behavior change, regardless of review time.",
+            "Update SKILL.md so review time alone never activates the workflow for those presentation-only changes.",
+            "Preserve all independent risk, ambiguity, handoff, existing-spec, active-decision, and stricter local gates."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.8.0",
       "date": "2026-07-22",

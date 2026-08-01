@@ -2,7 +2,7 @@
 
 **A small spec-driven development framework for building software with AI coding agents.**
 
-Simplest SDD turns a feature request into a clear agreement between you and your agent: what to build, why it matters, how it should work, and how you will know it is done.
+Simplest SDD refines a feature request with you, keeps an existing durable agreement current when one already owns the behavior, and asks before creating a new one.
 
 It adds structure when a change is large, ambiguous, or risky—and stays out of the way when a change is small and obvious.
 
@@ -14,27 +14,29 @@ Long prompts do not solve that problem. They disappear into conversation history
 
 Simplest SDD keeps the smallest useful loop:
 
-> Understand → specify → approve → plan → execute → verify → learn
+> Understand → reuse or choose a spec → execute → verify → learn
 
 The result is less guessing, clearer human control, and project knowledge that improves instead of resetting with every agent session.
 
 ## What It Does
 
-For work that deserves a spec, Simplest SDD:
+For work that activates its discovery workflow, Simplest SDD:
 
 1. **Understands the project.** The agent inspects the repository, existing instructions, intended users, product goals, and testing approach before proposing changes.
-2. **Refines the request.** It asks one focused round of questions to resolve outcomes, scope, behavior, constraints, and proof.
-3. **Creates a shared contract.** It writes a concise business spec, technical spec, and integrated implementation plan.
-4. **Waits for approval.** No implementation starts until you approve the spec. Sensitive technical changes receive an additional approval gate.
-5. **Chooses an execution approach with you.** It can recommend working in the current session, delegating bounded tasks, using a hybrid approach, or following a custom assignment. No subagent starts without your approval.
-6. **Implements and verifies.** The approved plan follows the repository's existing testing discipline and records what actually happened.
-7. **Keeps useful memory.** Specs, important decisions, verification results, execution strategy, models, tokens, and outcomes remain in a browsable project library for future work.
+2. **Refines the request visibly.** It asks one focused round of questions and names the specs and decisions it expects to consult or change.
+3. **Reuses an existing contract automatically.** If an existing spec owns the behavior, it updates that spec after discovery, preserves its history, and reports the exact files changed.
+4. **Asks only before creating a new spec.** When no existing spec owns the behavior, it recommends creating a new spec or continuing without one, labels only the recommended choice, and waits.
+5. **Preserves sensitive approvals.** Migrations, data, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes still require explicit approval in every branch.
+6. **Implements and verifies.** It follows the new spec, refreshed existing spec, or refined no-new-spec request using the repository's testing discipline.
+7. **Reports durable impact.** Generated artifacts and user-facing updates name every spec and decision consulted, unchanged, pending, or changed.
+
+The HTML documents use a small semantic color system—violet for business, blue for technical design, green for plans, and amber for decisions—plus restrained highlights for important contract terms. Each feature document also identifies its relationship to the product contract, technical design, implementation plan, execution record, applicable decisions, and only genuinely dependent specs.
 
 ## Why It Is Useful
 
 - **Fewer expensive misunderstandings.** You review the intended outcome before reviewing a large code change.
 - **Better continuity.** Future agents can find the product intent, technical boundaries, and important decisions without replaying old conversations.
-- **Human control at the right moments.** You approve both what will be built and how the work will be executed.
+- **Human control at the right moments.** Existing contracts stay current automatically, new contracts require your choice, and sensitive technical changes keep their explicit approval gate.
 - **Focused context.** Agents load the relevant spec and decisions instead of carrying the entire project history into every task.
 - **Safer delegation.** Parallel work is recommended only when tasks have clear boundaries and independent verification.
 - **Provider independence.** The framework recommends capabilities and reasoning effort, not hard-coded model names.
@@ -42,16 +44,16 @@ For work that deserves a spec, Simplest SDD:
 
 ## When It Activates
 
-Use the full workflow when:
+Run discovery when:
 
-- reviewing the expected result would take more than about five minutes;
+- a business requirement or product behavior is changing and reviewing the expected result would take more than about five minutes;
 - product behavior is meaningfully ambiguous;
 - a misunderstanding would be expensive;
 - architecture, data, authentication, billing, security, or public contracts are involved;
 - work will cross sessions or be delegated; or
 - the behavior is already covered by an existing spec.
 
-Clear, low-risk changes that are easy to review can still be implemented directly. Simplest SDD is a guardrail, not a requirement to write a document for every edit.
+Purely presentational design, styling, spacing, or layout changes with no business requirement or behavior change should be implemented directly, even when visual review may take more than five minutes, unless another trigger above applies. Other clear, low-risk changes that are easy to review can also be implemented directly. When discovery runs, an existing owning spec updates automatically; the agent asks about a new spec only when no existing spec owns the behavior.
 
 ## How To Use It
 
@@ -92,7 +94,7 @@ CLAUDE.md                         # imports AGENTS.md for Claude
 └── templates/                    # reusable document structure
 ```
 
-The library uses plain, static files that remain readable by people and agents. `AGENTS.md` and `.agents/skills` are the source of truth, with a compatibility link for Claude skills.
+The library uses plain, static files that remain readable by people and agents. Cross-document links name both the target's role and why it matters, so readers can follow the feature without guessing what a generic “related” link means. `AGENTS.md` and `.agents/skills` are the source of truth, with a compatibility link for Claude skills.
 
 See the [examples](examples/) for an anonymized request-refinement conversation, generated specs, and an execution record.
 

@@ -18,9 +18,10 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Use `CLAUDE.md` as a regular Claude import file containing `@AGENTS.md`, not as a symlink.
 - Keep `.agents/skills/spec-library` as the canonical skill directory.
 - Keep `.claude/skills/spec-library -> ../../.agents/skills/spec-library` for Claude skill compatibility.
-- Use clean static HTML for the root library index, specs, living decision category documents, plans, supporting indexes, and templates.
+- Use clean static HTML with semantic artifact colors and explicit document relationships for the root library index, specs, living decision category documents, plans, supporting indexes, and templates.
 - Never delete user-authored specs or decisions during update.
 - Keep decision documentation sparse: do not create empty categories or promote choices that remain reliably inferable from code, conventions, or an active specification.
+- Preserve mandatory discovery for every request that activates the skill. Automatically refresh an existing owning spec after discovery; require an explicit user choice only before creating a new spec.
 - Preserve an existing explicit delegation policy. Otherwise let the planner recommend delegation, but require explicit user approval of the proposed topology and assignments before spawning subagents.
 - Keep recommendations model-agnostic through capability profiles and effort; record actual models in execution data after runs.
 - Treat this migration as the active phase. After migrating and validating, stop before feature work, commits, pull requests, deployment, monitoring, or review handling unless the user explicitly requested it.
@@ -78,11 +79,18 @@ Before finishing:
 - confirm `CLAUDE.md` is a regular file containing `@AGENTS.md`;
 - confirm `.agents/skills/spec-library/SKILL.md` has the latest schema marker;
 - confirm `SKILL.md` records the resolved testing discipline by name and its implement-and-verify step follows that discipline (not a hardcoded `tdd` requirement);
+- confirm `SKILL.md` always runs mandatory discovery when activated and includes a provisional list of owning, consulted, and potentially changed specs and decisions by exact path or anchor;
+- confirm `SKILL.md` automatically updates an existing owning spec after discovery without business-spec approval, preserves prior history, and reports every consulted or changed spec and decision;
+- confirm `SKILL.md` asks `Create a new spec` versus `Continue without a new spec` only when no existing spec owns the behavior, labels exactly one choice `(Recommended)`, and creates no new feature spec unless the user selects it;
+- confirm every branch preserves explicit technical approval for migrations, data, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes;
 - confirm every feature keeps one integrated `plan.html` with detailed classified tasks instead of independent task-plan files;
 - confirm delegation recommendations require an explicit user strategy selection, same-session is always offered, and actual runtime models are recorded separately from capability recommendations;
 - confirm every new feature has a valid `execution.json`; run `npx simplest-sdd@latest analytics` and rebuild the committed JSONL ledger when records exist;
 - confirm `.claude/skills/spec-library` resolves to `../../.agents/skills/spec-library`;
 - confirm the root library index, current templates, supporting indexes, specs, plans, and decisions are HTML or that old Markdown copies were intentionally preserved to avoid data loss;
+- confirm uncustomized current templates and active generated artifacts use accessible artifact-specific accents, visible text labels and status badges, and restrained highlights for consequential keywords;
+- confirm business, technical, and plan templates use `Document relationships` tables with role, exact document link, and a useful reason instead of a vague `Related` list;
+- confirm feature siblings link directly to one another, plans link `execution.json`, applicable decisions use exact stable anchors, and related-spec links meet the dependency/shared-contract/scope-interaction/supersession criteria;
 - confirm `decisions/index.html` routes agents to populated category documents, technical specs have a concise Decision impact section, and active-decision changes require explicit approval;
 - confirm decision documents contain only choices whose intent is materially safer to preserve than infer, with no empty categories or routine implementation details;
 - confirm no specs, decisions, unrelated skills, or existing instructions were lost;

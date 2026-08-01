@@ -12,42 +12,42 @@ const steps = [
     description: "The agent inspects the repository, existing instructions, intended users, product goals, and testing approach before proposing changes."
   },
   {
-    title: "Refines the request",
-    description: "It asks one focused round of questions to resolve outcomes, scope, behavior, constraints, and proof."
+    title: "Refines the request visibly",
+    description: "It asks focused questions and names the specs and decisions it expects to consult or change."
   },
   {
-    title: "Creates a shared contract",
-    description: "It writes a concise business spec, technical spec, and integrated implementation plan."
+    title: "Reuses an existing contract",
+    description: "If a spec owns the behavior, it updates that contract automatically and reports the exact files changed."
   },
   {
-    title: "Waits for approval",
-    description: "No implementation starts until you approve the spec. Sensitive technical changes receive an additional approval gate."
+    title: "Asks only before a new spec",
+    description: "When no spec owns the behavior, it recommends creating a new one or continuing without one and waits for your choice."
   },
   {
-    title: "Chooses an execution approach with you",
-    description: "It can recommend the current session, bounded delegation, a hybrid approach, or a custom assignment. No subagent starts without your approval."
+    title: "Preserves sensitive approvals",
+    description: "Migrations, data, auth, billing, security, public contracts, infrastructure, and active decisions retain explicit approval."
   },
   {
     title: "Implements and verifies",
-    description: "The approved plan follows the repository’s existing testing discipline and records what actually happened."
+    description: "It follows the new spec, refreshed existing spec, or refined no-new-spec request using the repository’s testing discipline."
   },
   {
-    title: "Keeps useful memory",
-    description: "Specs, important decisions, verification, strategy, models, tokens, and outcomes remain in a browsable project library."
+    title: "Reports durable impact",
+    description: "Every update names the specs and decisions consulted, unchanged, pending, or changed."
   }
 ];
 
 const benefits = [
   ["Fewer expensive misunderstandings", "Review the intended outcome before reviewing a large code change."],
   ["Better continuity", "Future agents can find intent, boundaries, and decisions without replaying old conversations."],
-  ["Human control at the right moments", "Approve both what will be built and how the work will be executed."],
+  ["Human control at the right moments", "Reuse existing contracts automatically, ask before new ones, and keep sensitive technical approvals explicit."],
   ["Safer delegation", "Parallel work is suggested only for tasks with clear boundaries and independent verification."],
   ["Provider independence", "Recommend capabilities and reasoning effort instead of hard-coded model names."],
   ["A feedback loop", "Compare plans, routing choices, cost, verification, and outcomes over time."]
 ];
 
 const activationTriggers = [
-  "Reviewing the expected result would take more than about five minutes",
+  "A business requirement or product behavior is changing and reviewing the expected result would take more than about five minutes",
   "Product behavior is meaningfully ambiguous",
   "A misunderstanding would be expensive",
   "Architecture, data, authentication, billing, security, or public contracts are involved",
@@ -88,8 +88,8 @@ npx simplest-sdd@latest analytics --format csv`;
         <p class="hero-tagline"><span class="title-highlight title-highlight--orange">Nothing</span> when it doesn’t.</p>
         <p class="hero-summary">
           Simplest SDD is a small spec-driven development framework for building software with AI coding agents.
-          It turns a feature request into a clear agreement: what to build, why it matters, how it should work,
-          and how you will know it is done.
+          It refines a feature request with you, refreshes an existing durable agreement when one owns the behavior,
+          and asks before creating a new one.
         </p>
       </div>
     </section>
@@ -142,7 +142,7 @@ npx simplest-sdd@latest analytics --format csv`;
           <h2 id="how-title">What it does</h2>
           <CopyButton sectionId="what-it-does" label="Copy link to What it does" className="section-copy-button" />
         </div>
-        <span>Seven steps for work that deserves a spec.</span>
+        <span>Seven steps from visible discovery to durable, current contracts.</span>
       </div>
       <ol class="step-grid">
         {steps.map((step, index) => (
@@ -185,17 +185,18 @@ npx simplest-sdd@latest analytics --format csv`;
       </div>
       <div class="activation-grid">
         <div>
-          <p class="activation-intro">The full workflow activates automatically when:</p>
+          <p class="activation-intro">The mandatory discovery round activates when:</p>
           <ul>
             {activationTriggers.map((trigger) => <li>{trigger}</li>)}
           </ul>
         </div>
         <aside>
-          <p>Small and obvious?</p>
+          <p>No business behavior change?</p>
           <strong>Just build it.</strong>
           <span>
-            Clear, low-risk changes that are easy to review can still be implemented directly. Simplest SDD is a
-            guardrail, not a document requirement for every edit.
+            Purely presentational design, styling, spacing, or layout changes should be implemented directly even
+            when visual review takes more than five minutes, unless another trigger applies. After discovery, an
+            owning spec updates automatically; you choose only when a new spec would be created.
           </span>
         </aside>
       </div>
@@ -251,8 +252,8 @@ npx simplest-sdd@latest analytics --format csv`;
             <code>.agents/skills</code> are the source of truth, with a compatibility link for Claude skills.
           </p>
           <p>
-            Business intent, technical boundaries, execution details, and durable decisions stay separate so an
-            agent can load only the context it needs.
+            Business intent, technical boundaries, execution details, and durable decisions use distinct semantic
+            colors and restrained highlights. Explicit relationship links explain which document to read next and why.
           </p>
           <a
             href="https://github.com/marcebollin/simplest-sdd/tree/main/examples"
