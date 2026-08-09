@@ -32,8 +32,8 @@ const steps = [
     description: "It follows the new spec, refreshed existing spec, or refined no-new-spec request using the repository’s testing discipline."
   },
   {
-    title: "Reports durable impact",
-    description: "Every update names the specs and decisions consulted, unchanged, pending, or changed."
+    title: "Closes the feedback loop",
+    description: "For spec-backed work, it records your anchored 1–10 rating and optional comment, then reports every durable spec and decision impact."
   }
 ];
 
@@ -43,7 +43,7 @@ const benefits = [
   ["Human control at the right moments", "Reuse existing contracts automatically, ask before new ones, and keep sensitive technical approvals explicit."],
   ["Safer delegation", "Parallel work is suggested only for tasks with clear boundaries and independent verification."],
   ["Provider independence", "Recommend capabilities and reasoning effort instead of hard-coded model names."],
-  ["A feedback loop", "Compare plans, routing choices, cost, verification, and outcomes over time."]
+  ["A human feedback loop", "Compare plans, routing choices, cost, verification, outcomes, and your ratings over time."]
 ];
 
 const activationTriggers = [
@@ -64,7 +64,7 @@ CLAUDE.md                         # imports AGENTS.md for Claude
 │   ├── business.html             # why and what
 │   ├── technical.html            # how and boundaries
 │   ├── plan.html                 # tasks and verification
-│   └── execution.json            # execution facts and outcomes
+│   └── execution.json            # execution facts, outcomes, and human ratings
 ├── decisions/                    # durable decisions only
 └── templates/                    # reusable document structure`;
 
@@ -278,9 +278,9 @@ npx simplest-sdd@latest analytics --format csv`;
         <div class="prose">
           <p>
             Validate and summarize the execution records stored with each feature. Compare plans, routing choices,
-            models, token use, verification, and outcomes using facts from real runs.
+            models, token use, verification, outcomes, and your anchored 1–10 ratings using facts from real runs.
           </p>
-          <p class="muted-note">The goal is a better feedback loop—not reporting work for its own sake.</p>
+          <p class="muted-note">An optional comment preserves why you chose the score. The goal is a better feedback loop—not reporting work for its own sake.</p>
         </div>
         <div class="command-panel">
           <div class="panel-bar">

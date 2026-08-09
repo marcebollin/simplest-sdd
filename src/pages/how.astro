@@ -121,8 +121,12 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "Close Out And Self-Improve": {
-    explanation: "Reconciles what was planned with what actually shipped. It updates durable artifacts, records execution facts, and changes the skill only when repeated friction reveals a reusable guardrail.",
+    explanation: "Reconciles what was planned with what actually shipped. It updates durable artifacts, records objective execution facts, and changes the skill only when repeated friction reveals a reusable guardrail.",
     tone: "green"
+  },
+  "Request And Record Human Evaluation": {
+    explanation: "Closes the loop only for work with an execution record. After showing the verified result, the agent asks for an anchored 1–10 score and optional comment, ties it to the exact runs, and never invents feedback.",
+    tone: "amber"
   },
   "Root Library Index": {
     explanation: "Provides progressive disclosure for humans and agents. The index helps a reader choose the relevant artifact without loading every spec, decision, plan, and execution record.",

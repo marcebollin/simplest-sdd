@@ -28,7 +28,7 @@ For work that activates its discovery workflow, Simplest SDD:
 4. **Asks only before creating a new spec.** When no existing spec owns the behavior, it recommends creating a new spec or continuing without one, labels only the recommended choice, and waits.
 5. **Preserves sensitive approvals.** Migrations, data, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes still require explicit approval in every branch.
 6. **Implements and verifies.** It follows the new spec, refreshed existing spec, or refined no-new-spec request using the repository's testing discipline.
-7. **Reports durable impact.** Generated artifacts and user-facing updates name every spec and decision consulted, unchanged, pending, or changed.
+7. **Closes the feedback loop.** When the work has an execution record, it asks for an anchored 1–10 rating and optional comment after showing the result, then reports every spec and decision consulted, unchanged, pending, or changed.
 
 The HTML documents use a small semantic color system—violet for business, blue for technical design, green for plans, and amber for decisions—plus restrained highlights for important contract terms. Each feature document also identifies its relationship to the product contract, technical design, implementation plan, execution record, applicable decisions, and only genuinely dependent specs.
 
@@ -40,7 +40,7 @@ The HTML documents use a small semantic color system—violet for business, blue
 - **Focused context.** Agents load the relevant spec and decisions instead of carrying the entire project history into every task.
 - **Safer delegation.** Parallel work is recommended only when tasks have clear boundaries and independent verification.
 - **Provider independence.** The framework recommends capabilities and reasoning effort, not hard-coded model names.
-- **A feedback loop.** Execution records make it possible to compare plans, routing choices, cost, verification, and outcomes over time.
+- **A human feedback loop.** Execution records make it possible to compare plans, routing choices, cost, verification, outcomes, and your ratings over time.
 
 ## When It Activates
 
@@ -89,7 +89,7 @@ CLAUDE.md                         # imports AGENTS.md for Claude
 │   ├── business.html             # why and what
 │   ├── technical.html            # how and boundaries
 │   ├── plan.html                 # tasks and verification
-│   └── execution.json            # execution facts and outcomes
+│   └── execution.json            # execution facts, outcomes, and human ratings
 ├── decisions/                    # durable decisions only
 └── templates/                    # reusable document structure
 ```
@@ -107,6 +107,10 @@ npx simplest-sdd@latest analytics
 npx simplest-sdd@latest analytics --format jsonl
 npx simplest-sdd@latest analytics --format csv
 ```
+
+Spec-backed executions end by asking one low-friction question: rate the whole execution from 1 to 10, where `1` means failed, `5` means mixed or partially successful, and `10` means excellent. You can add an optional comment about what most affected the score. The rating is linked to the exact run IDs it evaluates, so later executions of the same spec preserve their own feedback instead of overwriting history.
+
+Summary output shows the latest rating or feedback status per spec. JSON, JSONL, and CSV include the evaluation ID, status, scale, rating, comment, timestamps, and covered run. Because run-oriented exports repeat an evaluation that covers multiple runs, deduplicate aggregate rating analysis by `evaluationId`.
 
 For a local Codex session, it can also read model, effort, duration, and token totals without printing the conversation:
 
@@ -136,6 +140,6 @@ Simplest SDD combines a few ideas into a deliberately small framework.
 
 ## The Short Version
 
-Simplest SDD helps an AI agent understand before it builds, asks you to approve before it acts, verifies before it declares success, and leaves the project smarter for the next session.
+Simplest SDD helps an AI agent understand before it builds, asks you to approve before it acts, verifies before it declares success, asks how the execution went, and leaves the project smarter for the next session.
 
 Project website: [sd2.marcebollin.com](https://sd2.marcebollin.com)

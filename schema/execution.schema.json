@@ -15,7 +15,7 @@
     "runs"
   ],
   "properties": {
-    "schemaVersion": { "const": "1.0.0" },
+    "schemaVersion": { "enum": ["1.0.0", "1.1.0"] },
     "specId": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
     "title": { "type": "string", "minLength": 1 },
     "classification": {
@@ -89,8 +89,28 @@
     "runs": {
       "type": "array",
       "items": { "$ref": "#/$defs/run" }
+    },
+    "humanEvaluations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/humanEvaluation" }
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "schemaVersion": { "const": "1.1.0" } },
+        "required": ["schemaVersion"]
+      },
+      "then": { "required": ["humanEvaluations"] }
+    },
+    {
+      "if": {
+        "properties": { "schemaVersion": { "const": "1.0.0" } },
+        "required": ["schemaVersion"]
+      },
+      "then": { "not": { "required": ["humanEvaluations"] } }
+    }
+  ],
   "$defs": {
     "category": {
       "enum": ["feature", "bug", "security", "performance", "tests", "tech-debt", "migration", "dx", "docs", "research", "design"]
@@ -100,6 +120,64 @@
     "risk": { "enum": ["low", "medium", "high"] },
     "profile": { "enum": ["strong-planner", "strong-worker", "efficient-worker", "strong-reviewer", "efficient-reviewer"] },
     "strategyMode": { "enum": ["same-session", "delegated", "hybrid", "custom"] },
+    "humanEvaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "scale",
+        "runIds",
+        "rating",
+        "comment",
+        "requestedAt",
+        "recordedAt"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["pending", "rated", "declined"] },
+        "scale": { "const": "overall-execution-1-to-10-v1" },
+        "runIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "rating": { "type": ["integer", "null"], "minimum": 1, "maximum": 10 },
+        "comment": { "type": ["string", "null"] },
+        "requestedAt": { "type": "string", "format": "date-time" },
+        "recordedAt": { "type": ["string", "null"], "format": "date-time" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "rated" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "rating": { "type": "integer", "minimum": 1, "maximum": 10 },
+              "recordedAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "pending" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "rating": { "const": null },
+              "recordedAt": { "const": null }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "declined" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "rating": { "const": null },
+              "recordedAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      ]
+    },
     "task": {
       "type": "object",
       "additionalProperties": false,

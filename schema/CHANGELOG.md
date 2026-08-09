@@ -2,6 +2,23 @@
 
 This changelog tracks the installed simplest-sdd schema. Workflow releases advance the schema version; CLI-only releases may leave it unchanged.
 
+## 0.13.0 - 2026-08-08
+
+- After implementation and verification, asks for one neutrally worded overall execution rating from 1 to 10, anchored at 1 for failed, 5 for mixed or partially successful, and 10 for excellent, plus an optional comment whenever the request has an execution record.
+- Preserves multiple human evaluations in one execution record, with each evaluation linked to the run IDs it covers and tracked through `pending`, `rated`, or `declined` status without overwriting earlier feedback.
+- Advances new execution records to execution schema `1.1.0` while keeping analytics compatible with legacy `1.0.0` records and representing missing historical feedback as unavailable rather than inventing it.
+- Persists the user's rating, optional comment, or decline before rebuilding execution analytics and refreshing the root library index so evaluation status remains inspectable with the rest of the execution facts.
+- Skips the evaluation prompt on the no-new-spec branch and never infers a rating, comment, decline, or historical evaluation on the user's behalf.
+
+### Migration from 0.12.0
+
+1. Update `SKILL.md` so a terminal spec-backed implementation with `execution.json` presents its implementation and verification result, asks the anchored 1-to-10 overall execution question with an optional comment, and waits for the user's response; keep the no-new-spec branch unchanged and skip the question there.
+2. Upgrade the execution template, newly created execution records, and legacy records touched by a new execution to schema `1.1.0` with a `humanEvaluations` array that can preserve multiple human evaluations, the run IDs each one covers, optional comments, timestamps, and `pending`, `rated`, or `declined` status. Leave untouched historical `1.0.0` records readable without rewriting or invented feedback.
+3. Create the pending evaluation entry before asking, then update that same entry from the user's reply to `rated` or `declined` without guessing a score or comment; treat the reply as close-out continuation rather than a new request.
+4. After recording the reply, rebuild the JSONL analytics ledger and refresh the root library index so the latest evaluation status and rating are visible alongside execution details, then finish that execution's close-out. If the same reply contains separate explicit work, route it as a new phase instead of absorbing it into the rated execution.
+5. Update analytics validation and exports to accept execution schema `1.1.0` evaluations while continuing to read legacy `1.0.0` records; leave absent historical evaluations unavailable and never backfill inferred feedback.
+6. Update the generated execution template, examples, validation checks, and human-facing analytics documentation to explain the anchored scale, optional comment, lifecycle, run linkage, and legacy behavior.
+
 ## 0.12.0 - 2026-07-30
 
 - Inspects relevant specs and decisions before discovery and shows their exact paths or anchors with the discovery questions.

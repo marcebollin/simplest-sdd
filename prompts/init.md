@@ -95,7 +95,7 @@ Add or update a concise project guidance section containing:
 - Treat the user's current prompt as the authorized phase. Honor every stated stop point.
 - For spec-driven work, assess whether bounded tasks would benefit from delegated or hybrid execution. Explain the recommendation and wait for the user's explicit strategy selection before spawning any subagent.
 - Always offer same-session execution. It may edit the current checkout after the user approves a new spec, after an existing spec is refreshed automatically, or after the user explicitly chooses to continue without a new spec. Offer delegated or hybrid modes only when a new or existing spec provides a task structure that supports them, and show a concrete custom-assignment example.
-- When a prompt has no explicit stop point, stop after the selected strategy completes the approved implementation, verification, and simplest-sdd close-out.
+- When a prompt has no explicit stop point, stop after the selected strategy completes the approved implementation, verification, and simplest-sdd close-out. When the request has an `execution.json`, close-out includes asking for and recording the user's whole-execution rating; the no-new-spec path has no execution record and skips this feedback step.
 - Do not continue into commits, pull requests, deployment, monitoring, or review handling unless the current prompt explicitly requests it.
 ```
 
@@ -310,7 +310,7 @@ specs/<domain>-<feature>/
 - `business.html`: durable product contract. Goal, intended users, problem, outcomes, primary flow, clues/examples, scope, acceptance criteria, and open product questions. No file paths or implementation checklist.
 - `technical.html`: durable design. Current system, proposed approach, boundaries, failure/security/compatibility concerns, verification strategy, feature-local choices, decision impact, and optional diagrams or charts for non-obvious tradeoffs.
 - `plan.html`: implementation handoff. Goal and intended users, links to both specs and relevant decisions, ordered tasks, useful starting code surfaces, verification, discoveries, deviations, and completion summary.
-- `execution.json`: machine-readable classification, execution recommendation and user selection, task assignments, actual models, token usage, duration, verification, and outcomes. It complements the single integrated plan; it does not split the feature into independent plans.
+- `execution.json`: machine-readable classification, execution recommendation and user selection, task assignments, actual models, token usage, duration, verification, outcomes, and human evaluations of completed execution cycles. It complements the single integrated plan; it does not split the feature into independent plans.
 
 Keep all artifacts concise. Let the implementing agent inspect ordinary code details.
 
@@ -359,7 +359,7 @@ On the new-spec path, do not begin implementation, edit product code, or run imp
 
 Before stopping, structure `plan.html` as one integrated plan with detailed tasks. Every task needs an ID, primary category, effort, risk, plan confidence, delegation confidence, dependencies, parallelizability, exact in/out scope, verification command with expected result, and task-specific STOP conditions. Use these categories: `feature`, `bug`, `security`, `performance`, `tests`, `tech-debt`, `migration`, `dx`, `docs`, `research`, and `design`.
 
-Create `execution.json` beside the plan using execution schema version `1.0.0`. Record one primary category plus category tags, overall effort, separate plan and delegation confidence, planning commit, recommended strategy, options presented, detailed task assignments, and an empty runs array. Keep the actual planner model when it can be determined; otherwise use `null` until close-out.
+Create `execution.json` beside the plan using execution schema version `1.1.0`. Record one primary category plus category tags, overall effort, separate plan and delegation confidence, planning commit, recommended strategy, options presented, detailed task assignments, an empty runs array, and an empty `humanEvaluations` array. Keep the actual planner model when it can be determined; otherwise use `null` until close-out.
 
 ### Recommend An Execution Strategy And Wait
 
@@ -406,7 +406,7 @@ Before spawning a delegated run, resolve and state its actual available model an
 
 Review every delegated diff for scope and safety before running changed tests or other code from that worktree. Re-run the approved done criteria, inspect the tests, and allow at most two focused revision rounds before marking the task blocked. Never merge a delegated worktree automatically.
 
-Complete the selected implementation path and verification, then stop at the named condition. On both spec branches, also complete the analytics record and artifact close-out. In every final report, list exact specs and decisions consulted, automatically updated, changed after approval, and left unchanged. Do not commit in same-session mode, merge delegated work, open a pull request, deploy, monitor, or handle review comments unless the user's current prompt explicitly includes those actions. If new work appears, record it as a follow-up instead of silently expanding the phase.
+Complete the selected implementation path and verification, then stop at the named condition. On both spec branches, also complete the objective analytics record and artifact close-out, request the human evaluation described below, and finish close-out after the user's response. In the implementation report that requests feedback and in the final close-out report, list exact specs and decisions consulted, automatically updated, changed after approval, and left unchanged. Do not commit in same-session mode, merge delegated work, open a pull request, deploy, monitor, or handle review comments unless the user's current prompt explicitly includes those actions. If new work appears, record it as a follow-up instead of silently expanding the phase.
 
 ### Close Out And Self-Improve
 
@@ -414,13 +414,27 @@ Run feature artifact and analytics close-out for new and automatically updated e
 
 - Make business and technical specs describe what shipped, and verify their sibling and qualifying related-document links still express the actual relationship.
 - Complete the plan with verification evidence.
-- Complete `execution.json` with every distinct planner, orchestrator, executor, verifier, and reviewer run; selected versus recommended strategy; actual model and effort; outcome; revisions; duration; verification evidence; and token usage with its provenance (`measured`, `reported`, `estimated`, or `unavailable`) and scope (`task`, `run`, or `session`). Use `null` for an actual model only when the runtime does not expose it; never guess. Record a redacted `usageId` so the same session total is never counted in multiple run rows. For same-session work, record one orchestrator/executor run when planning and execution usage cannot be separated; keep planner identity in the planning block and mark token scope `session`.
+- Complete `execution.json` with every distinct planner, orchestrator, executor, verifier, and reviewer run; selected versus recommended strategy; actual model and effort; outcome; revisions; duration; verification evidence; and token usage with its provenance (`measured`, `reported`, `estimated`, or `unavailable`) and scope (`task`, `run`, or `session`). Use `null` for an actual model only when the runtime does not expose it; never guess. Record a redacted `usageId` so the same session total is never counted in multiple run rows. For same-session work, record one orchestrator/executor run when planning and execution usage cannot be separated; keep planner identity in the planning block and mark token scope `session`. Preserve every prior human evaluation when an existing spec is executed again.
 - When a local Codex session ID is available, use `npx simplest-sdd@latest codex-usage --session <id>` to read model, effort, duration, and token totals without copying conversation content. Do not commit raw session logs or unredacted session IDs.
 - Rebuild the committed analytics ledger with `npx simplest-sdd@latest analytics --format jsonl > .agents/skills/spec-library/data/executions.jsonl`. Generate CSV on demand with `npx simplest-sdd@latest analytics --format csv`; JSONL and each feature's `execution.json` are the durable sources.
 - Apply only approved general decision changes that actually shipped. Update the canonical category section in place for clarifications or scope extensions, add a compact change-history entry linking back to the feature spec, and change the spec's decision-impact wording from proposed to applied. Create a replacement and mark the old decision superseded only when its meaning is fundamentally reversed.
 - Keep the decision registry sparse. If the behavior remains reliably inferable, preserve the spec's “No durable decision impact” statement and create nothing.
 - Update the root library index, spec index, and decision index. Mark replaced artifacts as superseded instead of deleting history.
 - Improve the skill only when repeated friction reveals a reusable guardrail. Do not add ceremony for a one-off mistake.
+
+### Request And Record Human Evaluation
+
+Run this step only when the current request has an `execution.json`, which includes both the new-spec and automatic existing-spec branches. Do not run it on the no-new-spec path. Ask once after implementation, verification, and the objective close-out facts are complete, including for a terminal `complete`, `stopped`, `blocked`, or `failed` outcome; never ask during an approval pause.
+
+If a legacy schema `1.0.0` record owns the current execution, upgrade that touched record to `1.1.0` and initialize `humanEvaluations` without changing its existing runs or inventing historical feedback. Do not rewrite untouched historical records solely to add empty feedback. Before asking, append one evaluation entry for the just-finished execution cycle to `humanEvaluations`. Give it a unique ID, `status: "pending"`, `scale: "overall-execution-1-to-10-v1"`, the exact non-empty `runIds` being evaluated, `rating: null`, `comment: null`, the current `requestedAt`, and `recordedAt: null`. A run ID may belong to only one evaluation. Validate the record, rebuild `data/executions.jsonl`, and update the root index so the evaluation is visibly pending.
+
+Present the concise implementation and verification result first, then end with this neutral question and wait:
+
+> How would you rate this execution overall from 1 to 10? `1` means it failed, `5` means mixed or partially successful, and `10` means excellent. Optionally add what most affected your rating, or say `skip`.
+
+Do not infer a rating or comment from praise, frustration, approval, silence, or prior conversation. A response containing only evaluation feedback is a continuation of this close-out, not a new feature request, so do not restart discovery for that feedback. If the same message also contains an explicit new request, record the feedback first, finish this close-out, and then route the remaining request normally under the repository workflow instead of silently folding it into the completed execution. If the user supplies an integer from 1 through 10, change the pending entry to `rated`, store the number and their optional comment verbatim except for necessary secret redaction, and set `recordedAt`. If the user says `skip` or clearly declines, change it to `declined`, keep `rating: null`, preserve any comment they explicitly supplied, and set `recordedAt`. If the response is ambiguous or outside the scale, ask only for a valid integer or `skip`.
+
+After recording a rating or decline, validate `execution.json`, rebuild `data/executions.jsonl`, refresh the root index's evaluation metadata, and acknowledge the recorded state and exact execution-record path. Stop when the response contained only feedback; when it also contained explicit new work, handle that remaining request as a new phase under the normal workflow. Human feedback never changes the recorded objective outcome or verification evidence. If the user does not respond, leave the entry `pending`; never fabricate historical feedback during init, migration, or later analysis.
 
 ### Root Library Index
 
@@ -431,7 +445,7 @@ The root index must:
 - link to all internal spec-library documentation, including feature specs, plans, decisions, and supporting indexes;
 - keep an accessible "Latest documents" section ordered by each artifact's last-updated date;
 - provide short descriptions that help readers decide what to open without loading every artifact;
-- expose filterable execution metadata for each feature: primary category and tags, effort, plan/delegation confidence, selected strategy, actual execution models, total measured/reported tokens, and latest outcome; link to the feature's `execution.json` for details;
+- expose filterable execution metadata for each feature: primary category and tags, effort, plan/delegation confidence, selected strategy, actual execution models, total measured/reported tokens, latest outcome, evaluation count, and latest human rating or evaluation status; link to the feature's `execution.json` for details;
 - keep direct links internal to repository documentation. Internal documents may reference external URLs when useful;
 - remain useful as static HTML if JavaScript is unavailable;
 - include small client-side filtering or search only when it improves reading the library and does not replace normal links.
@@ -449,7 +463,7 @@ The templates should provide these sections:
 - Business: Goal, Intended users, Problem, Outcomes, User flow, Clues and examples, Scope in/out, Acceptance criteria, Open questions, Document relationships. Include status and last-updated metadata.
 - Technical: Current system, Proposed approach, Boundaries and contracts, Failure/security/compatibility, Verification strategy, Feature-local choices, Decision impact, Open questions, Document relationships. Include status and last-updated metadata.
 - Plan: Goal and intended users, Execution boundary, Strategy recommendation and user decision, Read first, one integrated task table (ID, category, effort, risk, plan confidence, delegation confidence, dependencies, parallelizability, recommended profile/effort, selected assignment), detailed task steps, scope, verification, STOP conditions, discoveries and deviations, completion summary, and Document relationships. Include status and last-updated metadata.
-- Execution: create a valid `execution.json` example using schema version `1.0.0`, all supported categories including `design`, capability profiles rather than durable provider model names, a null strategy selection before approval, detailed tasks, and an empty runs array.
+- Execution: create a valid `execution.json` example using schema version `1.1.0`, all supported categories including `design`, capability profiles rather than durable provider model names, a null strategy selection before approval, detailed tasks, an empty runs array, and an empty `humanEvaluations` array. Preserve legacy schema `1.0.0` records without inventing feedback.
 - Decision category: a living category document containing concise decision sections with stable IDs/anchors. Each section has Decision, Applies to, Why, How to apply, Exceptions, and Change history. Include active/superseded status and last-updated metadata. Amend in place for compatible changes; supersede only for a fundamental reversal.
 
 Use `data-artifact`, the corresponding visible `.kicker`, a text `.badge` for status, and the artifact's stable accent in every HTML template. Include a filled example `Document relationships` table with correct relative sibling paths and explanations; use placeholders only for optional decisions and related specs. Make important-keyword examples specific to the document type and restrained enough to demonstrate the contract without turning the page into a collection of highlights.
@@ -482,6 +496,8 @@ Before finishing:
 - confirm migrations, data, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes still require explicit technical approval in every branch;
 - confirm `plan.html` is a single integrated plan with classified tasks and a user-approved execution strategy before any delegation;
 - confirm every feature folder has a valid `execution.json`, and `npx simplest-sdd@latest analytics` validates all records;
+- confirm every new schema `1.1.0` execution record has a `humanEvaluations` array, legacy `1.0.0` history remains readable, and each evaluation's lifecycle, rating range, and run references are valid;
+- confirm the generated `SKILL.md` asks once for the anchored 1–10 whole-execution rating and optional comment whenever the current request has an execution record, waits for the response, never infers feedback, persists a rating or decline, and skips the no-new-spec path;
 - confirm `.agents/skills/spec-library/data/executions.jsonl` can be rebuilt from the per-spec records and CSV can be generated on demand;
 - confirm the root library index, specs, plans, decisions, supporting indexes, and templates are HTML files with readable focus styles, accessible semantic colors, visible artifact/status labels, and restrained keyword highlights;
 - confirm each feature's business, technical, and plan documents have a `Document relationships` table with valid sibling links and useful reasons, the plan links its execution record, and applicable decision links use exact anchors;

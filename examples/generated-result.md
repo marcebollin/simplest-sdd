@@ -22,7 +22,7 @@ For simplest-sdd maintenance instructions, run `npx simplest-sdd@latest update` 
 - Treat the user's current prompt as the authorized phase and honor every stated stop point.
 - During mandatory discovery, name the existing owning, consulted, and potentially changed specs and decisions. Refresh an existing owning spec automatically; ask whether to create a new spec only when no spec owns the behavior.
 - Always offer same-session execution and show a concrete custom assignment example.
-- Without an explicit stop point, stop after the selected strategy completes the approved implementation, verification, analytics, and close-out.
+- Without an explicit stop point, stop after the selected strategy completes the approved implementation, verification, analytics, human evaluation, and close-out.
 - Do not continue into commits, pull requests, deployment, monitoring, or review handling unless the current prompt explicitly requests it.
 
 ## Spec-driven workflow
@@ -73,7 +73,7 @@ CLAUDE.md
 .claude/skills/spec-library -> ../../.agents/skills/spec-library
 ```
 
-The root library index is the read-first catalog. It links to all internal spec-library documents, keeps latest documents easy to reach, and exposes category, effort, confidence, strategy, actual models, tokens, and outcome for static filtering:
+The root library index is the read-first catalog. It links to all internal spec-library documents, keeps latest documents easy to reach, and exposes category, effort, confidence, strategy, actual models, tokens, outcome, and human rating for static filtering:
 
 ```html
 <main>
@@ -83,7 +83,7 @@ The root library index is the read-first catalog. It links to all internal spec-
   </header>
   <section>
     <h2>Execution summary</h2>
-    <p><a href="specs/content-discovery-export/execution.json">Content discovery export</a> · feature + performance · effort M · plan confidence high · delegation confidence high · hybrid · 184,200 measured tokens · complete</p>
+    <p><a href="specs/content-discovery-export/execution.json">Content discovery export</a> · feature + performance · effort M · plan confidence high · delegation confidence high · hybrid · 184,200 measured tokens · complete · human rating 9/10</p>
   </section>
   <section>
     <h2>Latest documents</h2>
@@ -247,7 +247,7 @@ The plan carries execution details and explicitly keeps the users visible:
   </section>
   <section>
     <h2>Execution boundary</h2>
-    <p>Authorized phase: implement and verify the approved discovery/export spec. Stop after analytics and close-out evidence are recorded. Merge, pull request, deployment, monitoring, and review handling remain out of scope.</p>
+    <p>Authorized phase: implement and verify the approved discovery/export spec. Stop after analytics, human evaluation, and close-out evidence are recorded. Merge, pull request, deployment, monitoring, and review handling remain out of scope.</p>
   </section>
   <section>
     <h2>Execution recommendation and decision</h2>
@@ -270,13 +270,21 @@ The plan carries execution details and explicitly keeps the users visible:
       <tbody>
         <tr><td>Product contract</td><td><a href="business.html">Business spec</a></td><td>Supplies the outcomes and acceptance criteria each task must satisfy.</td></tr>
         <tr><td>Technical design</td><td><a href="technical.html">Technical spec</a></td><td>Supplies the approved boundaries and verification strategy.</td></tr>
-        <tr><td>Execution record</td><td><a href="execution.json">Execution record</a></td><td>Records selected assignments, actual runs, usage, and outcomes.</td></tr>
+        <tr><td>Execution record</td><td><a href="execution.json">Execution record</a></td><td>Records selected assignments, actual runs, usage, outcomes, and human evaluations.</td></tr>
         <tr><td>Decision constraint</td><td><a href="../../decisions/architecture.html#ARC-001">ARC-001</a></td><td>Constrains T1 to reuse the active result set.</td></tr>
       </tbody>
     </table>
   </section>
 </main>
 ```
+
+## Human evaluation
+
+After implementation and verification, the agent presents the result and asks one final question:
+
+> How would you rate this execution overall from 1 to 10? `1` means it failed, `5` means mixed or partially successful, and `10` means excellent. Optionally add what most affected your rating, or say `skip`.
+
+The response is stored in `execution.json` as a human evaluation linked to the exact run IDs it covers. Later execution cycles append their own evaluations, so the example's `9/10` score and comment remain available for comparison rather than being overwritten.
 
 ## Durable decision
 
@@ -307,4 +315,4 @@ Only a choice whose cross-feature intent is materially safer to preserve than in
 </main>
 ```
 
-The business and technical specs remain useful after shipping. `plan.html` holds the single integrated implementation record, while `execution.json` and the derived JSONL ledger make routing, models, tokens, and outcomes queryable later. See the complete [execution record example](execution-record.json).
+The business and technical specs remain useful after shipping. `plan.html` holds the single integrated implementation record, while `execution.json` and the derived JSONL ledger make routing, models, tokens, outcomes, and human evaluations queryable later. See the complete [execution record example](execution-record.json).

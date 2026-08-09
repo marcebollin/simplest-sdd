@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "specId": "content-discovery-export",
   "title": "Content discovery and export",
   "classification": {
@@ -156,6 +156,18 @@
       "commitBefore": "abc1234",
       "commitAfter": "def5678",
       "notes": "Diff was reviewed before changed tests were executed. Merge remained a user decision."
+    }
+  ],
+  "humanEvaluations": [
+    {
+      "id": "evaluation-001",
+      "status": "rated",
+      "scale": "overall-execution-1-to-10-v1",
+      "runIds": ["run-001", "run-002"],
+      "rating": 9,
+      "comment": "The implementation matched the approved scope and the verification evidence was easy to review.",
+      "requestedAt": "2026-07-12T15:30:00Z",
+      "recordedAt": "2026-07-12T15:32:00Z"
     }
   ]
 }

@@ -24,6 +24,7 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Preserve mandatory discovery for every request that activates the skill. Automatically refresh an existing owning spec after discovery; require an explicit user choice only before creating a new spec.
 - Preserve an existing explicit delegation policy. Otherwise let the planner recommend delegation, but require explicit user approval of the proposed topology and assignments before spawning subagents.
 - Keep recommendations model-agnostic through capability profiles and effort; record actual models in execution data after runs.
+- Preserve human evaluation history. For every request with an execution record, ask once for an anchored 1–10 whole-execution rating plus an optional comment after implementation and verification; never infer or backfill feedback.
 - Treat this migration as the active phase. After migrating and validating, stop before feature work, commits, pull requests, deployment, monitoring, or review handling unless the user explicitly requested it.
 
 ## 1. Inspect Current Installation
@@ -85,7 +86,9 @@ Before finishing:
 - confirm every branch preserves explicit technical approval for migrations, data, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes;
 - confirm every feature keeps one integrated `plan.html` with detailed classified tasks instead of independent task-plan files;
 - confirm delegation recommendations require an explicit user strategy selection, same-session is always offered, and actual runtime models are recorded separately from capability recommendations;
-- confirm every new feature has a valid `execution.json`; run `npx simplest-sdd@latest analytics` and rebuild the committed JSONL ledger when records exist;
+- confirm every new feature has a valid schema `1.1.0` `execution.json` with a `humanEvaluations` array, while legacy schema `1.0.0` records remain readable without invented ratings;
+- confirm `SKILL.md` asks once after implementation and verification for the anchored 1–10 whole-execution rating and optional comment whenever the request has an execution record, records `pending`, `rated`, or `declined` against exact run IDs, treats the reply as close-out rather than new discovery, and skips the no-new-spec path;
+- confirm human ratings are never inferred, historical evaluations are preserved, and analytics plus the root index expose the latest rating or status; run `npx simplest-sdd@latest analytics` and rebuild the committed JSONL ledger when records exist;
 - confirm `.claude/skills/spec-library` resolves to `../../.agents/skills/spec-library`;
 - confirm the root library index, current templates, supporting indexes, specs, plans, and decisions are HTML or that old Markdown copies were intentionally preserved to avoid data loss;
 - confirm uncustomized current templates and active generated artifacts use accessible artifact-specific accents, visible text labels and status badges, and restrained highlights for consequential keywords;

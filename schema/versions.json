@@ -1,6 +1,31 @@
 {
-  "currentSchemaVersion": "0.12.0",
+  "currentSchemaVersion": "0.13.0",
   "versions": [
+    {
+      "version": "0.13.0",
+      "date": "2026-08-08",
+      "summary": "Adds analysis-ready human evaluation to spec-backed executions while preserving legacy execution records and the no-spec branch's lightweight close-out.",
+      "changes": [
+        "After implementation and verification, ask for one neutrally worded overall execution rating from 1 to 10, anchored at 1 for failed, 5 for mixed or partially successful, and 10 for excellent, plus an optional comment whenever the request has an execution record.",
+        "Preserve multiple human evaluations in one execution record, with each evaluation linked to the run IDs it covers and tracked through pending, rated, or declined status without overwriting earlier feedback.",
+        "Advance new execution records to execution schema 1.1.0 while keeping analytics compatible with legacy 1.0.0 records and representing missing historical feedback as unavailable rather than inventing it.",
+        "Persist the user's rating, optional comment, or decline before rebuilding execution analytics and refreshing the root library index so evaluation status remains inspectable with the rest of the execution facts.",
+        "Skip the evaluation prompt on the no-new-spec branch, and never infer a rating, comment, decline, or historical evaluation on the user's behalf."
+      ],
+      "migrations": [
+        {
+          "from": "0.12.0",
+          "steps": [
+            "Update SKILL.md so a terminal spec-backed implementation with execution.json presents its implementation and verification result, asks the anchored 1-to-10 overall execution question with an optional comment, and waits for the user's response; keep the no-new-spec branch unchanged and skip the question there.",
+            "Upgrade the execution template, newly created execution records, and legacy records touched by a new execution to schema 1.1.0 with a humanEvaluations array that can preserve multiple human evaluations, the run IDs each one covers, optional comments, timestamps, and pending, rated, or declined status; leave untouched historical 1.0.0 records readable without rewriting or invented feedback.",
+            "Create the pending evaluation entry before asking, then update that same entry from the user's reply to rated or declined without guessing a score or comment; treat the reply as close-out continuation rather than a new request.",
+            "After recording the reply, rebuild the JSONL analytics ledger and refresh the root library index so the latest evaluation status and rating are visible alongside execution details, then finish that execution's close-out; route separate explicit work in the same reply as a new phase.",
+            "Update analytics validation and exports to accept execution schema 1.1.0 evaluations while continuing to read legacy 1.0.0 records; leave absent historical evaluations unavailable and never backfill inferred feedback.",
+            "Update the generated execution template, examples, validation checks, and human-facing analytics documentation to explain the anchored scale, optional comment, lifecycle, run linkage, and legacy behavior."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.12.0",
       "date": "2026-07-30",
