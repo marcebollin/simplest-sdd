@@ -69,7 +69,7 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "Analyze Related Implementations And Reuse": {
-    explanation: "Checks existing logic and actual consumers, recommends reuse, a separate implementation, or a custom adaptation or abstraction, and records the user’s choice in the specs and decision registry.",
+    explanation: "Checks real code, callers, and tests before offering reuse as-is, a separate implementation, or a custom adaptation or extraction with one reasoned recommendation. Implementation waits for an explicit choice; an earlier choice counts, while creating or skipping a spec grants no reuse approval. When no candidate fits, the agent reports the evidence instead of forcing options.",
     tone: "blue"
   },
   "Refine Request: Mandatory Discovery Questions": {
@@ -77,7 +77,7 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "violet"
   },
   "Resolve The Spec Branch After Discovery": {
-    explanation: "Refreshes an existing owning spec automatically. Only when no spec owns the behavior does the agent label one of the new-spec or no-new-spec choices as recommended and wait.",
+    explanation: "Refreshes an existing owning spec automatically. Only when no spec owns the behavior does the agent ask whether to create one. Continuing without a new spec still preserves approved reuse choices in canonical decisions and indexes, without creating new feature specs or plans.",
     tone: "amber"
   },
   "Preserve Independent Technical Approvals": {
@@ -85,7 +85,7 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "rose"
   },
   "HTML Artifacts": {
-    explanation: "Makes every generated artifact pleasant for people to read while remaining plain text an agent can parse. The constraints favor durable, portable pages over an internal documentation app.",
+    explanation: "Makes the body as readable as the headings: focused paragraphs, useful list lead-ins, semantic bold and italic emphasis, inline code, and sparse highlights. The author chooses formatting from the content, without keyword matching or formatting quotas, and preserves exact requirements and meaning without color.",
     tone: "teal"
   },
   "Create One Feature Folder": {
@@ -97,7 +97,7 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "cyan"
   },
   "Record Decision Impact Without Creating Ceremony": {
-    explanation: "Preserves approved reuse and abstraction choices in every documentation branch, keeps other decision records selective, and names the exact decisions consulted or changed.",
+    explanation: "Records every approved reuse-analysis choice, including separate implementations and work without a new spec. The decision captures alternatives, rationale, scope, approval, and implementation state; approved intent starts as pending and is reconciled with what shipped. Other decisions remain selective, and active-decision changes keep their technical approval gate.",
     tone: "green"
   },
   "Generate A New Spec Only When Selected And Wait For Approval": {
@@ -125,7 +125,7 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "Close Out And Self-Improve": {
-    explanation: "Reconciles what was planned with what actually shipped. It reports the outcome, verification, remaining limitations, and durable documentation impact, and changes the skill only when repeated friction reveals a reusable guardrail.",
+    explanation: "Reconciles what was planned with what actually shipped, including approved reuse decisions. Close-out reports the outcome, verification, limitations, and exact spec and decision impact, then finishes without execution records, telemetry, or a rating question. Repeated friction can still inform a reusable skill guardrail.",
     tone: "green"
   },
   "Root Library Index": {
@@ -133,7 +133,7 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "teal"
   },
   "5. Create Concise HTML Templates": {
-    explanation: "Gives every future feature a consistent starting shape while keeping the documents concise. Templates carry the contract; project-specific content supplies the meaning.",
+    explanation: "Shows body-level hierarchy through illustrative paragraphs and lists: business commitments and acceptance criteria, technical boundaries and identifiers, ordered plan actions, and decision tradeoffs. Examples guide editorial judgment rather than impose a fixed pattern; real documents replace the sample facts and remove their illustrative labels.",
     tone: "indigo",
     reference: {
       label: "Theo’s spec-driven development video",
@@ -153,7 +153,7 @@ const initAnnotations: Record<string, Annotation> = {
 
 const updateAnnotations: Record<string, Annotation> = {
   "Start here": {
-    explanation: "Defines the migration target and explains that the CLI has already inspected the current repository. The state and changelog blocks are generated for this installation, not copied blindly from a generic upgrade guide.",
+    explanation: "Defines the migration target and explains that the CLI generates state and changelog blocks for the current installation. Current rules override historical tracking and rating instructions, so upgrades from older versions never recreate intermediate execution records or telemetry.",
     tone: "slate"
   },
   "Rules": {
@@ -169,11 +169,11 @@ const updateAnnotations: Record<string, Annotation> = {
     tone: "violet"
   },
   "3. Choose What To Do With Old Execution Records": {
-    explanation: "Shows the old execution records found and asks whether to leave them untouched or delete them. Keeping them is the default; deletion requires an explicit choice and preserves specifications, plans, and decisions.",
+    explanation: "Lists the exact legacy record and ledger paths and offers preservation or deletion. Preservation leaves them byte-for-byte unchanged as inactive history; deletion requires an explicit choice covering those files. Silence preserves them while other updates continue. No records means no cleanup question, and spec folders, plans, and decisions remain intact.",
     tone: "amber"
   },
   "4. Apply The Migration Conservatively": {
-    explanation: "Applies only the missing migrations, in order, while preserving ownership and history. It explicitly avoids downgrades, empty rewrites, and destructive consolidation.",
+    explanation: "Applies missing changes under the current rules: preserve approved reuse decisions, retire execution tracking and the analytics and codex-usage commands, and keep strategy, assignments, progress, and verification in plan.html. Readability guidance and illustrative examples improve new or intentionally revised documents while preserving custom styles and historical artifacts.",
     tone: "amber"
   },
   "5. Validate": {
@@ -326,7 +326,7 @@ const currentRelease = schemaVersions.versions.find(
         <span class="title-highlight title-highlight--orange">explore</span>.
       </h1>
 
-      <div class="version-strip" aria-label="Current Simplest SDD version">
+      <div class="version-strip" aria-label="Documented Simplest SDD version">
         <div>
           <span>CLI package</span>
           <strong>v{packageInfo.version}</strong>
@@ -336,7 +336,7 @@ const currentRelease = schemaVersions.versions.find(
           <strong>v{schemaVersions.currentSchemaVersion}</strong>
         </div>
         <div>
-          <span>Released</span>
+          <span>Schema date</span>
           <strong>{currentRelease?.date ?? "Current"}</strong>
         </div>
         <p>

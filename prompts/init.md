@@ -261,6 +261,14 @@ Every artifact should use:
 - optional inline SVG, tables, or simple HTML/CSS charts only when they explain a decision or technical tradeoff better than prose;
 - no JavaScript unless the user explicitly asks and the project already permits it.
 
+Write for readability inside each section, not only at the heading level. Encode the following editorial guidance in the generated `SKILL.md` and apply it when authoring or intentionally revising HTML artifacts:
+
+- Make paragraphs and lists as readable as possible for someone scanning for the main point and then reading the detail. Choose formatting from the meaning and density of the actual content; do not use keyword-matching rules, fixed emphasis quotas, or a requirement to decorate every paragraph or list item.
+- Lead a paragraph with its main idea; separate a commitment, its rationale, and an exception when combining them would bury the important point. Keep related sentences together and leave short, clear prose plain when formatting would add nothing.
+- Use `<strong>` for a consequential clause or a useful list lead-in, `<em>` for emphasis that changes how a phrase is read, and `<code>` for literal identifiers, paths, commands, or values. Reserve `mark` or `.keyword` for a short phrase that deserves more attention than ordinary bold text. Avoid emphasizing whole paragraphs, long italic passages, or every occurrence of a term.
+- Make parallel items easy to compare: a descriptive lead-in such as `<strong>Complete results.</strong>` can distinguish the requirement from its explanation. Use a supporting paragraph within a list item when the detail needs breathing room. Use unordered lists for peers and ordered lists when sequence or priority matters; nest only for a real subrelationship. Do not turn connected prose into a list merely to add visual variety.
+- Before finishing, skim the body text independently of the headings. Can the reader find the commitments, distinctions, exceptions, and next actions without reading every word? Adjust wording, grouping, spacing, and selective emphasis where it helps, while preserving the exact requirements and qualifiers. Formatting must remain understandable without color.
+
 Every generated or updated business, technical, and plan artifact must contain a visible `Documentation impact` or `Document relationships` section that names every other spec and decision it consulted, used, or changed. Use exact relative links and decision anchors, distinguish unchanged context from changed contracts, and explicitly state `None` for an empty category.
 
 Use this baseline style. Preserve the stable artifact-to-accent mapping when adapting the palette to the project: business is violet, technical is blue, plan is green, decisions are amber, and indexes use the default slate/blue accent.
@@ -279,6 +287,13 @@ Use this baseline style. Preserve the stable artifact-to-accent mapping when ada
   h1, h2 { line-height: 1.2; }
   h1 { font-size: 2rem; margin: 0 0 8px; }
   h2 { font-size: 1.2rem; margin-top: 32px; border-top: 1px solid var(--line); padding-top: 18px; }
+  p { margin: .8em 0; }
+  ul, ol { margin: .8em 0; padding-left: 1.5em; }
+  li + li { margin-top: .65em; }
+  li > p { margin: .35em 0; }
+  li > ul, li > ol { margin: .4em 0; }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
   a { color: var(--accent); }
   a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
   .kicker { margin: 0 0 6px; color: var(--accent-ink); font-size: .78rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
@@ -295,6 +310,7 @@ Use this baseline style. Preserve the stable artifact-to-accent mapping when ada
   th { background: var(--accent-soft); color: var(--accent-ink); font-weight: 700; }
   tr:last-child td { border-bottom: 0; }
   code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 0.95em; }
+  :not(pre) > code { padding: .1em .3em; background: var(--accent-soft); color: var(--accent-ink); border-radius: 3px; overflow-wrap: anywhere; }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #171717; --ink: #f2f2f2; --muted: #b7b7b7; --line: #3f3f3f; --accent: #a8b3c4; --accent-soft: #27303d; --accent-ink: #edf2f7; --panel: #202020; --mark: #5c4600; --mark-ink: #fff1a8; }
     body[data-artifact="business-spec"] { --accent: #c4b5fd; --accent-soft: #302652; --accent-ink: #f1edff; }
@@ -305,13 +321,13 @@ Use this baseline style. Preserve the stable artifact-to-accent mapping when ada
 </style>
 ```
 
-Use the visual vocabulary consistently:
+Let the document's purpose guide which phrases deserve emphasis; these are useful candidates, not automatic highlighting rules:
 
-- Business specs highlight product commitments, exclusions, named outcomes, and acceptance thresholds.
-- Technical specs highlight constraints, contracts, failure or security behavior, and stable decision IDs.
-- Plans highlight task IDs, dependencies, `STOP` conditions, and verification outcomes.
-- Decision documents highlight decision IDs, status, scope, and mandatory application rules.
-- Highlight only the first or most useful occurrence of a term in a section. Prefer a callout for a short critical rule and a table for repeated structured facts.
+- Business specs: product commitments, exclusions, named outcomes, and acceptance thresholds.
+- Technical specs: constraints, contracts, failure or security behavior, and stable decision IDs.
+- Plans: task IDs, dependencies, `STOP` conditions, and verification outcomes.
+- Decision documents: decision IDs, status, scope, and mandatory application rules.
+- Prefer the most useful occurrence of a phrase over repeated highlights. A callout can help a short critical rule stand out, and a table can make repeated structured facts easier to compare.
 
 ### Create One Feature Folder
 
@@ -466,6 +482,56 @@ The templates should provide these sections:
 
 Use `data-artifact`, the corresponding visible `.kicker`, a text `.badge` for status, and the artifact's stable accent in every HTML template. Include a filled example `Document relationships` table with correct relative sibling paths and explanations; use placeholders only for optional decisions and related specs. Make important-keyword examples specific to the document type and restrained enough to demonstrate the contract without turning the page into a collection of highlights.
 
+Include concise, filled paragraph and list examples in the relevant sections of each template so agents can see body-level hierarchy as well as headings. Use the examples below as inspiration, adapting the amount and kind of emphasis to the content. Label sample content visibly as illustrative in the template; replace it with actual project facts and remove the sample label when creating a real document. These examples do not establish project requirements, approvals, or a fixed formatting pattern.
+
+Business — a clear commitment, supporting context, and comparable acceptance criteria:
+
+```html
+<p class="note">Illustrative content — replace with this feature's actual requirements.</p>
+<p><strong>Export the complete active result set.</strong> Readers can reuse their saved material without collecting pages by hand.</p>
+<p>The export follows the current filters and visible order. The scope remains fixed while the download is prepared.</p>
+<ul>
+  <li><strong>Complete results.</strong> Include <em>all</em> matching items, even when they span several pages.</li>
+  <li><strong>Visible order.</strong> Keep the same ordering the reader selected.</li>
+  <li><strong>Failed page.</strong> Explain the failure and offer a retry; <mark>no partial download</mark> is produced.</li>
+</ul>
+```
+
+Technical — a design boundary with literal identifiers and supporting detail:
+
+```html
+<p class="note">Illustrative content — replace identifiers and behavior with inspected or explicitly proposed design.</p>
+<p><strong>Share page completion only.</strong> The proposed <code>completeActiveResults()</code> helper accepts a feature-owned page loader. Each caller retains its query and record conversion.</p>
+<ul>
+  <li><strong>Access checks stay with the caller.</strong><p>The helper receives only results the active user may access; it does not broaden permissions.</p></li>
+  <li><strong>A failed page rejects the operation.</strong> Callers serialize only after completion succeeds.</li>
+</ul>
+```
+
+Plan — an actual sequence with clear actions and verification detail:
+
+```html
+<p class="note">Illustrative content — replace with approved tasks and the repository's real commands.</p>
+<p><strong>Preserve both export flows while sharing completion.</strong> Verify the existing consumer before connecting the new one.</p>
+<ol>
+  <li><strong>Establish the baseline.</strong> Run the existing export checks and record the result.</li>
+  <li><strong>Extract the approved helper.</strong> Keep queries, permissions, and conversion in each feature.</li>
+  <li><strong>Verify both consumers.</strong><p>Check complete results, ordering, and later-page failure. <strong>STOP</strong> if the approved behavior cannot be preserved.</p></li>
+</ol>
+```
+
+Decision category — an explicit scope and a short tradeoff list without forced emphasis on every item:
+
+```html
+<p class="note">Illustrative content — this is not an approved project decision.</p>
+<p><strong>Limit shared completion to the two named export consumers.</strong> Each feature owns its query, permission checks, and record conversion.</p>
+<ul>
+  <li><strong>Benefit.</strong> Completion fixes reach both flows through one helper.</li>
+  <li><strong>Cost.</strong> Changes to the helper require regression checks for both consumers.</li>
+  <li>Revisit the boundary when a concrete new consumer has different completion requirements.</li>
+</ul>
+```
+
 Write HTML index instructions that make entries short descriptions used for progressive disclosure. Create a root library index with no fake project documents, an empty latest-documents state, links to the focused spec and decision indexes, and optional filtering/search scaffolding only if it stays small and readable. Do not pre-create fake project decisions or empty decision category documents.
 
 ## 6. Add Claude Compatibility
@@ -498,6 +564,7 @@ Before finishing:
 - confirm `plan.html` is a single integrated plan with classified tasks and a user-approved execution strategy before any delegation;
 - confirm close-out reports implementation, verification, and document impact without creating execution records, collecting telemetry, or asking for ratings or qualification;
 - confirm the root library index, specs, plans, decisions, supporting indexes, and templates are HTML files with readable focus styles, accessible semantic colors, visible artifact/status labels, and restrained keyword highlights;
+- review representative paragraphs and lists for clear main points, useful grouping and spacing, and selective semantic emphasis; confirm the skill leaves these choices to editorial judgment and each template demonstrates them with visibly illustrative content that is replaced in real documents;
 - confirm each feature's business, technical, and plan documents have a `Document relationships` table with valid sibling links and useful reasons, and applicable decision links use exact anchors;
 - confirm related-spec links meet the dependency/shared-contract/scope-interaction/supersession criteria rather than relying on topic similarity;
 - confirm the decision index routes to only populated category documents, technical specs record decision impact, and routine inferable choices outside explicitly approved reuse analysis did not create durable decisions;

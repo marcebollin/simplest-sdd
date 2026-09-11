@@ -2,6 +2,20 @@
 
 This changelog tracks the installed simplest-sdd schema. Workflow releases advance the schema version; CLI-only releases may leave it unchanged.
 
+## 0.16.0 - 2026-09-11
+
+- Improves HTML body readability through editorial judgment: lead with the main idea, keep paragraphs focused, and use meaningful list labels when they help readers scan.
+- Uses semantic `strong`, `em`, and `code` where appropriate, with sparse `mark` or `.keyword` highlights for consequential phrases. Plain prose remains appropriate; there are no deterministic keyword rules or formatting quotas.
+- Adds clearly labeled illustrative paragraphs and lists to the business, technical, plan, and decision templates, with instructions to replace example facts with actual document content.
+- Adds light paragraph and list spacing and semantic inline styling while preserving artifact colors and accessibility.
+
+### Migration from 0.15.0
+
+1. Update `SKILL.md` with content-aware paragraph and list readability guidance, semantic inline emphasis, focused prose, and meaningful list labels without deterministic formatting rules or quotas.
+2. Refresh business, technical, plan, and decision templates with labeled illustrative paragraphs and lists and instructions to replace their example facts. Add light body and inline styles while preserving compatible custom styling, artifact colors, and accessibility.
+3. Apply the guidance to new or intentionally revised documents. Do not bulk-rewrite historical specs or decisions; preserve factual contracts, history, approvals, anchors, and valid links.
+4. Set the installed workflow marker to `0.16.0`. Preserve existing discovery, approval, execution, and legacy-record cleanup behavior; this release changes presentation guidance only.
+
 ## 0.15.0 - 2026-09-11
 
 - Removes execution records, human evaluation and qualification prompts, rating-response waits, and the execution analytics ledger. Work ends after implementation, verification, and required spec and decision maintenance.

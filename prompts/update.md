@@ -21,6 +21,7 @@ The current rules below take precedence over historical migration steps. Read th
 - Keep `.agents/skills/spec-library` as the canonical skill directory.
 - Keep `.claude/skills/spec-library -> ../../.agents/skills/spec-library` for Claude skill compatibility.
 - Use clean static HTML with semantic artifact colors and explicit document relationships for the root library index, specs, living decision category documents, plans, supporting indexes, and templates.
+- Make paragraph and list readability an explicit authoring responsibility in the skill, using content-aware editorial judgment rather than deterministic keyword rules or formatting quotas.
 - Never delete user-authored specs or decisions during update.
 - Keep decision documentation sparse outside explicitly approved reuse-analysis choices: do not create empty categories or promote other choices that remain reliably inferable from code, conventions, or an active specification.
 - Preserve mandatory discovery for every request that activates the skill. Automatically refresh an existing owning spec after discovery; ask the documentation-branch question only when no existing spec owns the behavior.
@@ -96,6 +97,34 @@ When migrating decisions, preserve stable links and history. Consolidate old one
 
 Add the reuse-analysis workflow and template sections for future or actively revised specs. Do not invent past analysis, recommendations, or user approvals to fill historical documents. Remove blanket no-new-spec decision-write prohibitions and inference-only decision rules where they would discard an explicitly approved reuse-analysis choice; preserve the ban on new feature artifacts in that branch and the technical approval gate for active-decision changes.
 
+Refresh the generated skill's HTML guidance and the business, technical, plan, and decision-category templates for body readability. Preserve customized styles, the existing section hierarchy, semantic colors, document links, and factual contracts. Apply the guidance to new or intentionally revised documents; do not bulk-reformat historical specs or decisions.
+
+In `SKILL.md`, instruct the author to make paragraphs and lists as readable as possible for both scanning and careful reading. Lead with the main idea, separate dense commitments from rationale or exceptions where useful, and keep connected prose together. Choose `<strong>` for consequential clauses or descriptive list lead-ins, `<em>` for meaningful emphasis, `<code>` for literals, and sparse `mark` or `.keyword` for a short critical phrase. Leave plain text when it is already clear. Use lists for comparable items, ordered lists for meaningful sequences or priorities, and supporting paragraphs inside longer items. Choose emphasis from the content, never a keyword matcher, fixed quota, or mandatory treatment for every item. Review the body text for visible commitments, distinctions, exceptions, and next actions without changing requirements or losing qualifiers; meaning must remain clear without color.
+
+Give each template concise, filled paragraph and list examples appropriate to its purpose: product commitments and acceptance criteria in business specs, boundaries and identifiers in technical specs, sequential actions and verification in plans, scope and tradeoffs in decisions. Label example content visibly as illustrative, with instructions to replace it with actual project facts and remove the sample label when generating a real document. These are adaptable examples, not approved requirements or a fixed formatting recipe:
+
+```html
+<p class="note">Illustrative content — replace with this document's actual requirements.</p>
+<p><strong>Export the complete active result set.</strong> Readers can reuse saved material without collecting pages by hand.</p>
+<p>The current filters and visible ordering define the scope of the download.</p>
+<ul>
+  <li><strong>Complete results.</strong> Include <em>all</em> matching items across pages.</li>
+  <li><strong>Failed page.</strong><p>Explain the failure and offer a retry. Produce <mark>no partial download</mark>.</p></li>
+</ul>
+```
+
+```html
+<p class="note">Illustrative plan content — replace with approved tasks and actual identifiers.</p>
+<p><strong>Preserve existing export behavior.</strong> The proposed <code>completeActiveResults()</code> helper shares only page completion.</p>
+<ol>
+  <li><strong>Establish the baseline.</strong> Run existing export checks and record the result.</li>
+  <li><strong>Extract the approved helper.</strong> Keep queries and permission checks in each feature.</li>
+  <li><strong>Verify both consumers.</strong> Check complete results, ordering, and later-page failure.</li>
+</ol>
+```
+
+Support the examples with comfortable paragraph and list-item spacing, visually distinct semantic bold/italic text, and legible inline code that wraps long identifiers. Reuse the existing light/dark palette and readable body size; avoid making essential supporting details faint or relying on color to indicate importance. Review a representative paragraph and list in the rendered templates, not just their headings.
+
 If no migration versions are printed because the installed schema is current, validate it and report any drift; do not rewrite files merely to produce a change. Never downgrade an installation whose marker is newer than `{{schemaVersion}}`.
 
 ## 5. Validate
@@ -122,6 +151,7 @@ Before finishing:
 - confirm `.claude/skills/spec-library` resolves to `../../.agents/skills/spec-library`;
 - confirm the root library index, current templates, supporting indexes, specs, plans, and decisions are HTML or that old Markdown copies were intentionally preserved to avoid data loss;
 - confirm uncustomized current templates and active generated artifacts use accessible artifact-specific accents, visible text labels and status badges, and restrained highlights for consequential keywords;
+- confirm the skill guides content-aware paragraph/list readability without deterministic emphasis rules; review each template's illustrative body examples for useful grouping, spacing, and semantic emphasis, and confirm sample facts and labels are replaced in real documents;
 - confirm business, technical, and plan templates use `Document relationships` tables with role, exact document link, and a useful reason instead of a vague `Related` list;
 - confirm feature siblings link directly to one another, applicable decisions use exact stable anchors, and related-spec links meet the dependency/shared-contract/scope-interaction/supersession criteria;
 - confirm `decisions/index.html` routes agents to populated category documents, technical specs have a concise Decision impact section, and active-decision changes require explicit approval;

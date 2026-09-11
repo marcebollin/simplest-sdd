@@ -148,13 +148,18 @@ test("prints detected update state and applicable migration history", (t) => {
   assert.deepEqual(snapshot(cwd), before);
 });
 
-test("prints only the removal migration for a 0.14.0 installation", (t) => {
-  const cwd = project(t, "0.14.0");
-  const before = snapshot(cwd);
-  const output = run(["update", "--cwd", cwd]);
+test("prints only applicable migrations for recent installations", (t) => {
+  for (const [installedVersion, expectedMigrations] of [
+    ["0.14.0", ["0.16.0", "0.15.0"]],
+    ["0.15.0", ["0.16.0"]]
+  ]) {
+    const cwd = project(t, installedVersion);
+    const before = snapshot(cwd);
+    const output = run(["update", "--cwd", cwd]);
 
-  assert.deepEqual(migrationVersions(output), ["0.15.0"]);
-  assert.deepEqual(snapshot(cwd), before);
+    assert.deepEqual(migrationVersions(output), expectedMigrations);
+    assert.deepEqual(snapshot(cwd), before);
+  }
 });
 
 test("update requires an explicit legacy cleanup choice and preserves data by default", (t) => {

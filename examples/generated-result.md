@@ -4,6 +4,8 @@ This is an abbreviated example of the system generated for a mature read-later a
 
 The code paths and inspection findings in this example are illustrative stand-ins. A real generated spec must reference actual inspected implementation, callers, and tests from the target repository.
 
+The paragraph and list formatting below illustrates editorial judgment, not a fixed recipe. Adapt emphasis, lead-ins, spacing, and grouping to make each document as readable as possible; leave simple prose plain when formatting would add noise.
+
 ## Repository instructions
 
 The bootstrap preserves existing commands and technical rules, then adds concise product context:
@@ -140,6 +142,12 @@ The business document describes the product contract and the user's reuse choice
     :root { color-scheme: light dark; --bg: #f8f7f3; --ink: #202124; --line: #d9d4c7; --accent: #7c3aed; --accent-soft: #ede9fe; --accent-ink: #4c1d95; --mark: #fff0a6; --mark-ink: #4b3500; }
     body { margin: 0; font: 16px/1.65 system-ui, sans-serif; color: var(--ink); background: var(--bg); }
     main { width: min(76ch, calc(100% - 32px)); margin: 0 auto; padding: 48px 0; }
+    p { margin: .8em 0; }
+    ul, ol { padding-left: 1.5em; }
+    li + li { margin-top: .55em; }
+    li > p { margin: .35em 0; }
+    strong { font-weight: 700; }
+    em { font-style: italic; }
     header { padding: 24px; background: var(--accent-soft); border-left: 6px solid var(--accent); border-radius: 8px; }
     .kicker { color: var(--accent-ink); font-weight: 750; text-transform: uppercase; }
     .badge { padding: 2px 8px; color: var(--accent-ink); border: 1px solid var(--accent); border-radius: 999px; font-weight: 700; }
@@ -172,17 +180,26 @@ The business document describes the product contract and the user's reuse choice
     <section>
       <h2>Acceptance criteria</h2>
       <ul>
-        <li>Discovery clearly identifies result types.</li>
-        <li>Export includes the complete active result set in visible order.</li>
-        <li>Saved-library export retains its current scope, ordering, permissions, and failure behavior after the shared logic is introduced.</li>
+        <li><strong>Recognizable results.</strong> Discovery clearly identifies result types.</li>
+        <li><strong>Complete export.</strong> Export includes the complete active result set in visible order.</li>
+        <li>
+          <p><strong>Existing behavior preserved.</strong> Saved-library export retains its current scope, ordering, permissions, and failure behavior.</p>
+          <p>These guarantees continue to hold after the shared logic is introduced.</p>
+        </li>
       </ul>
     </section>
     <section>
       <h2>Reuse analysis and approved approach</h2>
-      <p>Saved-library export already completes every page and preserves visible order. Discovery needs those same guarantees but supports additional result types.</p>
-      <p><strong>Selected and approved:</strong> adapt the existing behavior by sharing page completion between the two exports, while each feature retains control of its own scope and result types. This was the agent's recommended option because the two concrete flows share completion requirements but differ in query and record contracts.</p>
-      <p><strong>Alternatives:</strong> reuse as-is would require narrowing discovery export to saved items; a separate implementation would preserve isolation but duplicate completion behavior and fixes. The user could also propose another custom boundary.</p>
-      <p><strong>Product consequences:</strong> both exports deliver their complete active set in visible order, and a failed page prevents a misleading partial download. Shared changes require verification of both flows; saved-library behavior must remain unchanged.</p>
+      <p><strong>Both exports need complete results in visible order.</strong> Saved-library export already completes every page; discovery needs those same guarantees but supports additional result types.</p>
+      <p><strong>Selected and approved:</strong> adapt the existing behavior by sharing page completion between the two exports, while each feature retains control of its own scope and result types.</p>
+      <p>This was the agent's recommended option because the two concrete flows share completion requirements but differ in query and record contracts.</p>
+      <ul>
+        <li><strong>Reuse as-is:</strong> would require narrowing discovery export to saved items.</li>
+        <li><strong>Separate implementation:</strong> would preserve isolation but duplicate completion behavior and fixes.</li>
+      </ul>
+      <p>The user could also propose another custom boundary.</p>
+      <p><strong>Product consequences:</strong> both exports deliver their complete active set in visible order, and <mark>a failed page prevents a partial download</mark>.</p>
+      <p>Shared changes require verification of both flows; saved-library behavior must remain unchanged.</p>
       <p><strong>Approval:</strong> during discovery, the user explicitly selected the shared page-completion helper for both exports while retaining per-feature queries, permissions, and record conversion. Canonical record: <a href="../../decisions/architecture.html#ARC-001">ARC-001</a>.</p>
     </section>
     <section>
@@ -211,13 +228,26 @@ The technical document records durable boundaries and may include a simple diagr
 ```html
 <section>
   <h2>Proposed approach</h2>
-  <p>Use one discovery surface over existing entity queries. Complete the active paginated result set before serialization.</p>
+  <p>Use one discovery surface over existing entity queries. <strong>Complete the active paginated result set before serialization.</strong></p>
   <h3>Reuse analysis and approved approach</h3>
-  <p>Inspection of <code>exportSavedLibrary()</code> in <code>src/features/saved-library/export.ts</code> found the existing pagination loop and ordering preservation. Its caller <code>ExportButton.handleExport()</code> in <code>src/features/saved-library/ExportButton.tsx</code> supplies the active scope. <code>buildSavedLibraryQuery()</code> in <code>src/features/saved-library/results.ts</code> constructs the feature-specific query; the exporter also assumes saved-item conversion. <code>src/features/saved-library/export.test.ts</code> covers multi-page completion, order, and later-page failure.</p>
-  <p>Reuse as-is is incompatible with discovery's additional result types. A separate implementation would repeat the tested pagination behavior. The approved custom option extracts only page completion into the proposed <code>completeActiveResults()</code> helper in <code>src/shared/export/complete-active-results.ts</code>. Its consumers will be the existing <code>exportSavedLibrary()</code> and the new <code>exportDiscoveryResults()</code> in <code>src/features/discovery/export.ts</code>. Both consumers have concrete requirements; the helper and discovery exporter are proposed additions, and no general export framework is justified.</p>
+  <p><strong>The existing exporter already implements page completion and ordering.</strong> Inspection found these guarantees in <code>exportSavedLibrary()</code> in <code>src/features/saved-library/export.ts</code>.</p>
+  <ul>
+    <li><strong>Active scope:</strong> the caller <code>ExportButton.handleExport()</code> in <code>src/features/saved-library/ExportButton.tsx</code> supplies the current scope.</li>
+    <li><strong>Feature-specific contract:</strong> <code>buildSavedLibraryQuery()</code> in <code>src/features/saved-library/results.ts</code> constructs the query; the exporter also assumes saved-item conversion.</li>
+    <li><strong>Existing evidence:</strong> <code>src/features/saved-library/export.test.ts</code> covers multi-page completion, order, and later-page failure.</li>
+  </ul>
+  <p>Reuse as-is is incompatible with discovery's additional result types. A separate implementation would repeat the tested pagination behavior.</p>
+  <p>The approved custom option extracts <em>only page completion</em> into the proposed <code>completeActiveResults()</code> helper in <code>src/shared/export/complete-active-results.ts</code>. Its consumers will be the existing <code>exportSavedLibrary()</code> and the new <code>exportDiscoveryResults()</code> in <code>src/features/discovery/export.ts</code>.</p>
+  <p>Both consumers have concrete requirements; the helper and discovery exporter are <strong>proposed additions</strong>, and no general export framework is justified.</p>
   <h3>Approved boundary and verification</h3>
-  <p>The helper accepts a feature-provided page loader for a captured active scope and completes results in that scope's existing order. Each feature owns query construction, permission enforcement, and record conversion; the helper introduces no shared cache, new access rights, or schema change. Keep consumers' error handling and output contracts explicit: do not serialize a partial set when any page fails.</p>
-  <p>Verify both consumers with empty, single-page, and multi-page results, ordering and filtering, permissions, and later-page failures. Retain existing saved-library expectations and add discovery coverage for its additional result types. If inspection or verification changes the approved sharing boundary, return to the user before implementing the changed choice.</p>
+  <p>The helper accepts a feature-provided page loader for a captured active scope and completes results in that scope's existing order.</p>
+  <p><strong>Each feature owns query construction, permission enforcement, and record conversion.</strong> The helper introduces no shared cache, new access rights, or schema change.</p>
+  <p>Keep consumers' error handling and output contracts explicit: <mark>do not serialize a partial set</mark> when any page fails.</p>
+  <ul>
+    <li><strong>Both consumers:</strong> verify empty, single-page, and multi-page results, ordering and filtering, permissions, and later-page failures.</li>
+    <li><strong>Feature coverage:</strong> retain existing saved-library expectations and add discovery coverage for its additional result types.</li>
+  </ul>
+  <p>If inspection or verification changes the approved sharing boundary, <strong>return to the user before implementing the changed choice</strong>.</p>
   <figure class="panel">
     <figcaption>Export path</figcaption>
     <svg role="img" aria-labelledby="export-title" viewBox="0 0 560 120">
@@ -234,7 +264,8 @@ The technical document records durable boundaries and may include a simple diagr
 </section>
 <section>
   <h2>Decision impact</h2>
-  <p><a href="../../decisions/architecture.html#ARC-001">ARC-001 — Share active-result completion between saved-library and discovery exports</a> records the reuse/abstraction boundary explicitly approved during discovery. Implementation status remains pending until verified; the implementation plan applies the approved choice. <a href="../../decisions/design.html#DES-002">DES-002</a> was consulted unchanged. Existing active decisions modified: None.</p>
+  <p><a href="../../decisions/architecture.html#ARC-001">ARC-001 — Share active-result completion between saved-library and discovery exports</a> records the reuse/abstraction boundary explicitly approved during discovery.</p>
+  <p>Implementation status remains <strong>pending until verified</strong>; the implementation plan applies the approved choice. <a href="../../decisions/design.html#DES-002">DES-002</a> was consulted unchanged. Existing active decisions modified: None.</p>
 </section>
 <section>
   <h2>Document relationships</h2>
@@ -263,15 +294,17 @@ The plan carries execution details and explicitly keeps the users visible:
   </header>
   <section>
     <h2>Goal and intended users</h2>
-    <p>Make discovery and scoped reuse reliable as a saved library grows for heavy internet readers. <span class="keyword">Verification must cover the complete active set.</span></p>
+    <p>Make discovery and scoped reuse reliable as a saved library grows for heavy internet readers. Verification must cover the <span class="keyword">complete active set</span>.</p>
   </section>
   <section>
     <h2>Execution boundary</h2>
-    <p>Authorized phase: implement and verify the approved discovery/export spec. Stop after reporting the outcome, verification, remaining limitations, and documentation impact. Merge, pull request, deployment, monitoring, and review handling remain out of scope.</p>
+    <p><strong>Authorized phase:</strong> implement and verify the approved discovery/export spec.</p>
+    <p><strong>Stop after reporting</strong> the outcome, verification, remaining limitations, and documentation impact. Merge, pull request, deployment, monitoring, and review handling remain out of scope.</p>
   </section>
   <section>
     <h2>Execution recommendation and decision</h2>
-    <p>Recommended: hybrid. Keep the shared discovery design in the current session; delegate bounded tests and browser verification to efficient workers. Selected by user: hybrid as recommended.</p>
+    <p><strong>Selected by user:</strong> hybrid, as recommended.</p>
+    <p>Keep the shared discovery design in the current session; delegate bounded tests and browser verification to efficient workers.</p>
   </section>
   <section>
     <h2>Integrated task plan</h2>
@@ -319,21 +352,30 @@ Approved reuse and abstraction choices are recorded in the canonical decision re
     <h2>ARC-001 — Share active-result completion between saved-library and discovery exports</h2>
     <p class="meta">Status: active. Implementation: applied and verified. Last updated: 2026-07-22.</p>
     <h3>Decision</h3>
-    <p>Extract and reuse page completion for saved-library and discovery exports. Each consumer retains its own active query, permission enforcement, and record conversion.</p>
+    <p><strong>Share page completion between saved-library and discovery exports.</strong> Each consumer retains its own active query, permission enforcement, and record conversion.</p>
     <h3>Applies to</h3>
     <p>The two approved consumers: saved-library export and discovery export. Evaluate compatibility before proposing reuse for another consumer; this approval does not authorize a general export framework.</p>
     <h3>Why</h3>
-    <p>Both flows need complete results in visible order and must fail rather than download a partial set. Inspected saved-library export code and tests already implement those guarantees, while discovery needs different query and record contracts. Sharing only completion avoids duplicate fixes without coupling those contracts.</p>
+    <p>Both flows need complete results in visible order and must fail rather than download a partial set. Inspected saved-library export code and tests already implement those guarantees, while discovery needs different query and record contracts.</p>
+    <p>Sharing <em>only completion</em> avoids duplicate fixes without coupling those contracts.</p>
     <h3>Alternatives considered</h3>
     <ul>
-      <li>Reuse as-is: rejected because the existing exporter assumes saved-item records and would narrow discovery export's required scope.</li>
-      <li>Separate implementation: rejected because it duplicates completion behavior, though it would isolate future changes.</li>
-      <li>Custom adaptation/extraction: selected as recommended, limited to page completion for the two known consumers. No broader abstraction was approved.</li>
+      <li><strong>Reuse as-is — rejected.</strong> The existing exporter assumes saved-item records and would narrow discovery export's required scope.</li>
+      <li><strong>Separate implementation — rejected.</strong> It duplicates completion behavior, though it would isolate future changes.</li>
+      <li>
+        <p><strong>Custom adaptation/extraction — selected as recommended.</strong> Limited to page completion for the two known consumers.</p>
+        <p>No broader abstraction was approved.</p>
+      </li>
     </ul>
     <h3>Approval</h3>
     <p>Explicitly approved by the user during discovery: “Extract the shared page-completion helper for both export flows. Keep queries, permissions, and record conversion in each feature, and keep existing saved-library export behavior unchanged.” The agent recommendation and documentation branch selection were not treated as approval.</p>
     <h3>How to apply</h3>
-    <p>Use <code>completeActiveResults()</code> in <code>src/shared/export/complete-active-results.ts</code> with a feature-owned page loader for the captured active scope. Preserve scope, order, and failure semantics; verify both callers for changes to shared completion. The <a href="../specs/content-discovery-export/technical.html">technical spec</a> records inspected source paths and verification details.</p>
+    <ol>
+      <li><strong>Capture the active scope.</strong> Supply a feature-owned page loader to <code>completeActiveResults()</code> in <code>src/shared/export/complete-active-results.ts</code>.</li>
+      <li><strong>Complete results before serialization.</strong> Preserve scope, order, and failure semantics.</li>
+      <li><strong>Verify both callers.</strong> Changes to shared completion require regression checks for both export flows.</li>
+    </ol>
+    <p>The <a href="../specs/content-discovery-export/technical.html">technical spec</a> records inspected source paths and verification details.</p>
     <h3>Tradeoffs and consequences</h3>
     <p>The shared helper couples completion changes across both consumers, so both require regression checks. Queries, permissions, and serialization remain outside the helper. Revisit approval if evidence requires a broader extraction or changes those boundaries.</p>
     <h3>Exceptions</h3>

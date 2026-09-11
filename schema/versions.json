@@ -1,6 +1,28 @@
 {
-  "currentSchemaVersion": "0.15.0",
+  "currentSchemaVersion": "0.16.0",
   "versions": [
+    {
+      "version": "0.16.0",
+      "date": "2026-09-11",
+      "summary": "Improves HTML paragraph and list readability through editorial guidance, semantic inline formatting, and illustrative template examples.",
+      "changes": [
+        "Direct the generated skill to make body content as readable as possible using content-aware judgment: lead with the main idea, keep paragraphs focused, and use meaningful list labels where they help readers scan.",
+        "Use strong for key clauses or meaningful list labels, em for meaningful emphasis, code for literals, and sparse mark or keyword highlights for consequential phrases; keep plain prose when sufficient and avoid deterministic keyword matching or formatting quotas.",
+        "Add concise, clearly labeled illustrative paragraphs and lists to the business, technical, plan, and decision templates; replace example facts with the actual document's content.",
+        "Add light paragraph and list spacing and semantic inline styles while preserving the existing artifact palette and accessibility."
+      ],
+      "migrations": [
+        {
+          "from": "0.15.0",
+          "steps": [
+            "Update SKILL.md with content-aware paragraph and list readability guidance, including semantic inline emphasis, focused prose, and meaningful list labels without deterministic keyword rules or formatting quotas.",
+            "Refresh business, technical, plan, and decision templates with clearly labeled illustrative paragraphs and lists, instructions to replace their example facts, and light body and inline styles that preserve compatible custom styling, artifact colors, and accessibility.",
+            "Apply the body-readability guidance to new or intentionally revised documents. Do not bulk-rewrite historical specs or decisions; preserve factual contracts, history, approvals, anchors, and valid links.",
+            "Advance the installed workflow marker to 0.16.0. Preserve the existing discovery, approval, execution, and legacy-record cleanup behavior; this release changes presentation guidance only."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.15.0",
       "date": "2026-09-11",
