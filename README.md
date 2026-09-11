@@ -23,7 +23,7 @@ The result is less guessing, clearer human control, and project knowledge that i
 For work that activates its discovery workflow, Simplest SDD:
 
 1. **Understands the project.** The agent inspects the repository, existing instructions, intended users, product goals, and testing approach before proposing changes.
-2. **Refines the request visibly.** It asks one focused round of questions and names the specs and decisions it expects to consult or change.
+2. **Refines the request visibly.** It inspects related implementations, asks one focused round of questions, and names the specs and decisions it expects to consult or change. Where logic overlaps, it offers reuse as-is, a separate implementation, or a custom adaptation/shared abstraction, recommends one with reasons, and waits for your choice.
 3. **Reuses an existing contract automatically.** If an existing spec owns the behavior, it updates that spec after discovery, preserves its history, and reports the exact files changed.
 4. **Asks only before creating a new spec.** When no existing spec owns the behavior, it recommends creating a new spec or continuing without one, labels only the recommended choice, and waits.
 5. **Preserves sensitive approvals.** Migrations, data, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes still require explicit approval in every branch.
@@ -31,6 +31,8 @@ For work that activates its discovery workflow, Simplest SDD:
 7. **Closes the feedback loop.** When the work has an execution record, it asks for an anchored 1–10 rating and optional comment after showing the result, then reports every spec and decision consulted, unchanged, pending, or changed.
 
 The HTML documents use a small semantic color system—violet for business, blue for technical design, green for plans, and amber for decisions—plus restrained highlights for important contract terms. Each feature document also identifies its relationship to the product contract, technical design, implementation plan, execution record, applicable decisions, and only genuinely dependent specs.
+
+For example, a payment report request may reveal reporting logic in another section. The agent checks whether the rules actually match and whether extracting a shared calculation would help both sections. The business spec records the alternatives, recommendation, your approved choice, and its product consequences; the technical spec records the code boundaries and verification. Approved reuse, adaptation, abstraction, or isolation choices are also stored in the decision registry, even when you continue without a new spec. Automatic spec updates do not approve a reuse proposal.
 
 ## Why It Is Useful
 

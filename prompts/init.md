@@ -112,7 +112,7 @@ Add or update a concise project guidance section containing:
 | Purely presentational design, styling, spacing, or layout change with no business requirement or behavior change, regardless of review time, and no other independent workflow trigger | Implement and verify directly |
 | Other clear low-risk change whose output is reviewable within ~5 minutes and no existing spec or active decision is implicated | Implement and verify directly |
 
-When this workflow is loaded, it always inspects relevant specs and decisions, discloses their names with one concise request-refinement round of at least five material questions, and waits for every answer. After discovery, determine whether an existing spec already owns the changed behavior. If it does, refresh that spec automatically, notify the user exactly which spec and decision files were consulted or changed, and continue without business-spec approval. If no existing spec owns the behavior, ask whether to create a new spec or continue without one, label exactly one choice `(Recommended)`, and wait. Independent explicit approvals for migrations, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes apply in every branch. Implementations follow the repository's resolved testing discipline recorded in the spec-library skill.
+When this workflow is loaded, it always inspects relevant specs, decisions, and related implementations, discloses its findings with one concise request-refinement round of at least five material questions, and waits for every answer. When related logic is available, compare reuse, a separate implementation, and a custom adaptation or shared abstraction; recommend one and obtain the user's choice. Record the analysis and approved choice in the applicable specs and preserve approved reuse-analysis choices in the decision registry, even without a new spec. After discovery, determine whether an existing spec already owns the changed behavior. If it does, refresh that spec automatically, notify the user exactly which spec and decision files were consulted or changed, and continue without business-spec approval. If no existing spec owns the behavior, ask whether to create a new spec or continue without one, label exactly one choice `(Recommended)`, and wait. Independent explicit approvals for migrations, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes apply in every branch. Implementations follow the repository's resolved testing discipline recorded in the spec-library skill.
 ```
 
 Do not duplicate existing commands or rules. Integrate additions where they are easiest to read.
@@ -168,6 +168,24 @@ Before discovery, classify documentation impact:
 
 Do not classify a spec as the owner merely because it shares keywords or a domain. It must define the behavior or contract the request changes. Keep the classification provisional until the discovery answers resolve scope.
 
+### Analyze Related Implementations And Reuse
+
+During context resolution and request discovery, inspect existing implementations of the requested behavior across relevant product areas, including their callers, shared utilities, tests, and governing specs or decisions. Look beyond identical feature names: find overlapping business rules and lower-level logic that could be reused or extracted even when no complete feature matches. Keep exploration tied to the requested behavior and actual consumers.
+
+For each material candidate, identify exact code paths and symbols, what it already does, and where its semantics differ. Assess inputs and outputs, permissions and data boundaries, side effects, failure behavior, coupling, and verification coverage as relevant. Explain whether reusing or extracting the logic would preserve existing behavior and reduce duplication enough to justify the added dependency and migration work. Similar names or code shapes alone do not justify sharing. Recommend a narrow abstraction only when concrete existing and requested uses support it; do not expand into speculative generalization or unrelated refactoring.
+
+Include a concise `Reuse analysis` with the discovery questions. Name the existing product area and candidate logic, summarize the evidence and material tradeoffs, and ask the user to choose for each consequential reuse boundary:
+
+1. `Reuse the existing logic as-is` — explain its fit and any limitations.
+2. `Create a separate implementation` — keep this behavior independent of the candidate logic and explain the duplication or divergence cost.
+3. `Custom approach` — offer a concrete adaptation or extraction when useful, such as sharing payment-report calculations while keeping each section's workflow separate; allow the user to specify a different boundary or approach.
+
+Mark exactly one option `(Recommended)` and explain why the inspected evidence supports it. If an option cannot meet the requirements, say why instead of presenting it as equally viable. When a shared abstraction is recommended, identify the logic to extract, the existing and new consumers, behavior to preserve, and the scope of caller changes. If no suitable candidate exists, state `No suitable reuse candidate found`, summarize what was inspected and why it did not fit, and propose a separate implementation without inventing a forced reuse question. Continue through the normal discovery and documentation branch before implementation.
+
+Wait for an explicit choice before implementing the affected logic. A clear choice already supplied by the user counts; reflect it back without asking again. Clarify unresolved custom scope before treating it as approved. A recommendation, silence, automatic spec refresh, or the choice to create or skip a spec is not approval of reuse or abstraction. Keep this implementation choice separate from the two-option documentation branch. If later evidence materially changes the selected approach, consumers, or abstraction scope, explain the difference and obtain approval for that change before implementing it.
+
+In `business.html`, include `Reuse analysis and approved approach`: the related product behavior, options considered, model recommendation and rationale, user's selected option and custom conditions, approval status, and product consequences or exclusions. Use product language; keep exact source paths, symbols, caller changes, shared boundaries, compatibility risks, and verification in the matching technical section. Link approved choices to their canonical decision anchors. When no candidate qualifies, record the inspected product areas and no-candidate conclusion. The integrated plan must carry the approved extraction/adaptation and checks for both existing and new consumers. On the no-new-spec branch, keep the analysis in the conversation and preserve the approved decision as described below without creating feature artifacts.
+
 ### Refine Request: Mandatory Discovery Questions
 
 Before the mandatory five questions:
@@ -176,7 +194,7 @@ Before the mandatory five questions:
 - gather clues and examples from the product, the user's other projects, or relevant external products, asking separately only when none are available; this does not count toward the five;
 - infer intended users from `AGENTS.md`, the request, product behavior, and existing specs. Do not ask the user to restate users already supported by the evidence. Resolve conflicting evidence in one of the mandatory questions.
 
-Then ask the user at least five material questions in one concise round and wait for answers. Always run this discovery round whenever the gate activates; do not skip it because the agent expects to recommend continuing without a spec. The questions refine the request before any decision about documentation or implementation. Cover outcome for the inferred users, scope, behavior, constraints, and proof. Do not repeat facts already established by the request or repository; use them to ask sharper tradeoff and edge-case questions.
+Then ask the user at least five material questions in one concise round and wait for answers. Always run this discovery round whenever the gate activates; do not skip it because the agent expects to recommend continuing without a spec. The questions refine the request before any decision about documentation or implementation. Cover outcome for the inferred users, scope, behavior, constraints, and proof. Include the evidence-backed reuse choice above in this round when candidates exist; it may count as a material question. Do not repeat facts already established by the request or repository; use them to ask sharper tradeoff and edge-case questions.
 
 In the same discovery message, before the questions, include a concise provisional `Documentation impact` block with exact repository-relative paths and decision anchors:
 
@@ -185,7 +203,7 @@ In the same discovery message, before the questions, include a concise provision
 - `Decisions consulted`: list `path#anchor` values or `None`;
 - `Decisions that may change`: list `path#anchor` values or `None`.
 
-State that the list is provisional until the answers resolve scope. Never hide known spec or decision impact inside internal reasoning.
+Also name proposed new reuse or abstraction decisions when applicable, clearly marked as proposals rather than existing records. State that the list is provisional until the answers resolve scope. Never hide known spec or decision impact inside internal reasoning.
 
 ### Resolve The Spec Branch After Discovery
 
@@ -218,7 +236,7 @@ Mark exactly one option with `(Recommended)` and do not label the other option. 
 Wait for the user's selection. Discovery answers never imply consent to create a new spec.
 
 - If the user chooses the new-spec path, continue to artifact generation, business-spec approval, execution-strategy selection, and close-out.
-- If the user chooses to continue without a new spec, do not create `business.html`, `technical.html`, `plan.html`, `execution.json`, or a feature entry in the spec indexes for this request. Automatically update any existing specs already classified `changed` and notify the user of their exact paths; this is maintenance, not new-spec creation. Implement and verify directly in the current session from the refined request and resolved testing discipline. Existing specs and decisions remain constraints. After any required technical approval, update an existing decision document only when the approved implementation changes that durable decision, and notify the user of the exact file and anchor. Skip business-spec approval, execution-strategy selection, feature analytics recording, and new-feature-spec close-out.
+- If the user chooses to continue without a new spec, do not create `business.html`, `technical.html`, `plan.html`, `execution.json`, or a feature entry in the spec indexes for this request. Automatically update any existing specs already classified `changed` and notify the user of their exact paths; this is maintenance, not new-spec creation. Implement and verify directly in the current session from the refined request and resolved testing discipline. Existing specs and decisions remain constraints. Preserve approved reuse-analysis choices in canonical decision documents and their decision/root indexes; this narrow exception allows a new decision without a new feature spec. Other existing decision changes still require the applicable technical approval. Notify the user of each exact decision file and anchor. Skip business-spec approval, execution-strategy selection, feature analytics recording, and new-feature-spec close-out.
 
 ### Preserve Independent Technical Approvals
 
@@ -307,8 +325,8 @@ specs/<domain>-<feature>/
 └── execution.json
 ```
 
-- `business.html`: durable product contract. Goal, intended users, problem, outcomes, primary flow, clues/examples, scope, acceptance criteria, and open product questions. No file paths or implementation checklist.
-- `technical.html`: durable design. Current system, proposed approach, boundaries, failure/security/compatibility concerns, verification strategy, feature-local choices, decision impact, and optional diagrams or charts for non-obvious tradeoffs.
+- `business.html`: durable product contract. Goal, intended users, problem, outcomes, primary flow, clues/examples, scope, acceptance criteria, reuse analysis and approved approach in product terms, and open product questions. No implementation file paths or implementation checklist; document links belong in the relevant sections and relationships table.
+- `technical.html`: durable design. Current system, proposed approach, reuse analysis and approved approach with exact code references and shared boundaries, failure/security/compatibility concerns, verification strategy, feature-local choices, decision impact, and optional diagrams or charts for non-obvious tradeoffs.
 - `plan.html`: implementation handoff. Goal and intended users, links to both specs and relevant decisions, ordered tasks, useful starting code surfaces, verification, discoveries, deviations, and completion summary.
 - `execution.json`: machine-readable classification, execution recommendation and user selection, task assignments, actual models, token usage, duration, verification, outcomes, and human evaluations of completed execution cycles. It complements the single integrated plan; it does not split the feature into independent plans.
 
@@ -341,13 +359,15 @@ When there is no durable decision impact, write exactly:
 
 > No durable decision impact. The relevant behavior can be inferred from the current spec and implementation.
 
-The default is not to create a decision. Create or update one only when all of these are true:
+Every explicitly approved choice from the reuse analysis must be stored in the canonical decision registry, including reuse as-is, adaptation, extraction of shared logic, or choosing a separate implementation over the identified candidate. This is an explicit exception to the inference heuristic below and applies in every documentation branch. Extend an existing relevant decision when possible instead of duplicating it. Record the selected approach and boundaries, affected consumers, recommendation and rationale, alternatives rejected and why, exceptions/custom conditions, and the user's approval with its date. Record approved intent when approval is received, with implementation state `pending`, and refresh the decision and root indexes; do not imply it has shipped. An existing active rule must not be changed before its required technical approval; until then, retain the proposal in the spec or conversation. Unselected suggestions and unresolved choices are not approved decisions.
+
+For other choices, the default is not to create a decision. Create or update one only when all of these are true:
 
 - it is likely to affect multiple features, surfaces, or future implementations;
 - different reasonable interpretations could cause meaningful inconsistency, risk, or repeated debate;
 - the intended rule cannot be reliably inferred from code, existing conventions, or an active specification.
 
-Prefer inference for local, obvious, temporary, inexpensive-to-reverse, or implementation-level choices. Do not create empty categories, duplicate decisions, or records for routine details. Extend an existing decision when possible. A decision captures intent that code cannot communicate clearly; it does not reproduce code or the feature spec.
+Outside approved reuse-analysis choices, prefer inference for local, obvious, temporary, inexpensive-to-reverse, or implementation-level choices. Do not create empty categories, duplicate decisions, or records for routine details. Extend an existing decision when possible. A decision captures intent, alternatives, and approved boundaries; it does not reproduce code or the feature spec. Use the no-impact statement only when neither an approved reuse-analysis choice nor another durable decision applies.
 
 Every discovery message, branch-selection message, approval request, generated spec summary, automatic-update notice, and final result must expose the applicable spec and decision impact by exact path or anchor. Never say only `related documentation updated`.
 
@@ -355,7 +375,7 @@ Every discovery message, branch-selection message, approval request, generated s
 
 Run this step only when no existing spec owns the behavior and the user chooses `Create a new spec`. Create `business.html`, `technical.html`, and `plan.html` before implementing product code. Present the generated spec summary with exact lists of other specs consulted or changed and decisions consulted, proposed, or changed, then stop. Require explicit business-spec approval before implementation. After approval, automatically apply the approved relationship changes to every existing spec classified `changed` and notify the user of the exact paths; do not ask for a second documentation approval. Clearly listed new general decisions are approved with the applicable business or technical spec. Apply the independent technical approval gate above to migrations, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes.
 
-On the new-spec path, do not begin implementation, edit product code, or run implementation tasks until the required business-spec and independent technical approvals have been given. If approval changes the requested behavior or approved design, update the generated spec and regain the required approval before continuing. The automatic existing-spec branch does not require business-spec approval.
+On the new-spec path, do not begin implementation, edit product code, or run implementation tasks until the required business-spec and independent technical approvals have been given. Preserve the explicit reuse choice from discovery without requesting it again unless the approach changes materially. If approval changes the requested behavior or approved design, update the generated spec and regain the required approval before continuing. The automatic existing-spec branch does not require business-spec approval, but it still requires the explicit reuse-analysis choice when applicable.
 
 Before stopping, structure `plan.html` as one integrated plan with detailed tasks. Every task needs an ID, primary category, effort, risk, plan confidence, delegation confidence, dependencies, parallelizability, exact in/out scope, verification command with expected result, and task-specific STOP conditions. Use these categories: `feature`, `bug`, `security`, `performance`, `tests`, `tech-debt`, `migration`, `dx`, `docs`, `research`, and `design`.
 
@@ -410,15 +430,15 @@ Complete the selected implementation path and verification, then stop at the nam
 
 ### Close Out And Self-Improve
 
-Run feature artifact and analytics close-out for new and automatically updated existing owning specs. In every branch, reconcile all existing specs classified `changed` and report their exact paths. The no-new-spec branch ends after implementation and verification without creating new feature artifacts; if an approved implementation changed an active durable decision, update only that existing decision document and its index, then report the exact path and anchor.
+Run feature artifact and analytics close-out for new and automatically updated existing owning specs. In every branch, reconcile all existing specs classified `changed` and report their exact paths. The no-new-spec branch ends after implementation, verification, and reconciliation of approved decisions without creating new feature artifacts. Persist approved reuse-analysis decisions and approved changes to existing decisions, update their decision/root indexes, and report the exact paths and anchors.
 
 - Make business and technical specs describe what shipped, and verify their sibling and qualifying related-document links still express the actual relationship.
 - Complete the plan with verification evidence.
 - Complete `execution.json` with every distinct planner, orchestrator, executor, verifier, and reviewer run; selected versus recommended strategy; actual model and effort; outcome; revisions; duration; verification evidence; and token usage with its provenance (`measured`, `reported`, `estimated`, or `unavailable`) and scope (`task`, `run`, or `session`). Use `null` for an actual model only when the runtime does not expose it; never guess. Record a redacted `usageId` so the same session total is never counted in multiple run rows. For same-session work, record one orchestrator/executor run when planning and execution usage cannot be separated; keep planner identity in the planning block and mark token scope `session`. Preserve every prior human evaluation when an existing spec is executed again.
 - When a local Codex session ID is available, use `npx simplest-sdd@latest codex-usage --session <id>` to read model, effort, duration, and token totals without copying conversation content. Do not commit raw session logs or unredacted session IDs.
 - Rebuild the committed analytics ledger with `npx simplest-sdd@latest analytics --format jsonl > .agents/skills/spec-library/data/executions.jsonl`. Generate CSV on demand with `npx simplest-sdd@latest analytics --format csv`; JSONL and each feature's `execution.json` are the durable sources.
-- Apply only approved general decision changes that actually shipped. Update the canonical category section in place for clarifications or scope extensions, add a compact change-history entry linking back to the feature spec, and change the spec's decision-impact wording from proposed to applied. Create a replacement and mark the old decision superseded only when its meaning is fundamentally reversed.
-- Keep the decision registry sparse. If the behavior remains reliably inferable, preserve the spec's “No durable decision impact” statement and create nothing.
+- Reconcile approved decisions with what actually shipped. For approved reuse-analysis decisions recorded earlier, retain the approval and set implementation state to `shipped`, `partially implemented`, or `not implemented` with the reason and remaining scope. Do not delete approved intent or mark unshipped work as applied. Update the canonical category section in place for clarifications or scope extensions, add a compact change-history entry linking back to the feature spec when one exists (otherwise record request context and date without a fabricated link), and change the spec's decision-impact wording to reflect the outcome. Create a replacement and mark the old decision superseded only when its meaning is fundamentally reversed.
+- Keep the decision registry sparse outside the required approved reuse-analysis records. Use the spec's “No durable decision impact” statement and create nothing only when no approved reuse-analysis choice or other durable decision applies.
 - Update the root library index, spec index, and decision index. Mark replaced artifacts as superseded instead of deleting history.
 - Improve the skill only when repeated friction reveals a reusable guardrail. Do not add ceremony for a one-off mistake.
 
@@ -460,11 +480,11 @@ Each template should be a complete HTML document with the baseline style from th
 
 The templates should provide these sections:
 
-- Business: Goal, Intended users, Problem, Outcomes, User flow, Clues and examples, Scope in/out, Acceptance criteria, Open questions, Document relationships. Include status and last-updated metadata.
-- Technical: Current system, Proposed approach, Boundaries and contracts, Failure/security/compatibility, Verification strategy, Feature-local choices, Decision impact, Open questions, Document relationships. Include status and last-updated metadata.
+- Business: Goal, Intended users, Problem, Outcomes, User flow, Clues and examples, Scope in/out, Acceptance criteria, Reuse analysis and approved approach, Open questions, Document relationships. In the reuse section record related product behavior, alternatives, recommendation and rationale, user choice/custom conditions, approval status, consequences, and decision links, or the evidence-backed no-candidate conclusion. Include status and last-updated metadata.
+- Technical: Current system, Proposed approach, Reuse analysis and approved approach, Boundaries and contracts, Failure/security/compatibility, Verification strategy, Feature-local choices, Decision impact, Open questions, Document relationships. Include exact inspected source paths/symbols, existing/new consumers, approved shared or separate boundaries, compatibility and verification for affected consumers, and canonical decision links. Include status and last-updated metadata.
 - Plan: Goal and intended users, Execution boundary, Strategy recommendation and user decision, Read first, one integrated task table (ID, category, effort, risk, plan confidence, delegation confidence, dependencies, parallelizability, recommended profile/effort, selected assignment), detailed task steps, scope, verification, STOP conditions, discoveries and deviations, completion summary, and Document relationships. Include status and last-updated metadata.
 - Execution: create a valid `execution.json` example using schema version `1.1.0`, all supported categories including `design`, capability profiles rather than durable provider model names, a null strategy selection before approval, detailed tasks, an empty runs array, and an empty `humanEvaluations` array. Preserve legacy schema `1.0.0` records without inventing feedback.
-- Decision category: a living category document containing concise decision sections with stable IDs/anchors. Each section has Decision, Applies to, Why, How to apply, Exceptions, and Change history. Include active/superseded status and last-updated metadata. Amend in place for compatible changes; supersede only for a fundamental reversal.
+- Decision category: a living category document containing concise decision sections with stable IDs/anchors. Each section has Decision, Applies to, Why, How to apply, Exceptions, and Change history. Approved reuse-analysis records also capture alternatives considered, recommendation, selected scope/consumers, custom conditions, approval/date, and implementation state. Include approved/active/superseded status and last-updated metadata; distinguish approved intent awaiting implementation from an applied rule. Amend in place for compatible changes; supersede only for a fundamental reversal.
 
 Use `data-artifact`, the corresponding visible `.kicker`, a text `.badge` for status, and the artifact's stable accent in every HTML template. Include a filled example `Document relationships` table with correct relative sibling paths and explanations; use placeholders only for optional decisions and related specs. Make important-keyword examples specific to the document type and restrained enough to demonstrate the contract without turning the page into a collection of highlights.
 
@@ -491,6 +511,9 @@ Before finishing:
 - confirm `.agents/skills/spec-library/SKILL.md` contains `<!-- simplest-sdd-schema-version: {{schemaVersion}} -->`;
 - confirm the generated `SKILL.md` records the repository's resolved testing discipline by name (test-first skill, other defined testing approach, or intentional test-free stance) and follows it after branch-specific approvals or an explicit no-new-spec choice;
 - confirm the generated `SKILL.md` always runs mandatory discovery when its gate activates and includes provisional spec/decision impact by exact path or anchor in that discovery message;
+- confirm discovery inspects related implementations and shared lower-level logic, presents reuse/separate/custom options with one evidence-backed recommendation when candidates exist, and records a no-candidate conclusion otherwise;
+- confirm business and technical templates retain the reuse analysis, recommendation, explicit user choice and approval state at their respective product/design levels; plans cover only approved scope and verification for affected consumers;
+- confirm approved reuse-analysis choices persist in canonical decisions and indexes in every branch, including without a new spec, while unselected ideas remain proposals and approved intent is distinguished from shipped behavior;
 - confirm the generated `SKILL.md` automatically updates an existing owning spec after discovery without business-spec approval, preserves history, and reports the exact specs and decisions consulted or changed;
 - confirm the generated `SKILL.md` presents exactly two choices with exactly one `(Recommended)` label only when no existing spec owns the behavior, and creates a new spec only after the user selects `Create a new spec`;
 - confirm migrations, data, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes still require explicit technical approval in every branch;
@@ -502,7 +525,7 @@ Before finishing:
 - confirm the root library index, specs, plans, decisions, supporting indexes, and templates are HTML files with readable focus styles, accessible semantic colors, visible artifact/status labels, and restrained keyword highlights;
 - confirm each feature's business, technical, and plan documents have a `Document relationships` table with valid sibling links and useful reasons, the plan links its execution record, and applicable decision links use exact anchors;
 - confirm related-spec links meet the dependency/shared-contract/scope-interaction/supersession criteria rather than relying on topic similarity;
-- confirm the decision index routes to only populated category documents, technical specs record decision impact, and routine inferable choices did not create durable decisions;
+- confirm the decision index routes to only populated category documents, technical specs record decision impact, and routine inferable choices outside explicitly approved reuse analysis did not create durable decisions;
 - confirm no existing instruction, spec, decision, or skill was lost;
 - search for stale references saying `CLAUDE.md` should be a symlink or that generated artifacts should be Markdown;
 - validate skill frontmatter if a validator is available;

@@ -2,6 +2,8 @@
 
 This is an abbreviated example of the system generated for a mature read-later application.
 
+The code paths and inspection findings in this example are illustrative stand-ins. A real generated spec must reference actual inspected implementation, callers, and tests from the target repository.
+
 ## Repository instructions
 
 The bootstrap preserves existing commands and technical rules, then adds concise product context:
@@ -21,6 +23,7 @@ For simplest-sdd maintenance instructions, run `npx simplest-sdd@latest update` 
 
 - Treat the user's current prompt as the authorized phase and honor every stated stop point.
 - During mandatory discovery, name the existing owning, consulted, and potentially changed specs and decisions. Refresh an existing owning spec automatically; ask whether to create a new spec only when no spec owns the behavior.
+- Inspect related implementation and ask the user to select reuse as-is, a separate implementation, or a custom adaptation/shared abstraction when a meaningful opportunity exists; recommend exactly one option with evidence. Record approved reuse/abstraction choices in canonical decisions, including when the user chooses no new spec.
 - Always offer same-session execution and show a concrete custom assignment example.
 - Without an explicit stop point, stop after the selected strategy completes the approved implementation, verification, analytics, human evaluation, and close-out.
 - Do not continue into commits, pull requests, deployment, monitoring, or review handling unless the current prompt explicitly requests it.
@@ -36,7 +39,9 @@ For simplest-sdd maintenance instructions, run `npx simplest-sdd@latest update` 
 | Other clear low-risk output reviewable within ~5 minutes | Implement and verify directly |
 ```
 
-When the skill activates, it inspects relevant specs and decisions and shows their exact paths or anchors with the request-refinement questions. After the answers, an existing owning spec updates automatically without business-spec approval. Only when no existing spec owns the behavior does it present `Create a new spec` and `Continue without a new spec`, mark exactly one choice `(Recommended)`, and wait. Sensitive technical changes retain explicit approval in every branch.
+When the skill activates, it inspects relevant specs, decisions, related code, callers, and tests and shows their exact paths or anchors with the request-refinement questions. It compares relevant reuse, separate-implementation, and custom adaptation or extraction options, recommends exactly one with concrete evidence, and waits for the user's selection. It does not infer approval from its own recommendation or create speculative abstractions.
+
+After the answers, an existing owning spec updates automatically without business-spec approval; that refresh does not approve a pending reuse/abstraction choice. Only when no existing spec owns the behavior does it separately present `Create a new spec` and `Continue without a new spec`, mark exactly one documentation choice `(Recommended)`, and wait. The no-new-spec branch creates no feature artifacts or feature entries in the spec indexes, but still records approved reuse/abstraction choices in canonical decisions and the necessary decision/library indexes. Sensitive technical changes retain explicit approval in every branch.
 
 `CLAUDE.md` is a regular file:
 
@@ -56,6 +61,8 @@ CLAUDE.md
 │   └── executions.jsonl
 ├── specs/
 │   ├── index.html
+│   ├── saved-library/
+│   │   └── business.html
 │   └── content-discovery-export/
 │       ├── business.html
 │       ├── technical.html
@@ -63,7 +70,8 @@ CLAUDE.md
 │       └── execution.json
 ├── decisions/
 │   ├── index.html
-│   └── architecture.html
+│   ├── architecture.html
+│   └── design.html
 └── templates/
     ├── business-spec.html
     ├── technical-spec.html
@@ -126,7 +134,7 @@ The focused indexes expose only enough metadata for an agent to decide what to l
 
 ## Business spec
 
-The business document describes the product contract without implementation instructions. Its violet accent identifies the artifact type, while visible labels and restrained highlights carry the meaning without depending on color:
+The business document describes the product contract and the user's reuse choice in product terms. Code paths and extraction mechanics belong in the technical spec. Its violet accent identifies the artifact type, while visible labels and restrained highlights carry the meaning without depending on color:
 
 ```html
 <!doctype html>
@@ -174,7 +182,16 @@ The business document describes the product contract without implementation inst
       <ul>
         <li>Discovery clearly identifies result types.</li>
         <li>Export includes the complete active result set in visible order.</li>
+        <li>Saved-library export retains its current scope, ordering, permissions, and failure behavior after the shared logic is introduced.</li>
       </ul>
+    </section>
+    <section>
+      <h2>Reuse analysis and approved approach</h2>
+      <p>Saved-library export already completes every page and preserves visible order. Discovery needs those same guarantees but supports additional result types.</p>
+      <p><strong>Selected and approved:</strong> adapt the existing behavior by sharing page completion between the two exports, while each feature retains control of its own scope and result types. This was the agent's recommended option because the two concrete flows share completion requirements but differ in query and record contracts.</p>
+      <p><strong>Alternatives:</strong> reuse as-is would require narrowing discovery export to saved items; a separate implementation would preserve isolation but duplicate completion behavior and fixes. The user could also propose another custom boundary.</p>
+      <p><strong>Product consequences:</strong> both exports deliver their complete active set in visible order, and a failed page prevents a misleading partial download. Shared changes require verification of both flows; saved-library behavior must remain unchanged.</p>
+      <p><strong>Approval:</strong> during discovery, the user explicitly selected the shared page-completion helper for both exports while retaining per-feature queries, permissions, and record conversion. Canonical record: <a href="../../decisions/architecture.html#ARC-001">ARC-001</a>.</p>
     </section>
     <section>
       <h2>Document relationships</h2>
@@ -183,9 +200,12 @@ The business document describes the product contract without implementation inst
         <tbody>
           <tr><td>Technical design</td><td><a href="technical.html">Technical spec</a></td><td>Defines how the complete active set is loaded and serialized.</td></tr>
           <tr><td>Implementation plan</td><td><a href="plan.html">Implementation plan</a></td><td>Turns this product contract into ordered, verifiable work.</td></tr>
+          <tr><td>Related spec</td><td><a href="../saved-library/business.html">Saved library</a></td><td>Consulted unchanged: owns the existing export contract that the shared extraction must preserve.</td></tr>
+          <tr><td>Decision constraint</td><td><a href="../../decisions/design.html#DES-002">DES-002</a></td><td>Consulted unchanged: preserves the established calm, compact interaction constraints.</td></tr>
+          <tr><td>Decision constraint</td><td><a href="../../decisions/architecture.html#ARC-001">ARC-001</a></td><td>Newly approved reuse/abstraction choice: records the user's selected sharing boundary and rejected alternatives.</td></tr>
         </tbody>
       </table>
-      <p>No additional decision or related-spec references.</p>
+      <p>Other existing specs or active decisions changed: None.</p>
     </section>
   </main>
 </body>
@@ -194,12 +214,18 @@ The business document describes the product contract without implementation inst
 
 ## Technical spec
 
-The technical document records durable boundaries and may include a simple diagram when it helps:
+The technical document records durable boundaries and may include a simple diagram when it helps. This excerpt shows the approved design before implementation; close-out updates its decision-impact status to applied and verified:
 
 ```html
 <section>
   <h2>Proposed approach</h2>
   <p>Use one discovery surface over existing entity queries. Complete the active paginated result set before serialization.</p>
+  <h3>Reuse analysis and approved approach</h3>
+  <p>Inspection of <code>exportSavedLibrary()</code> in <code>src/features/saved-library/export.ts</code> found the existing pagination loop and ordering preservation. Its caller <code>ExportButton.handleExport()</code> in <code>src/features/saved-library/ExportButton.tsx</code> supplies the active scope. <code>buildSavedLibraryQuery()</code> in <code>src/features/saved-library/results.ts</code> constructs the feature-specific query; the exporter also assumes saved-item conversion. <code>src/features/saved-library/export.test.ts</code> covers multi-page completion, order, and later-page failure.</p>
+  <p>Reuse as-is is incompatible with discovery's additional result types. A separate implementation would repeat the tested pagination behavior. The approved custom option extracts only page completion into the proposed <code>completeActiveResults()</code> helper in <code>src/shared/export/complete-active-results.ts</code>. Its consumers will be the existing <code>exportSavedLibrary()</code> and the new <code>exportDiscoveryResults()</code> in <code>src/features/discovery/export.ts</code>. Both consumers have concrete requirements; the helper and discovery exporter are proposed additions, and no general export framework is justified.</p>
+  <h3>Approved boundary and verification</h3>
+  <p>The helper accepts a feature-provided page loader for a captured active scope and completes results in that scope's existing order. Each feature owns query construction, permission enforcement, and record conversion; the helper introduces no shared cache, new access rights, or schema change. Keep consumers' error handling and output contracts explicit: do not serialize a partial set when any page fails.</p>
+  <p>Verify both consumers with empty, single-page, and multi-page results, ordering and filtering, permissions, and later-page failures. Retain existing saved-library expectations and add discovery coverage for its additional result types. If inspection or verification changes the approved sharing boundary, return to the user before implementing the changed choice.</p>
   <figure class="panel">
     <figcaption>Export path</figcaption>
     <svg role="img" aria-labelledby="export-title" viewBox="0 0 560 120">
@@ -216,7 +242,7 @@ The technical document records durable boundaries and may include a simple diagr
 </section>
 <section>
   <h2>Decision impact</h2>
-  <p>This feature will create <a href="../../decisions/architecture.html#ARC-001">ARC-001 — Reuse the active result set for exports</a> because the rule will govern future export surfaces.</p>
+  <p><a href="../../decisions/architecture.html#ARC-001">ARC-001 — Share active-result completion between saved-library and discovery exports</a> records the reuse/abstraction boundary explicitly approved during discovery. Implementation status remains pending until verified; the implementation plan applies the approved choice. <a href="../../decisions/design.html#DES-002">DES-002</a> was consulted unchanged. Existing active decisions modified: None.</p>
 </section>
 <section>
   <h2>Document relationships</h2>
@@ -225,7 +251,9 @@ The technical document records durable boundaries and may include a simple diagr
     <tbody>
       <tr><td>Product contract</td><td><a href="business.html">Business spec</a></td><td>Defines the complete-set behavior this design must preserve.</td></tr>
       <tr><td>Implementation plan</td><td><a href="plan.html">Implementation plan</a></td><td>Applies these boundaries in task order and verification.</td></tr>
-      <tr><td>Decision constraint</td><td><a href="../../decisions/architecture.html#ARC-001">ARC-001</a></td><td>Makes active-result reuse binding for this and future export surfaces.</td></tr>
+      <tr><td>Related spec</td><td><a href="../saved-library/business.html">Saved library</a></td><td>Consulted unchanged: defines the existing consumer's preserved product contract.</td></tr>
+      <tr><td>Decision constraint</td><td><a href="../../decisions/design.html#DES-002">DES-002</a></td><td>Consulted unchanged: constrains the export interaction without changing its design rule.</td></tr>
+      <tr><td>Decision constraint</td><td><a href="../../decisions/architecture.html#ARC-001">ARC-001</a></td><td>Newly approved reuse/abstraction choice: limits shared completion to the two known consumers.</td></tr>
     </tbody>
   </table>
 </section>
@@ -258,8 +286,8 @@ The plan carries execution details and explicitly keeps the users visible:
     <table>
       <thead><tr><th>ID</th><th>Task</th><th>Category</th><th>Effort</th><th>Plan / delegation confidence</th><th>Assignment</th></tr></thead>
       <tbody>
-        <tr><td>T1</td><td>Normalize discovery and ordering inputs</td><td>design</td><td>M</td><td>high / medium</td><td>same-session, strong-worker, high</td></tr>
-        <tr><td>T2</td><td>Add focused tests and browser verification</td><td>tests</td><td>S</td><td>high / high</td><td>delegated, efficient-worker, medium</td></tr>
+        <tr><td>T1</td><td>Normalize discovery inputs and extract approved page completion for both export consumers</td><td>design</td><td>M</td><td>high / medium</td><td>same-session, strong-worker, high</td></tr>
+        <tr><td>T2</td><td>Verify complete-set, ordering, permission, and failure behavior in both export flows</td><td>tests</td><td>S</td><td>high / high</td><td>delegated, efficient-worker, medium</td></tr>
       </tbody>
     </table>
   </section>
@@ -271,7 +299,9 @@ The plan carries execution details and explicitly keeps the users visible:
         <tr><td>Product contract</td><td><a href="business.html">Business spec</a></td><td>Supplies the outcomes and acceptance criteria each task must satisfy.</td></tr>
         <tr><td>Technical design</td><td><a href="technical.html">Technical spec</a></td><td>Supplies the approved boundaries and verification strategy.</td></tr>
         <tr><td>Execution record</td><td><a href="execution.json">Execution record</a></td><td>Records selected assignments, actual runs, usage, outcomes, and human evaluations.</td></tr>
-        <tr><td>Decision constraint</td><td><a href="../../decisions/architecture.html#ARC-001">ARC-001</a></td><td>Constrains T1 to reuse the active result set.</td></tr>
+        <tr><td>Related spec</td><td><a href="../saved-library/business.html">Saved library</a></td><td>Consulted unchanged: supplies regression expectations for the existing consumer.</td></tr>
+        <tr><td>Decision constraint</td><td><a href="../../decisions/design.html#DES-002">DES-002</a></td><td>Consulted unchanged: preserves established interaction constraints during verification.</td></tr>
+        <tr><td>Decision constraint</td><td><a href="../../decisions/architecture.html#ARC-001">ARC-001</a></td><td>Newly approved reuse/abstraction choice: constrains T1 to the selected sharing boundary and T2 to both consumers.</td></tr>
       </tbody>
     </table>
   </section>
@@ -288,31 +318,46 @@ The response is stored in `execution.json` as a human evaluation linked to the e
 
 ## Durable decision
 
-Only a choice whose cross-feature intent is materially safer to preserve than infer is promoted. It becomes a section in a living category document, not an artifact owned by the feature:
+Approved reuse and abstraction choices are recorded in the canonical decision registry, including their approval and alternatives. Other choices still follow the sparse-registry durability criteria. This choice becomes a section in a living category document, not an artifact owned by the feature. The following excerpt shows its state after implementation and verification:
 
 ```html
 <main>
   <header>
     <h1>Architecture decisions</h1>
-    <p class="meta">Only populated categories and durable cross-feature choices belong here.</p>
+    <p class="meta">Only populated categories, durable project choices, and explicitly approved reuse/abstraction choices belong here.</p>
   </header>
   <section id="ARC-001">
-    <h2>ARC-001 — Reuse the active result set for exports</h2>
-    <p class="meta">Status: active. Last updated: 2026-07-22.</p>
+    <h2>ARC-001 — Share active-result completion between saved-library and discovery exports</h2>
+    <p class="meta">Status: active. Implementation: applied and verified. Last updated: 2026-07-22.</p>
     <h3>Decision</h3>
-    <p>Complete and serialize the active paginated result set.</p>
+    <p>Extract and reuse page completion for saved-library and discovery exports. Each consumer retains its own active query, permission enforcement, and record conversion.</p>
     <h3>Applies to</h3>
-    <p>Current and future exports derived from an interactive result set.</p>
+    <p>The two approved consumers: saved-library export and discovery export. Evaluate compatibility before proposing reuse for another consumer; this approval does not authorize a general export framework.</p>
     <h3>Why</h3>
-    <p>It prevents visible results and exports from using different scopes while reusing already loaded data.</p>
+    <p>Both flows need complete results in visible order and must fail rather than download a partial set. Inspected saved-library export code and tests already implement those guarantees, while discovery needs different query and record contracts. Sharing only completion avoids duplicate fixes without coupling those contracts.</p>
+    <h3>Alternatives considered</h3>
+    <ul>
+      <li>Reuse as-is: rejected because the existing exporter assumes saved-item records and would narrow discovery export's required scope.</li>
+      <li>Separate implementation: rejected because it duplicates completion behavior, though it would isolate future changes.</li>
+      <li>Custom adaptation/extraction: selected as recommended, limited to page completion for the two known consumers. No broader abstraction was approved.</li>
+    </ul>
+    <h3>Approval</h3>
+    <p>Explicitly approved by the user during discovery: “Extract the shared page-completion helper for both export flows. Keep queries, permissions, and record conversion in each feature, and keep existing saved-library export behavior unchanged.” The agent recommendation and documentation branch selection were not treated as approval.</p>
     <h3>How to apply</h3>
-    <p>Complete the active query scope before serialization rather than introducing an independent export query.</p>
+    <p>Use <code>completeActiveResults()</code> in <code>src/shared/export/complete-active-results.ts</code> with a feature-owned page loader for the captured active scope. Preserve scope, order, and failure semantics; verify both callers for changes to shared completion. The <a href="../specs/content-discovery-export/technical.html">technical spec</a> records inspected source paths and verification details.</p>
+    <h3>Tradeoffs and consequences</h3>
+    <p>The shared helper couples completion changes across both consumers, so both require regression checks. Queries, permissions, and serialization remain outside the helper. Revisit approval if evidence requires a broader extraction or changes those boundaries.</p>
     <h3>Exceptions</h3>
     <p>None currently.</p>
     <h3>Change history</h3>
-    <ul><li>2026-07-22: Created by the content discovery and export spec.</li></ul>
+    <ul>
+      <li>2026-07-22: Recorded the user's explicit discovery approval; implementation pending. Linked to the <a href="../specs/content-discovery-export/business.html">content discovery and export spec</a> after the user chose to create it.</li>
+      <li>2026-07-22: Applied and verified for both consumers; the approved boundary remained unchanged.</li>
+    </ul>
   </section>
 </main>
 ```
+
+The decision index links directly to `architecture.html#ARC-001` with its title, active status, scope, and update date; the root index exposes the populated category and decision index. If the user instead chose `Continue without a new spec`, the same approved choice and approval evidence would remain in the canonical decision and necessary index entries, with no links to nonexistent feature artifacts and no feature entry in the spec indexes. An unapproved recommendation would not become an active decision or authorize extraction.
 
 The business and technical specs remain useful after shipping. `plan.html` holds the single integrated implementation record, while `execution.json` and the derived JSONL ledger make routing, models, tokens, outcomes, and human evaluations queryable later. See the complete [execution record example](execution-record.json).

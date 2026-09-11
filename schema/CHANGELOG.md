@@ -2,6 +2,32 @@
 
 This changelog tracks the installed simplest-sdd schema. Workflow releases advance the schema version; CLI-only releases may leave it unchanged.
 
+## 0.14.0 - 2026-09-11
+
+- Inspects related implementations, actual callers, tests, and reusable lower-level logic during discovery. Recommendations compare shared business rules, compatibility, coupling, and preservation of existing behavior.
+- Offers reuse as-is, a separate new implementation, and a custom adaptation or shared extraction when viable related logic exists, with exactly one reasoned `(Recommended)` option. If no suitable candidate exists, records the inspected evidence without forcing artificial reuse choices.
+- Requires an explicit implementation choice before applying the approach. An already explicit instruction counts; unchanged approved scope needs no repeat approval. Choosing a documentation branch never selects an implementation approach.
+- Records analysis, alternatives, the model's recommendation and reason, approved user choice and custom conditions, approval status, and consequences in product language in the business spec. The technical spec names exact source paths, symbols, callers, abstraction boundaries, verification, and decision links; the plan includes only approved scope.
+- Stores every explicitly approved reuse-analysis choice, including keeping a separate implementation, in a canonical category decision and the decision and root indexes, regardless of ordinary decision-promotion heuristics or the no-new-spec branch.
+- Keeps unselected alternatives and unapproved ideas out of active decisions. Records approved intent with implementation pending, then reconciles the decision with what shipped, including partial or unimplemented scope, at close-out.
+- Allows approved decision and necessary index writes as a narrow no-new-spec exception alongside existing-contract maintenance. That branch still creates no new feature spec, plan, execution record, or analytics record.
+- Preserves independent technical approvals, including active-decision changes, stricter explicit local policies, historical artifacts and approvals, and execution schema `1.1.0`.
+
+### Migration from 0.13.0
+
+1. Update discovery in `SKILL.md` to inspect related implementations, their actual callers and tests, and reusable lower-level logic. Compare shared business rules, compatibility, coupling, and behavior-preservation risks before proposing reuse, adaptation, extraction, or a separate implementation.
+2. When viable related logic exists, present reuse as-is, a separate new implementation, and a custom adaptation or shared extraction with exactly one `(Recommended)` option and its reason. Document inspected evidence and limitations when no suitable candidate exists instead of inventing candidates or forced options.
+3. Wait for the user's explicit implementation choice before implementing the proposed approach. Count an already explicit instruction as approval and avoid asking again unless scope changes. Keep this choice distinct from `Create a new spec` versus `Continue without a new spec`, and preserve independent technical approvals.
+4. Extend the business template and newly created or intentionally updated business specs with product-level existing-logic analysis, alternatives, model recommendation and reason, approved user choice and custom conditions, approval status, and consequences. Do not infer historical approvals or broadly rewrite old specs.
+5. Extend the technical template with exact candidate source paths and symbols, actual callers and consumers, the approved reuse or abstraction boundary, preservation checks, and a direct canonical decision link. Constrain plan tasks and acceptance checks to the approved implementation scope.
+6. Make every explicitly approved choice from reuse analysis, including choosing isolation over reuse, a required canonical category decision with a stable ID and anchor, rationale, alternatives, approved scope and consumers, exceptions and custom conditions, approval evidence, and separate implementation state. This requirement overrides the routine inferability and cross-feature decision-promotion heuristic.
+7. Keep unselected alternatives and unapproved ideas as analysis, never active decisions. Preserve explicit technical approval before changing an existing active decision, amend compatible decisions with history, and supersede only when the approved meaning fundamentally changes.
+8. Record an approved choice promptly as approved intent with implementation pending, refresh `decisions/index.html` and the root library index, and link applicable business and technical specs to the canonical decision. Approval of an approach does not certify that it has been implemented.
+9. Permit these approved decision and necessary index writes on `Continue without a new spec` as a narrow exception to its artifact restrictions. Preserve required maintenance of existing contracts, but create no new feature spec, plan, execution record, or analytics record and add no spec-only approval or human-evaluation steps to that branch.
+10. At close-out in every branch, reconcile the decision and relevant indexes with the actual implementation and verification, including partial, changed, or unimplemented scope. Seek approval for changed implementation scope instead of silently broadening the approved abstraction or consumers.
+11. Update examples and validation checks for reuse, separate implementation, custom adaptation or extraction, missing candidates, prior explicit approval, and the no-new-spec decision exception. Preserve stricter explicit local policies and untouched historical artifacts without invented approvals or implementation facts.
+12. Advance the installed workflow marker to `0.14.0` while retaining execution schema `1.1.0` and its existing evaluation lifecycle. This release requires no execution-record or analytics-format migration.
+
 ## 0.13.0 - 2026-08-08
 
 - After implementation and verification, asks for one neutrally worded overall execution rating from 1 to 10, anchored at 1 for failed, 5 for mixed or partially successful, and 10 for excellent, plus an optional comment whenever the request has an execution record.

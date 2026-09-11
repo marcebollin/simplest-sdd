@@ -68,6 +68,10 @@ const initAnnotations: Record<string, Annotation> = {
       url: "https://github.com/shadcn/improve"
     }
   },
+  "Analyze Related Implementations And Reuse": {
+    explanation: "Checks existing logic and actual consumers, recommends reuse, a separate implementation, or a custom adaptation or abstraction, and records the user’s choice in the specs and decision registry.",
+    tone: "blue"
+  },
   "Refine Request: Mandatory Discovery Questions": {
     explanation: "Separates understanding from implementation and makes documentation impact visible. The discovery message names provisional owning, consulted, and potentially changed specs and decisions.",
     tone: "violet"
@@ -93,7 +97,7 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "cyan"
   },
   "Record Decision Impact Without Creating Ceremony": {
-    explanation: "Preserves choices only when future work genuinely depends on them and requires every user-facing checkpoint to name the exact decisions consulted or changed.",
+    explanation: "Preserves approved reuse and abstraction choices in every documentation branch, keeps other decision records selective, and names the exact decisions consulted or changed.",
     tone: "green"
   },
   "Generate A New Spec Only When Selected And Wait For Approval": {

@@ -20,8 +20,10 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Keep `.claude/skills/spec-library -> ../../.agents/skills/spec-library` for Claude skill compatibility.
 - Use clean static HTML with semantic artifact colors and explicit document relationships for the root library index, specs, living decision category documents, plans, supporting indexes, and templates.
 - Never delete user-authored specs or decisions during update.
-- Keep decision documentation sparse: do not create empty categories or promote choices that remain reliably inferable from code, conventions, or an active specification.
-- Preserve mandatory discovery for every request that activates the skill. Automatically refresh an existing owning spec after discovery; require an explicit user choice only before creating a new spec.
+- Keep decision documentation sparse outside explicitly approved reuse-analysis choices: do not create empty categories or promote other choices that remain reliably inferable from code, conventions, or an active specification.
+- Preserve mandatory discovery for every request that activates the skill. Automatically refresh an existing owning spec after discovery; ask the documentation-branch question only when no existing spec owns the behavior.
+- During discovery, inspect related implementations and potential shared logic, compare reuse as-is, a separate implementation, and a custom adaptation or abstraction with one evidence-backed recommendation, and obtain the user's choice before implementing it. Preserve the analysis and approved approach in the business/technical specs and canonical decisions. An explicit choice already supplied by the user counts; documentation choices do not imply reuse approval.
+- Persist every approved reuse-analysis choice, including keeping implementations separate, in canonical decision documents and indexes even on the no-new-spec branch. Keep approved intent and implementation state distinct; do not infer historical approvals or turn unselected suggestions into active decisions.
 - Preserve an existing explicit delegation policy. Otherwise let the planner recommend delegation, but require explicit user approval of the proposed topology and assignments before spawning subagents.
 - Keep recommendations model-agnostic through capability profiles and effort; record actual models in execution data after runs.
 - Preserve human evaluation history. For every request with an execution record, ask once for an anchored 1–10 whole-execution rating plus an optional comment after implementation and verification; never infer or backfill feedback.
@@ -71,6 +73,8 @@ For an unversioned or missing installation, the printed history includes the ful
 
 When migrating decisions, preserve stable links and history. Consolidate old one-decision documents into living category documents only when ownership, category, and anchors are unambiguous; otherwise keep and index the original artifacts. Never create placeholder category files merely to match an example taxonomy.
 
+Add the reuse-analysis workflow and template sections for future or actively revised specs. Do not invent past analysis, recommendations, or user approvals to fill historical documents. Remove blanket no-new-spec decision-write prohibitions and inference-only decision rules where they would discard an explicitly approved reuse-analysis choice; preserve the ban on new feature artifacts in that branch and the technical approval gate for active-decision changes.
+
 If no migration versions are printed because the installed schema is current, validate it and report any drift; do not rewrite files merely to produce a change. Never downgrade an installation whose marker is newer than `{{schemaVersion}}`.
 
 ## 4. Validate
@@ -81,6 +85,10 @@ Before finishing:
 - confirm `.agents/skills/spec-library/SKILL.md` has the latest schema marker;
 - confirm `SKILL.md` records the resolved testing discipline by name and its implement-and-verify step follows that discipline (not a hardcoded `tdd` requirement);
 - confirm `SKILL.md` always runs mandatory discovery when activated and includes a provisional list of owning, consulted, and potentially changed specs and decisions by exact path or anchor;
+- confirm discovery inspects actual related code, callers, tests, and reusable lower-level logic, offers reuse/separate/custom choices with exactly one justified recommendation when candidates exist, and records evidence rather than forcing options when none fit;
+- confirm reuse and abstraction require an explicit user choice distinct from documentation selection, existing authorization is retained, and material scope changes return for approval;
+- confirm business templates record reuse alternatives, recommendation/rationale, selected approach/custom conditions, approval status, and product consequences; technical templates add source paths/symbols, consumers, boundaries, compatibility checks, and decision anchors; plans carry the approved scope;
+- confirm approved reuse-analysis choices are recorded in canonical decisions and indexes even without a new feature spec or when inferable from code, with alternatives, rationale, scope, approval/date, and implementation state reconciled at close-out;
 - confirm `SKILL.md` automatically updates an existing owning spec after discovery without business-spec approval, preserves prior history, and reports every consulted or changed spec and decision;
 - confirm `SKILL.md` asks `Create a new spec` versus `Continue without a new spec` only when no existing spec owns the behavior, labels exactly one choice `(Recommended)`, and creates no new feature spec unless the user selects it;
 - confirm every branch preserves explicit technical approval for migrations, data, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes;
@@ -95,7 +103,7 @@ Before finishing:
 - confirm business, technical, and plan templates use `Document relationships` tables with role, exact document link, and a useful reason instead of a vague `Related` list;
 - confirm feature siblings link directly to one another, plans link `execution.json`, applicable decisions use exact stable anchors, and related-spec links meet the dependency/shared-contract/scope-interaction/supersession criteria;
 - confirm `decisions/index.html` routes agents to populated category documents, technical specs have a concise Decision impact section, and active-decision changes require explicit approval;
-- confirm decision documents contain only choices whose intent is materially safer to preserve than infer, with no empty categories or routine implementation details;
+- confirm decision documents preserve explicitly approved reuse-analysis choices and otherwise contain only choices whose intent is materially safer to preserve than infer, with no empty categories, routine implementation details, or invented historical approvals;
 - confirm no specs, decisions, unrelated skills, or existing instructions were lost;
 - search for stale references to the previous simplest-sdd behavior;
 - run the repository's relevant formatting or documentation checks;

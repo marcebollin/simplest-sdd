@@ -1,6 +1,6 @@
 {
   "name": "simplest-sdd",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "A discovery-first workflow with durable specs and human-rated execution analytics.",
   "repository": {
     "type": "git",

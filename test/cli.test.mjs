@@ -37,7 +37,7 @@ test("prints init instructions", () => {
 
   assert.match(output, /Simplest SDD Init Instructions/);
   assert.match(output, /@AGENTS\.md/);
-  assert.match(output, /simplest-sdd-schema-version: 0\.13\.0/);
+  assert.match(output, /simplest-sdd-schema-version: 0\.14\.0/);
   assert.match(output, /purely presentational design, styling, spacing, or layout change/i);
   assert.match(output, /must not activate the workflow solely because reviewing/i);
   assert.match(output, /mandatory discovery/i);
@@ -106,7 +106,7 @@ test("prints detected update state", () => {
   const output = run(["update", "--cwd", cwd]);
 
   assert.match(output, /Detected Local State/);
-  assert.match(output, /Latest schema version: `0\.13\.0`/);
+  assert.match(output, /Latest schema version: `0\.14\.0`/);
   assert.match(output, /regular file importing @AGENTS\.md/);
   assert.match(output, /found \(0\.2\.0\)/);
   assert.match(output, /wait for explicit approval before implementation/);
@@ -119,6 +119,7 @@ test("prints detected update state", () => {
   assert.match(output, /### 0\.11\.0/);
   assert.match(output, /### 0\.12\.0/);
   assert.match(output, /### 0\.13\.0/);
+  assert.match(output, /### 0\.14\.0/);
   assert.match(output, /Create a new spec.*Continue without a new spec/s);
   assert.match(output, /automatically (?:refresh|update) an existing spec/i);
   assert.match(output, /provisional documentation-impact/i);
@@ -139,13 +140,29 @@ test("prints detected update state", () => {
   assert.doesNotMatch(output, /### 0\.2\.0/);
 });
 
+test("prints only the reuse migration for a 0.13.0 installation without modifying it", (t) => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "simplest-sdd-test-"));
+  t.after(() => fs.rmSync(cwd, { recursive: true, force: true }));
+  const skillDir = path.join(cwd, ".agents", "skills", "spec-library");
+  const skillPath = path.join(skillDir, "SKILL.md");
+  const installed = "---\nname: spec-library\ndescription: Test skill.\n---\n\n<!-- simplest-sdd-schema-version: 0.13.0 -->\n";
+  fs.mkdirSync(skillDir, { recursive: true });
+  fs.writeFileSync(skillPath, installed);
+
+  const output = run(["update", "--cwd", cwd]);
+
+  assert.deepEqual([...output.matchAll(/^### (\d+\.\d+\.\d+) - /gm)].map((match) => match[1]), ["0.14.0"]);
+  assert.equal(fs.readFileSync(skillPath, "utf8"), installed);
+  assert.deepEqual(fs.readdirSync(skillDir), ["SKILL.md"]);
+});
+
 test("omits migration history for a current installation", () => {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "simplest-sdd-test-"));
   const skillDir = path.join(cwd, ".agents", "skills", "spec-library");
   fs.mkdirSync(skillDir, { recursive: true });
   fs.writeFileSync(
     path.join(skillDir, "SKILL.md"),
-    "---\nname: spec-library\ndescription: Test skill.\n---\n\n<!-- simplest-sdd-schema-version: 0.13.0 -->\n"
+    "---\nname: spec-library\ndescription: Test skill.\n---\n\n<!-- simplest-sdd-schema-version: 0.14.0 -->\n"
   );
 
   const output = run(["update", "--cwd", cwd]);
@@ -156,6 +173,7 @@ test("omits migration history for a current installation", () => {
   assert.doesNotMatch(output, /### 0\.11\.0/);
   assert.doesNotMatch(output, /### 0\.12\.0/);
   assert.doesNotMatch(output, /### 0\.13\.0/);
+  assert.doesNotMatch(output, /### 0\.14\.0/);
   assert.doesNotMatch(output, /### 0\.9\.0/);
   assert.doesNotMatch(output, /### 0\.6\.0/);
   assert.doesNotMatch(output, /### 0\.5\.0/);
