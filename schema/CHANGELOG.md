@@ -2,6 +2,29 @@
 
 This changelog tracks the installed simplest-sdd schema. Workflow releases advance the schema version; CLI-only releases may leave it unchanged.
 
+## 0.15.0 - 2026-09-11
+
+- Removes execution records, human evaluation and qualification prompts, rating-response waits, and the execution analytics ledger. Work ends after implementation, verification, and required spec and decision maintenance.
+- Removes the execution schema and template, `analytics` and `codex-usage` commands, and active telemetry instructions, examples, links, and index columns.
+- Keeps task classifications, estimates, capability recommendations, approved execution strategy, progress, and verification in `plan.html` without per-run model, token, timing, rating, or analytics records.
+- During update, lists existing legacy record paths and offers one explicit choice: `Leave old records untouched (Recommended, default)` or `Delete the identified old records`. Deletion requires an explicit selection; silence preserves every old record.
+- Leaves preserved records byte-for-byte unchanged as inactive history. Deletes only explicitly selected record and ledger files, then removes dangling links without deleting spec folders, decisions, unrelated data, or other history.
+- Overrides obsolete telemetry migrations on upgrades from every older release, without creating intermediate records, evaluations, or analytics artifacts. Historical release notes remain available as history.
+- Preserves discovery, documentation-branch choices, approved reuse decisions, independent technical approvals, and the resolved testing discipline.
+
+### Migration from 0.14.0 and earlier
+
+1. Apply the current workflow directly from any older or unversioned installation. These removal instructions override every older migration step that would create, migrate, validate, export, rebuild, or maintain execution records, human ratings, analytics, or `codex-usage` telemetry. Never recreate intermediate telemetry artifacts or run obsolete commands before removing them.
+2. Remove execution tracking, human evaluation and qualification prompts, rating-response waits, telemetry collection, analytics rebuilds, and `codex-usage` instructions from active `SKILL.md`, `AGENTS.md` workflow notes, templates, examples, and close-out instructions. Preserve implementation and verification reporting, spec and decision maintenance, discovery, approved reuse choices, and independent technical approvals.
+3. Retire generated execution templates and schema references, analytics documentation and command examples, execution-record relationship requirements, and execution or rating index columns. Remove active links to retired support files and execution records while preserving business, technical, plan, and decision content and valid relationships.
+4. Keep task classifications, estimates, capability recommendations, the approved execution strategy, progress, and verification in `plan.html`. Do not transfer old per-run records, model or token usage, duration, ratings, or analytics into plans or a replacement telemetry store.
+5. Inventory the exact legacy `specs/**/execution.json` and `data/executions.jsonl` paths in the canonical spec library without parsing their contents or following the Claude compatibility symlink as a second library. If any exist, show every affected path and ask one question offering `Leave old records untouched (Recommended, default)` or `Delete the identified old records`.
+6. Wait for an explicit deletion selection before deleting any old record. Neither the update request, the recommended default, nor silence authorizes deletion. Continue independent update work with the records preserved while the choice is pending. An existing explicit selection covering the identified files counts; do not ask again. Skip the cleanup question when no old records exist.
+7. For `Leave old records untouched`, preserve every record and ledger byte-for-byte as inactive history. Do not parse, validate, upgrade, normalize, append to, rewrite, rename, relocate, or export them, or resume recording or rating them later. No response also preserves every record and must not be reported as an explicit user choice.
+8. For `Delete the identified old records`, delete only the exact record and ledger files covered by the explicit selection, then remove dangling links from library documents and indexes. Never blanket-delete directories, spec folders, `business.html`, `technical.html`, `plan.html`, decisions, unrelated data, or other history. Resolve unclear ownership without broadening deletion.
+9. Refresh active templates and indexes without reading archived records. Verify that current instructions have no recording or rating lifecycle, telemetry-dependent links or columns, or command that parses or regenerates old records. Treat earlier release entries below as historical context wherever these removal instructions supersede them.
+10. Set the installed workflow marker to `0.15.0`. Report changed files, the user's cleanup choice or pending/no-records status, and exact legacy files preserved or deleted. There is no replacement execution schema or record-format migration.
+
 ## 0.14.0 - 2026-09-11
 
 - Inspects related implementations, actual callers, tests, and reusable lower-level logic during discovery. Recommendations compare shared business rules, compatibility, coupling, and preservation of existing behavior.

@@ -3,14 +3,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { formatAnalytics, loadExecutionRecords } from "../lib/execution-data.mjs";
-import { readCodexUsage } from "../lib/codex-usage.mjs";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageJson = readJson(path.join(packageRoot, "package.json"));
 const versions = readJson(path.join(packageRoot, "schema", "versions.json"));
 
-const commands = new Set(["init", "update", "remove", "analytics", "codex-usage"]);
+const commands = new Set(["init", "update", "remove"]);
 
 main();
 
@@ -38,17 +36,7 @@ function main() {
 
   const cwd = path.resolve(parsed.cwd || process.cwd());
 
-  if (parsed.command === "analytics") {
-    runAnalytics(cwd, parsed.format);
-    return;
-  }
-
-  if (parsed.command === "codex-usage") {
-    runCodexUsage(parsed.session);
-    return;
-  }
-
-  const detectedState = detectState(cwd);
+  const detectedState = detectState(cwd, parsed.command !== "init");
   const template = readText(path.join(packageRoot, "prompts", `${parsed.command}.md`));
   const output = render(template, {
     packageVersion: packageJson.version,
@@ -64,8 +52,6 @@ function parseArgs(args) {
   const parsed = {
     command: null,
     cwd: null,
-    format: "summary",
-    session: null,
     help: false,
     version: false
   };
@@ -98,32 +84,6 @@ function parseArgs(args) {
       continue;
     }
 
-    if (arg === "--format") {
-      const next = args[index + 1];
-      if (!next) fail("Missing value for --format");
-      parsed.format = next;
-      index += 1;
-      continue;
-    }
-
-    if (arg.startsWith("--format=")) {
-      parsed.format = arg.slice("--format=".length);
-      continue;
-    }
-
-    if (arg === "--session") {
-      const next = args[index + 1];
-      if (!next) fail("Missing value for --session");
-      parsed.session = next;
-      index += 1;
-      continue;
-    }
-
-    if (arg.startsWith("--session=")) {
-      parsed.session = arg.slice("--session=".length);
-      continue;
-    }
-
     if (arg.startsWith("-")) {
       fail(`Unknown option: ${arg}`);
     }
@@ -138,26 +98,7 @@ function parseArgs(args) {
   return parsed;
 }
 
-function runAnalytics(cwd, format) {
-  const formats = new Set(["summary", "json", "jsonl", "csv"]);
-  if (!formats.has(format)) fail(`Unknown analytics format: ${format}. Use summary, json, jsonl, or csv.`);
-
-  const result = loadExecutionRecords(cwd);
-  if (result.errors.length > 0) {
-    fail(["Execution data validation failed:", ...result.errors.map((error) => `- ${error}`)].join("\n"));
-  }
-
-  print(formatAnalytics(result.records, format));
-}
-
-function runCodexUsage(sessionId) {
-  if (!sessionId) fail("codex-usage requires --session <id>");
-  const usage = readCodexUsage(sessionId);
-  if (!usage) fail(`Codex session not found: ${sessionId}`);
-  print(JSON.stringify(usage, null, 2));
-}
-
-function detectState(cwd) {
+function detectState(cwd, includeLegacyRecords) {
   const agentsPath = path.join(cwd, "AGENTS.md");
   const claudePath = path.join(cwd, "CLAUDE.md");
   const skillPath = path.join(cwd, ".agents", "skills", "spec-library", "SKILL.md");
@@ -184,8 +125,10 @@ function detectState(cwd) {
     libraryIndex: describeArtifactIndex(libraryHtmlIndex, null),
     specsIndex: describeArtifactIndex(specsHtmlIndex, specsMarkdownIndex),
     decisionsIndex: describeArtifactIndex(decisionsHtmlIndex, decisionsMarkdownIndex),
-    executionLedger: describePath(executionLedger),
-    executionRecords: countNamedFiles(path.join(cwd, ".agents", "skills", "spec-library", "specs"), "execution.json")
+    legacyRecords: includeLegacyRecords ? {
+      ledger: describePath(executionLedger),
+      count: countNamedFiles(path.join(cwd, ".agents", "skills", "spec-library", "specs"), "execution.json")
+    } : null
   };
 }
 
@@ -263,8 +206,10 @@ function formatDetectedState(state) {
     `- library index: ${state.libraryIndex}`,
     `- spec index: ${state.specsIndex}`,
     `- decision index: ${state.decisionsIndex}`,
-    `- execution ledger: ${state.executionLedger}`,
-    `- feature execution records: ${state.executionRecords}`
+    ...(state.legacyRecords ? [
+      `- legacy execution ledger: ${state.legacyRecords.ledger}`,
+      `- legacy feature execution records: ${state.legacyRecords.count}`
+    ] : [])
   ].join("\n");
 }
 
@@ -357,24 +302,18 @@ Usage:
   npx simplest-sdd@latest init [--cwd <path>]
   npx simplest-sdd@latest update [--cwd <path>]
   npx simplest-sdd@latest remove [--cwd <path>]
-  npx simplest-sdd@latest analytics [--cwd <path>] [--format summary|json|jsonl|csv]
-  npx simplest-sdd@latest codex-usage --session <id>
 
 Commands:
   init     Print agent instructions for installing simplest-sdd.
   update   Print agent instructions for migrating an existing simplest-sdd setup.
   remove   Print agent instructions for conservatively removing simplest-sdd configuration.
-  analytics    Validate execution.json records and print analysis-ready data.
-  codex-usage  Read model, effort, duration, and token totals from a local Codex session.
 
 Options:
   --cwd <path>   Inspect a project directory before printing instructions. Defaults to the current directory.
-  --format <type> Analytics output: summary, json, jsonl, or csv.
-  --session <id>  Local Codex session id to inspect without printing conversation content.
   --version      Print the CLI package version.
   --help         Show this help.
 
-Init, update, and remove print instructions for an AI coding agent. Analytics and codex-usage are read-only. This CLI does not edit project files directly.`;
+Init, update, and remove print instructions for an AI coding agent. This CLI does not edit project files directly.`;
 }
 
 function readJson(filePath) {

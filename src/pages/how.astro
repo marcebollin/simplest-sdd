@@ -89,7 +89,7 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "teal"
   },
   "Create One Feature Folder": {
-    explanation: "Separates the product contract, technical design, implementation handoff, and execution facts. Each reader can load the layer it needs without carrying the whole history.",
+    explanation: "Separates the product contract, technical design, and implementation handoff. Each reader can load the layer it needs without carrying the whole history.",
     tone: "teal"
   },
   "Connect Documents With Explicit Relationships": {
@@ -125,15 +125,11 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "Close Out And Self-Improve": {
-    explanation: "Reconciles what was planned with what actually shipped. It updates durable artifacts, records objective execution facts, and changes the skill only when repeated friction reveals a reusable guardrail.",
+    explanation: "Reconciles what was planned with what actually shipped. It reports the outcome, verification, remaining limitations, and durable documentation impact, and changes the skill only when repeated friction reveals a reusable guardrail.",
     tone: "green"
   },
-  "Request And Record Human Evaluation": {
-    explanation: "Closes the loop only for work with an execution record. After showing the verified result, the agent asks for an anchored 1–10 score and optional comment, ties it to the exact runs, and never invents feedback.",
-    tone: "amber"
-  },
   "Root Library Index": {
-    explanation: "Provides progressive disclosure for humans and agents. The index helps a reader choose the relevant artifact without loading every spec, decision, plan, and execution record.",
+    explanation: "Provides progressive disclosure for humans and agents. The index helps a reader choose the relevant artifact without loading every spec, decision, and plan.",
     tone: "teal"
   },
   "5. Create Concise HTML Templates": {
@@ -150,7 +146,7 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "violet"
   },
   "7. Validate": {
-    explanation: "Checks that installation produced a coherent system: the links resolve, the schema marker is current, history survived, analytics validate, and the agent stops at the requested boundary.",
+    explanation: "Checks that installation produced a coherent system: the links resolve, the schema marker is current, history survived, and the agent stops at the requested boundary.",
     tone: "lime"
   }
 };
@@ -161,7 +157,7 @@ const updateAnnotations: Record<string, Annotation> = {
     tone: "slate"
   },
   "Rules": {
-    explanation: "Protects local instructions, custom workflow choices, specifications, decisions, and execution history while an older installation is brought forward.",
+    explanation: "Protects local instructions, custom workflow choices, specifications, plans, and decisions while an older installation is brought forward. Old execution records stay untouched unless the user explicitly selects deletion.",
     tone: "rose"
   },
   "1. Inspect Current Installation": {
@@ -172,11 +168,15 @@ const updateAnnotations: Record<string, Annotation> = {
     explanation: "Turns version history into a repository-specific gap analysis. Each migration is checked against local reality so already-completed work is not repeated and conflicting customizations are surfaced.",
     tone: "violet"
   },
-  "3. Apply The Migration Conservatively": {
+  "3. Choose What To Do With Old Execution Records": {
+    explanation: "Shows the old execution records found and asks whether to leave them untouched or delete them. Keeping them is the default; deletion requires an explicit choice and preserves specifications, plans, and decisions.",
+    tone: "amber"
+  },
+  "4. Apply The Migration Conservatively": {
     explanation: "Applies only the missing migrations, in order, while preserving ownership and history. It explicitly avoids downgrades, empty rewrites, and destructive consolidation.",
     tone: "amber"
   },
-  "4. Validate": {
+  "5. Validate": {
     explanation: "Proves that the upgraded workflow is coherent and current without losing project knowledge, changing unrelated behavior, or continuing into feature delivery.",
     tone: "lime"
   }
@@ -200,7 +200,7 @@ const removeAnnotations: Record<string, Annotation> = {
     tone: "violet"
   },
   "3. Deactivate The Skill Without Losing User Data": {
-    explanation: "Removes the reusable skill and untouched templates when safe, but keeps specifications, decisions, execution records, and any customized material by default.",
+    explanation: "Removes the reusable skill and untouched templates when safe, but keeps specifications, decisions, plans, any legacy execution records, and customized material by default.",
     tone: "amber"
   },
   "4. Validate": {
@@ -288,7 +288,7 @@ const promptDefinitions = [
     id: "update",
     tabLabel: "Update",
     actionLabel: "migration",
-    summary: "Migrates an existing installation without flattening local customizations, rewriting current work, or losing project history.",
+    summary: "Updates an existing installation and asks whether to leave old execution records untouched or delete them. Keeping them is the default; specifications, plans, and decisions are preserved.",
     instruction: "Run npx simplest-sdd@latest update and follow the instructions",
     rawUrl: "/update-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/update.md",
@@ -298,7 +298,7 @@ const promptDefinitions = [
     id: "remove",
     tabLabel: "Remove",
     actionLabel: "removal",
-    summary: "Deactivates the framework conservatively while preserving specifications, decisions, plans, and execution history owned by the project.",
+    summary: "Deactivates the framework conservatively while preserving specifications, decisions, plans, and any legacy execution records owned by the project.",
     instruction: "Run npx simplest-sdd@latest remove and follow the instructions",
     rawUrl: "/remove-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/remove.md",

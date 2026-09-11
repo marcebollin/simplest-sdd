@@ -28,9 +28,9 @@ For work that activates its discovery workflow, Simplest SDD:
 4. **Asks only before creating a new spec.** When no existing spec owns the behavior, it recommends creating a new spec or continuing without one, labels only the recommended choice, and waits.
 5. **Preserves sensitive approvals.** Migrations, data, auth, billing, security, public contracts, infrastructure boundaries, and active-decision changes still require explicit approval in every branch.
 6. **Implements and verifies.** It follows the new spec, refreshed existing spec, or refined no-new-spec request using the repository's testing discipline.
-7. **Closes the feedback loop.** When the work has an execution record, it asks for an anchored 1–10 rating and optional comment after showing the result, then reports every spec and decision consulted, unchanged, pending, or changed.
+7. **Closes out clearly.** It reports the outcome, verification, remaining limitations, and every spec and decision consulted, unchanged, pending, or changed.
 
-The HTML documents use a small semantic color system—violet for business, blue for technical design, green for plans, and amber for decisions—plus restrained highlights for important contract terms. Each feature document also identifies its relationship to the product contract, technical design, implementation plan, execution record, applicable decisions, and only genuinely dependent specs.
+The HTML documents use a small semantic color system—violet for business, blue for technical design, green for plans, and amber for decisions—plus restrained highlights for important contract terms. Each feature document also identifies its relationship to the product contract, technical design, implementation plan, applicable decisions, and only genuinely dependent specs.
 
 For example, a payment report request may reveal reporting logic in another section. The agent checks whether the rules actually match and whether extracting a shared calculation would help both sections. The business spec records the alternatives, recommendation, your approved choice, and its product consequences; the technical spec records the code boundaries and verification. Approved reuse, adaptation, abstraction, or isolation choices are also stored in the decision registry, even when you continue without a new spec. Automatic spec updates do not approve a reuse proposal.
 
@@ -42,7 +42,7 @@ For example, a payment report request may reveal reporting logic in another sect
 - **Focused context.** Agents load the relevant spec and decisions instead of carrying the entire project history into every task.
 - **Safer delegation.** Parallel work is recommended only when tasks have clear boundaries and independent verification.
 - **Provider independence.** The framework recommends capabilities and reasoning effort, not hard-coded model names.
-- **A human feedback loop.** Execution records make it possible to compare plans, routing choices, cost, verification, outcomes, and your ratings over time.
+- **Clear close-out.** The result, verification, and durable documentation changes are visible when the work is complete.
 
 ## When It Activates
 
@@ -73,6 +73,8 @@ Run npx simplest-sdd@latest init and follow the instructions
 Run npx simplest-sdd@latest update and follow the instructions
 ```
 
+The update instruction asks whether to leave old execution records untouched (the default) or delete them. Deletion requires your explicit choice; specifications, plans, and decisions are preserved. New work no longer creates execution records or asks for a rating.
+
 ### Remove
 
 ```text
@@ -90,37 +92,14 @@ CLAUDE.md                         # imports AGENTS.md for Claude
 ├── specs/<feature>/
 │   ├── business.html             # why and what
 │   ├── technical.html            # how and boundaries
-│   ├── plan.html                 # tasks and verification
-│   └── execution.json            # execution facts, outcomes, and human ratings
+│   └── plan.html                 # tasks and verification
 ├── decisions/                    # durable decisions only
 └── templates/                    # reusable document structure
 ```
 
 The library uses plain, static files that remain readable by people and agents. Cross-document links name both the target's role and why it matters, so readers can follow the feature without guessing what a generic “related” link means. `AGENTS.md` and `.agents/skills` are the source of truth, with a compatibility link for Claude skills.
 
-See the [examples](examples/) for an anonymized request-refinement conversation, generated specs, and an execution record.
-
-## Execution Analytics
-
-Simplest SDD can validate and summarize the execution records stored with each feature:
-
-```sh
-npx simplest-sdd@latest analytics
-npx simplest-sdd@latest analytics --format jsonl
-npx simplest-sdd@latest analytics --format csv
-```
-
-Spec-backed executions end by asking one low-friction question: rate the whole execution from 1 to 10, where `1` means failed, `5` means mixed or partially successful, and `10` means excellent. You can add an optional comment about what most affected the score. The rating is linked to the exact run IDs it evaluates, so later executions of the same spec preserve their own feedback instead of overwriting history.
-
-Summary output shows the latest rating or feedback status per spec. JSON, JSONL, and CSV include the evaluation ID, status, scale, rating, comment, timestamps, and covered run. Because run-oriented exports repeat an evaluation that covers multiple runs, deduplicate aggregate rating analysis by `evaluationId`.
-
-For a local Codex session, it can also read model, effort, duration, and token totals without printing the conversation:
-
-```sh
-npx simplest-sdd@latest codex-usage --session <session-id>
-```
-
-Analytics are there to help the workflow learn from real results—not to add reporting work for its own sake.
+See the [examples](examples/) for an anonymized request-refinement conversation and generated specs, plans, and decisions.
 
 ## Inspiration
 
@@ -142,6 +121,6 @@ Simplest SDD combines a few ideas into a deliberately small framework.
 
 ## The Short Version
 
-Simplest SDD helps an AI agent understand before it builds, asks you to approve before it acts, verifies before it declares success, asks how the execution went, and leaves the project smarter for the next session.
+Simplest SDD helps an AI agent understand before it builds, asks you to approve before it acts, verifies before it declares success, and leaves the project smarter for the next session.
 
 Project website: [sd2.marcebollin.com](https://sd2.marcebollin.com)

@@ -1,6 +1,37 @@
 {
-  "currentSchemaVersion": "0.14.0",
+  "currentSchemaVersion": "0.15.0",
   "versions": [
+    {
+      "version": "0.15.0",
+      "date": "2026-09-11",
+      "summary": "Removes execution records, human rating prompts, and execution telemetry; updating offers a choice to leave existing records untouched or delete only explicitly selected legacy files.",
+      "changes": [
+        "Stop creating or maintaining execution.json records, human evaluations, and data/executions.jsonl; finish work after implementation, verification, and required spec and decision maintenance without asking for an execution rating or qualification.",
+        "Remove the execution schema, execution template, analytics and codex-usage commands, and active instructions, examples, links, and index columns that depend on execution records, ratings, or telemetry.",
+        "Keep task classification, estimates, capability recommendations, approved execution strategy, implementation progress, and verification in the human-readable plan without per-run model, token, timing, rating, or analytics records.",
+        "When an update finds legacy execution.json files or data/executions.jsonl, present the exact paths and one explicit choice: Leave old records untouched (Recommended, default) or Delete the identified old records; never infer deletion from the update request or a missing response.",
+        "Preserve selected legacy records byte-for-byte without parsing, validating, migrating, rewriting, or exporting them; delete only the identified files after an explicit deletion selection and remove links to deleted files without deleting spec folders, decisions, unrelated data, or other history.",
+        "Apply the current workflow directly on upgrades from every older version, overriding historical migration steps that would create, migrate, validate, export, or maintain execution records, human ratings, analytics, or codex-usage telemetry; never recreate intermediate telemetry artifacts.",
+        "Preserve discovery, documentation-branch choices, approved reuse decisions, independent technical approvals, resolved testing discipline, and historical release notes."
+      ],
+      "migrations": [
+        {
+          "from": "0.14.0",
+          "steps": [
+            "For an update from any older or unversioned installation, apply the current workflow directly. These removal instructions override every older migration step that would create, migrate, validate, export, rebuild, or maintain execution records, human ratings, analytics, or codex-usage telemetry; do not recreate intermediate artifacts or execute obsolete telemetry commands before removing them.",
+            "Remove execution tracking, human-evaluation or qualification prompts, rating-response waits, telemetry collection, analytics rebuilds, and codex-usage instructions from the active SKILL.md, AGENTS.md workflow note, templates, examples, and close-out contract. Preserve implementation and verification reporting, spec and decision maintenance, discovery, approved reuse choices, and all independent technical approvals.",
+            "Retire generated execution templates and schema references, analytics documentation and command examples, execution-record relationship requirements, and execution or rating index columns. Remove active links to retired support files and execution records while preserving business, technical, plan, and decision content and their valid relationships.",
+            "Keep task classifications, estimates, capability recommendations, the user's approved execution strategy, progress, and verification in plan.html. Do not transfer old per-run records, model or token usage, duration, ratings, or analytics data into plans or another replacement telemetry store.",
+            "Inventory the exact legacy specs/**/execution.json and data/executions.jsonl file paths within the canonical spec library without parsing their contents or following the Claude compatibility symlink as a second library. If any exist, ask one question offering Leave old records untouched (Recommended, default) or Delete the identified old records, and display every file covered by the choice.",
+            "Do not infer deletion from the update request, the recommended default, or silence. Wait for an explicit deletion selection before deleting any old record; other update work may continue while the choice is pending, with all old records preserved. An already explicit selection covering the identified files counts and does not require a repeat question. If no old records exist, skip the cleanup question.",
+            "On Leave old records untouched, leave every legacy record and ledger byte-for-byte unchanged as inactive history. Do not parse, validate, upgrade, normalize, append to, rewrite, rename, relocate, or export them, and do not resume recording or rating them in future work. No response also leaves all old records untouched and must not be reported as an explicit user choice.",
+            "On an explicit Delete the identified old records selection, delete only the exact record and ledger files covered by that selection and remove dangling links to them from the library's documents and indexes. Never blanket-delete directories, spec folders, business.html, technical.html, plan.html, decisions, unrelated data, or other historical artifacts; resolve unclear ownership without broadening deletion.",
+            "Refresh active templates and indexes without reading archived record contents. Verify that current instructions contain no recording or rating lifecycle, no telemetry-dependent links or columns, and no command that parses or regenerates old records; preserve historical release entries as history rather than operative migration instructions.",
+            "Advance the installed workflow marker to 0.15.0 and report the files updated, the user's cleanup choice or pending/no-records status, and the exact legacy files preserved or deleted. There is no replacement execution schema or execution-record format migration."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.14.0",
       "date": "2026-09-11",

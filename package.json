@@ -1,7 +1,7 @@
 {
   "name": "simplest-sdd",
-  "version": "0.14.0",
-  "description": "A discovery-first workflow with durable specs and human-rated execution analytics.",
+  "version": "0.15.0",
+  "description": "A discovery-first workflow with durable specs, explicit decisions, and verified implementation.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/marcebollin/simplest-sdd.git"
@@ -16,7 +16,6 @@
   },
   "files": [
     "bin",
-    "lib",
     "docs",
     "examples",
     "prompts",
@@ -38,7 +37,6 @@
     "claude",
     "codex",
     "orchestration",
-    "analytics",
     "spec-driven-development",
     "sdd"
   ],

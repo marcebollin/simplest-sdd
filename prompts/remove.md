@@ -14,7 +14,7 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Never delete user-authored specs or decisions by default, even though they live under `.agents/skills/spec-library`.
 - Ask for explicit confirmation before deleting any durable spec, decision, ADR, plan, or non-template document.
 - Treat the root library index, HTML specs, plans, decisions, and supporting indexes as user-owned once they contain project-specific content.
-- Treat feature `execution.json` files and `data/executions.jsonl` as user-owned execution history; never delete them without explicit confirmation.
+- Treat legacy feature `execution.json` files and `data/executions.jsonl` as user-owned execution history; never delete them without explicit confirmation.
 - Prefer deactivation over data deletion when the safe ownership boundary is unclear.
 - Treat removal as the active phase. After deactivating and validating, stop before unrelated feature work, commits, pull requests, deployment, monitoring, or review handling unless the user explicitly requested it.
 
@@ -53,7 +53,7 @@ The safest default is:
 - remove or rename `.agents/skills/spec-library/SKILL.md` only if doing so does not delete user-authored content;
 - remove generated HTML templates only if they have not been customized;
 - preserve `specs/`, `decisions/`, and any non-template documents;
-- preserve feature execution records and the analytics ledger;
+- preserve any legacy feature execution records and analytics ledger;
 - if the skill directory would become an empty generated shell, remove the empty directories;
 - if user-authored specs or decisions remain in the directory, leave them in place and tell the user that simplest-sdd was deactivated but durable documents were preserved.
 
@@ -65,7 +65,7 @@ Before finishing:
 
 - confirm no simplest-sdd workflow remains active in `AGENTS.md`;
 - confirm Claude no longer loads simplest-sdd skill instructions;
-- confirm the root library index, user-authored HTML specs, plans, decisions, feature execution records, analytics ledger, supporting indexes, and unrelated instructions still exist;
+- confirm the root library index, user-authored HTML specs, plans, decisions, any retained legacy feature execution records and analytics ledger, supporting indexes, and unrelated instructions still exist;
 - search for remaining `simplest-sdd`, `spec-driven workflow`, and `spec-library` references and explain any preserved references;
 - run relevant formatting or documentation checks if the repository has them;
 - report the files changed, files intentionally preserved, and any assumptions.

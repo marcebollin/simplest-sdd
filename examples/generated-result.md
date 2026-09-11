@@ -25,7 +25,7 @@ For simplest-sdd maintenance instructions, run `npx simplest-sdd@latest update` 
 - During mandatory discovery, name the existing owning, consulted, and potentially changed specs and decisions. Refresh an existing owning spec automatically; ask whether to create a new spec only when no spec owns the behavior.
 - Inspect related implementation and ask the user to select reuse as-is, a separate implementation, or a custom adaptation/shared abstraction when a meaningful opportunity exists; recommend exactly one option with evidence. Record approved reuse/abstraction choices in canonical decisions, including when the user chooses no new spec.
 - Always offer same-session execution and show a concrete custom assignment example.
-- Without an explicit stop point, stop after the selected strategy completes the approved implementation, verification, analytics, human evaluation, and close-out.
+- Without an explicit stop point, stop after the selected strategy completes the approved implementation, verification, and close-out.
 - Do not continue into commits, pull requests, deployment, monitoring, or review handling unless the current prompt explicitly requests it.
 
 ## Spec-driven workflow
@@ -57,8 +57,6 @@ CLAUDE.md
 .agents/skills/spec-library/
 ├── SKILL.md
 ├── index.html
-├── data/
-│   └── executions.jsonl
 ├── specs/
 │   ├── index.html
 │   ├── saved-library/
@@ -66,8 +64,7 @@ CLAUDE.md
 │   └── content-discovery-export/
 │       ├── business.html
 │       ├── technical.html
-│       ├── plan.html
-│       └── execution.json
+│       └── plan.html
 ├── decisions/
 │   ├── index.html
 │   ├── architecture.html
@@ -76,12 +73,11 @@ CLAUDE.md
     ├── business-spec.html
     ├── technical-spec.html
     ├── plan.html
-    ├── execution-template.json
     └── decision-category.html
 .claude/skills/spec-library -> ../../.agents/skills/spec-library
 ```
 
-The root library index is the read-first catalog. It links to all internal spec-library documents, keeps latest documents easy to reach, and exposes category, effort, confidence, strategy, actual models, tokens, outcome, and human rating for static filtering:
+The root library index is the read-first catalog. It links to all internal spec-library documents, keeps latest documents easy to reach, and summarizes each document's purpose, status, and update date:
 
 ```html
 <main>
@@ -89,10 +85,6 @@ The root library index is the read-first catalog. It links to all internal spec-
     <h1>Spec Library</h1>
     <p class="meta">Read-first catalog for internal product and technical specification documents.</p>
   </header>
-  <section>
-    <h2>Execution summary</h2>
-    <p><a href="specs/content-discovery-export/execution.json">Content discovery export</a> · feature + performance · effort M · plan confidence high · delegation confidence high · hybrid · 184,200 measured tokens · complete · human rating 9/10</p>
-  </section>
   <section>
     <h2>Latest documents</h2>
     <ul>
@@ -275,7 +267,7 @@ The plan carries execution details and explicitly keeps the users visible:
   </section>
   <section>
     <h2>Execution boundary</h2>
-    <p>Authorized phase: implement and verify the approved discovery/export spec. Stop after analytics, human evaluation, and close-out evidence are recorded. Merge, pull request, deployment, monitoring, and review handling remain out of scope.</p>
+    <p>Authorized phase: implement and verify the approved discovery/export spec. Stop after reporting the outcome, verification, remaining limitations, and documentation impact. Merge, pull request, deployment, monitoring, and review handling remain out of scope.</p>
   </section>
   <section>
     <h2>Execution recommendation and decision</h2>
@@ -298,7 +290,6 @@ The plan carries execution details and explicitly keeps the users visible:
       <tbody>
         <tr><td>Product contract</td><td><a href="business.html">Business spec</a></td><td>Supplies the outcomes and acceptance criteria each task must satisfy.</td></tr>
         <tr><td>Technical design</td><td><a href="technical.html">Technical spec</a></td><td>Supplies the approved boundaries and verification strategy.</td></tr>
-        <tr><td>Execution record</td><td><a href="execution.json">Execution record</a></td><td>Records selected assignments, actual runs, usage, outcomes, and human evaluations.</td></tr>
         <tr><td>Related spec</td><td><a href="../saved-library/business.html">Saved library</a></td><td>Consulted unchanged: supplies regression expectations for the existing consumer.</td></tr>
         <tr><td>Decision constraint</td><td><a href="../../decisions/design.html#DES-002">DES-002</a></td><td>Consulted unchanged: preserves established interaction constraints during verification.</td></tr>
         <tr><td>Decision constraint</td><td><a href="../../decisions/architecture.html#ARC-001">ARC-001</a></td><td>Newly approved reuse/abstraction choice: constrains T1 to the selected sharing boundary and T2 to both consumers.</td></tr>
@@ -308,13 +299,11 @@ The plan carries execution details and explicitly keeps the users visible:
 </main>
 ```
 
-## Human evaluation
+## Close-out
 
-After implementation and verification, the agent presents the result and asks one final question:
+After implementation and verification, the agent reports what changed, the verification performed, any remaining limitations, and the exact specs and decisions consulted or changed:
 
-> How would you rate this execution overall from 1 to 10? `1` means it failed, `5` means mixed or partially successful, and `10` means excellent. Optionally add what most affected your rating, or say `skip`.
-
-The response is stored in `execution.json` as a human evaluation linked to the exact run IDs it covers. Later execution cycles append their own evaluations, so the example's `9/10` score and comment remain available for comparison rather than being overwritten.
+> Both export flows now share active-result completion while preserving their own queries, permissions, and record conversion. Verification covered complete results, visible ordering, permissions, and later-page failure in both consumers. The content-discovery-export business spec, technical spec, and plan were updated. `ARC-001` is applied and verified; the saved-library business spec and `DES-002` were consulted unchanged. No remaining limitations were identified in the approved scope.
 
 ## Durable decision
 
@@ -360,4 +349,4 @@ Approved reuse and abstraction choices are recorded in the canonical decision re
 
 The decision index links directly to `architecture.html#ARC-001` with its title, active status, scope, and update date; the root index exposes the populated category and decision index. If the user instead chose `Continue without a new spec`, the same approved choice and approval evidence would remain in the canonical decision and necessary index entries, with no links to nonexistent feature artifacts and no feature entry in the spec indexes. An unapproved recommendation would not become an active decision or authorize extraction.
 
-The business and technical specs remain useful after shipping. `plan.html` holds the single integrated implementation record, while `execution.json` and the derived JSONL ledger make routing, models, tokens, outcomes, and human evaluations queryable later. See the complete [execution record example](execution-record.json).
+The business and technical specs remain useful after shipping. `plan.html` holds the integrated task plan, selected execution strategy, and verification results, while the decision registry preserves approved choices and their history.

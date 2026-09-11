@@ -32,8 +32,8 @@ const steps = [
     description: "It follows the new spec, refreshed existing spec, or refined no-new-spec request using the repository’s testing discipline."
   },
   {
-    title: "Closes the feedback loop",
-    description: "For spec-backed work, it records your anchored 1–10 rating and optional comment, then reports every durable spec and decision impact."
+    title: "Closes out clearly",
+    description: "It reports the outcome, verification, remaining limitations, and every durable spec and decision impact."
   }
 ];
 
@@ -43,7 +43,7 @@ const benefits = [
   ["Human control at the right moments", "Reuse existing contracts automatically, ask before new ones, and keep sensitive technical approvals explicit."],
   ["Safer delegation", "Parallel work is suggested only for tasks with clear boundaries and independent verification."],
   ["Provider independence", "Recommend capabilities and reasoning effort instead of hard-coded model names."],
-  ["A human feedback loop", "Compare plans, routing choices, cost, verification, outcomes, and your ratings over time."]
+  ["Clear close-out", "See the result, verification, and durable documentation changes when the work is complete."]
 ];
 
 const activationTriggers = [
@@ -63,14 +63,9 @@ CLAUDE.md                         # imports AGENTS.md for Claude
 ├── specs/<feature>/
 │   ├── business.html             # why and what
 │   ├── technical.html            # how and boundaries
-│   ├── plan.html                 # tasks and verification
-│   └── execution.json            # execution facts, outcomes, and human ratings
+│   └── plan.html                 # tasks and verification
 ├── decisions/                    # durable decisions only
 └── templates/                    # reusable document structure`;
-
-const analyticsCommands = `npx simplest-sdd@latest analytics
-npx simplest-sdd@latest analytics --format jsonl
-npx simplest-sdd@latest analytics --format csv`;
 ---
 
 <BaseLayout
@@ -103,8 +98,7 @@ npx simplest-sdd@latest analytics --format csv`;
           <li><a href="#when-it-activates"><span>04</span>When it activates</a></li>
           <li><a href="#use-it"><span>05</span>How to use it</a></li>
           <li><a href="#project-output"><span>06</span>What it adds</a></li>
-          <li><a href="#analytics"><span>07</span>Execution analytics</a></li>
-          <li><a href="#inspiration"><span>08</span>Inspiration</a></li>
+          <li><a href="#inspiration"><span>07</span>Inspiration</a></li>
         </ol>
       </aside>
 
@@ -220,7 +214,7 @@ npx simplest-sdd@latest analytics --format csv`;
         <CopyInstruction
           label="Update"
           action="update"
-          description="Bring an existing installation forward without losing project knowledge."
+          description="Bring an existing installation forward while preserving specs, plans, and decisions."
         />
         <CopyInstruction
           label="Remove"
@@ -228,6 +222,7 @@ npx simplest-sdd@latest analytics --format csv`;
           description="Deactivate the framework while preserving project-owned specs and decisions."
         />
       </div>
+      <p class="update-note">The update instruction asks whether to leave old execution records untouched or delete them. Keeping them is the default; deletion requires your explicit choice. New work no longer creates them or asks for a rating.</p>
     </section>
 
     <section class="content-section content-section--accent-3" id="project-output" aria-labelledby="project-title">
@@ -252,7 +247,7 @@ npx simplest-sdd@latest analytics --format csv`;
             <code>.agents/skills</code> are the source of truth, with a compatibility link for Claude skills.
           </p>
           <p>
-            Business intent, technical boundaries, execution details, and durable decisions use distinct semantic
+            Business intent, technical boundaries, implementation plans, and durable decisions use distinct semantic
             colors and restrained highlights. Explicit relationship links explain which document to read next and why.
           </p>
           <a
@@ -266,39 +261,9 @@ npx simplest-sdd@latest analytics --format csv`;
       </div>
     </section>
 
-    <section class="content-section analytics-section content-section--accent-1" id="analytics" aria-labelledby="analytics-title">
-      <div class="section-heading">
-        <p class="section-number">07</p>
-        <div>
-          <h2 id="analytics-title">Execution analytics</h2>
-          <CopyButton sectionId="analytics" label="Copy link to Execution analytics" className="section-copy-button" />
-        </div>
-      </div>
-      <div class="analytics-grid">
-        <div class="prose">
-          <p>
-            Validate and summarize the execution records stored with each feature. Compare plans, routing choices,
-            models, token use, verification, outcomes, and your anchored 1–10 ratings using facts from real runs.
-          </p>
-          <p class="muted-note">An optional comment preserves why you chose the score. The goal is a better feedback loop—not reporting work for its own sake.</p>
-        </div>
-        <div class="command-panel">
-          <div class="panel-bar">
-            <span>terminal</span>
-            <CopyButton text={analyticsCommands} label="Copy analytics commands" />
-          </div>
-          <pre><code>{analyticsCommands}</code></pre>
-          <p>
-            Local Codex usage:
-            <code>npx simplest-sdd@latest codex-usage --session &lt;session-id&gt;</code>
-          </p>
-        </div>
-      </div>
-    </section>
-
     <section class="content-section inspiration-section content-section--accent-2" id="inspiration" aria-labelledby="inspiration-title">
       <div class="section-heading">
-        <p class="section-number">08</p>
+        <p class="section-number">07</p>
         <div>
           <h2 id="inspiration-title">Inspiration</h2>
           <CopyButton sectionId="inspiration" label="Copy link to Inspiration" className="section-copy-button" />
@@ -521,7 +486,6 @@ npx simplest-sdd@latest analytics --format csv`;
   .why-grid,
   .activation-grid,
   .artifact-grid,
-  .analytics-grid,
   .inspiration-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -747,8 +711,7 @@ npx simplest-sdd@latest analytics --format csv`;
     --card-accent: var(--dull-viridian-green);
   }
 
-  .tree-panel,
-  .command-panel {
+  .tree-panel {
     min-width: 0;
     border: 1px solid var(--line-strong);
     background: var(--surface);
@@ -803,25 +766,10 @@ npx simplest-sdd@latest analytics --format csv`;
     text-underline-offset: .35rem;
   }
 
-  .muted-note {
-    color: var(--muted) !important;
-    font-size: .88rem !important;
-  }
-
-  .command-panel p {
-    padding: 1rem;
-    margin: 0;
-    border-top: 1px solid var(--line);
+  .update-note {
+    margin: 1rem 0 0;
     color: var(--muted);
-    font: 400 .78rem/1.6 var(--font-sans);
-  }
-
-  .command-panel p code {
-    display: block;
-    margin-top: .5rem;
-    color: var(--ink-soft);
-    font-family: var(--font-mono);
-    overflow-wrap: anywhere;
+    font: 400 .88rem/1.6 var(--font-sans);
   }
 
   .inspiration-grid > div {
@@ -985,7 +933,6 @@ npx simplest-sdd@latest analytics --format csv`;
     .why-grid,
     .activation-grid,
     .artifact-grid,
-    .analytics-grid,
     .inspiration-grid {
       grid-template-columns: 1fr;
       gap: 2.5rem;
@@ -1287,7 +1234,6 @@ npx simplest-sdd@latest analytics --format csv`;
   .why-grid,
   .activation-grid,
   .artifact-grid,
-  .analytics-grid,
   .inspiration-grid {
     gap: clamp(1.25rem, 3vw, 3rem);
   }
@@ -1382,8 +1328,7 @@ npx simplest-sdd@latest analytics --format csv`;
     gap: .75rem;
   }
 
-  .tree-panel,
-  .command-panel {
+  .tree-panel {
     background: var(--bg);
   }
 
@@ -1470,7 +1415,6 @@ npx simplest-sdd@latest analytics --format csv`;
     .why-grid,
     .activation-grid,
     .artifact-grid,
-    .analytics-grid,
     .inspiration-grid,
     .instruction-grid {
       grid-template-columns: 1fr;
