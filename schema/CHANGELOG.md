@@ -2,6 +2,30 @@
 
 This changelog tracks the installed simplest-sdd schema. Workflow releases advance the schema version; CLI-only releases may leave it unchanged.
 
+## 0.17.0 - 2026-09-12
+
+- Applies [OpenAI's GPT-6 Astra skill and prompt guidance](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra) while keeping model recommendations provider-independent.
+- Gives the skill a short description with precise activation and exclusion cases. Keeps generated `AGENTS.md` focused on durable project context, essential commands and boundaries, and a lightweight context router.
+- Keeps `SKILL.md` as the workflow entry point and loads conditional instructions from `references/discovery.md`, `references/authoring.md`, and `references/execution.md` only when relevant.
+- Retains inspection, reuse analysis, and visible documentation impact with at least eight material init questions and at least five material questions for each activated request-refinement round, waiting for every answer. Goal and clues/examples prerequisites are additional. Completed discovery and explicit approvals persist for unchanged scope.
+- Preserves explicit choices for consequential reuse or abstraction and their canonical decisions; routine compatible reuse within authorized scope needs no separate reuse-selection question.
+- Preserves new-spec selection and business-spec approval, automatic existing-owner updates, and concrete technical approval boundaries without requesting the same authorization again.
+- Scales reading, planning, delegation, and testing to the task. Useful independent delegation follows runtime capabilities and explicit local policy without a compulsory strategy menu.
+- Completes authorized implementation, relevant verification, and document close-out without arbitrary retry limits or repeated checks that add no evidence. Explicit stop points and real blockers still govern execution.
+- Focuses migration on the skill, its references, and generated `AGENTS.md` guidance while preserving genuine customizations, factual contracts, history, compatibility paths, and inactive legacy data.
+
+### Migration from 0.16.0 and earlier
+
+1. Apply the current rules directly from any older or unversioned installation. They preserve the eight-question init and five-question request-refinement minimums while superseding repeated approval gates, compulsory strategy menus, rigid context/testing requirements, and retired tracking. Do not recreate intermediate workflows or rewrite historical release notes.
+2. Audit `SKILL.md` and generated `AGENTS.md` guidance for duplication and obsolete simplest-sdd constraints. Preserve genuine user-authored policies and customizations; distinguish them from inherited framework defaults before retaining conflicting rules.
+3. Rewrite frontmatter with a concise activation description. Reduce `AGENTS.md` to durable project context, essential commands and boundaries, and a precise router for workflow work, read-only documentation questions, and direct low-risk changes.
+4. Keep activation, branch decisions, authorization boundaries, and close-out in `SKILL.md`. Move conditional detail into directly linked `references/discovery.md`, `references/authoring.md`, and `references/execution.md`, preserving HTML contracts and customized content.
+5. Preserve or restore at least eight material init questions before installation edits and at least five material request-refinement questions before documentation-branch decisions or implementation, waiting for every answer. Goal and clues/examples prerequisites are additional; a consequential reuse choice can count toward the five. Use known facts to sharpen questions and resume completed discovery without replaying it. Do not rerun bootstrap discovery during instruction migration. Keep consequential reuse approval while allowing routine compatible reuse within authorized scope.
+6. Preserve `Create a new spec` versus `Continue without a new spec` when no owning spec exists, approval of newly generated business specs, automatic existing-owner maintenance, and concrete technical approval boundaries. Existing explicit authorization counts for unchanged scope. Preserve approved reuse decisions in every branch without inventing historical approvals.
+7. Replace compulsory strategy selection with task-appropriate execution under the user's authorized scope and explicit local policies. Allow useful bounded delegation when supported, scale plan and executor detail to dependencies and risk, and retain one integrated plan.
+8. Keep the resolved testing discipline and select checks relevant to changed behavior. Remove blanket context loading, irrelevant test requirements, repeated verification without new evidence, current-prompt-only authorization, and arbitrary retry stops from inherited guidance. Complete authorized implementation, verification, and close-out while honoring explicit stop points.
+9. Validate routing examples, linked references, preserved approvals, relevant verification, and removal of superseded framework rules from active instructions. Avoid bulk changes to historical artifacts; preserve compatibility and legacy cleanup behavior. Set the schema marker to `0.17.0` after validation, then report changed files and rationale.
+
 ## 0.16.0 - 2026-09-11
 
 - Improves HTML body readability through editorial judgment: lead with the main idea, keep paragraphs focused, and use meaningful list labels when they help readers scan.

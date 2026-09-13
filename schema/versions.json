@@ -1,6 +1,37 @@
 {
-  "currentSchemaVersion": "0.16.0",
+  "currentSchemaVersion": "0.17.0",
   "versions": [
+    {
+      "version": "0.17.0",
+      "date": "2026-09-12",
+      "summary": "Refocuses skills and AGENTS.md on precise activation, progressive disclosure, persistent authorization, and proportionate execution using GPT-6 Astra prompting guidance.",
+      "changes": [
+        "Give spec-library a short, discriminating frontmatter description with positive and negative activation cases. Keep AGENTS.md focused on durable project context, essential boundaries and commands, and a lightweight context router.",
+        "Keep the generated SKILL.md as the concise workflow entry point; move conditional discovery, HTML authoring, and execution details into references/discovery.md, references/authoring.md, and references/execution.md, loaded only when needed.",
+        "Retain repository inspection, reuse analysis, and visible documentation impact with fixed discovery minimums: at least eight material questions during init before installation edits and at least five during each activated request-refinement round before documentation-branch decisions or implementation, waiting for every answer. Missing goal or clues/examples prerequisites are additional; resume completed discovery without replaying it.",
+        "Preserve explicit choices for consequential reuse or abstraction boundaries and their canonical decision records; routine compatible reuse within authorized scope needs no separate reuse-selection question.",
+        "Preserve new-spec selection and business-spec approval, automatic existing-owner maintenance, and concrete technical approval boundaries. Earlier explicit choices and approvals remain valid for unchanged scope; documentation choices never imply unrelated implementation approval.",
+        "Scale context loading, plan detail, delegation, and testing to the task. Allow useful independent delegation when supported by the runtime and explicit local policy, without a mandatory strategy menu; retain model-agnostic capability guidance when it helps.",
+        "Complete authorized implementation, relevant verification, and document close-out without redundant approval stops, arbitrary retry limits, or repeated checks that add no evidence. Honor explicit user stop points and surface real blockers.",
+        "Focus updates on the installed SKILL.md, its references, and generated AGENTS.md guidance. Replace inherited simplest-sdd ceremony while preserving genuine user customizations, factual contracts, historical artifacts, compatibility paths, and inactive legacy data."
+      ],
+      "migrations": [
+        {
+          "from": "0.16.0",
+          "steps": [
+            "Apply the current rules directly from every older or unversioned installation. They preserve the eight-question init and five-question request-refinement minimums while overriding repeated approval gates, compulsory execution-strategy menus, rigid context/testing requirements, and retired execution tracking; do not recreate superseded intermediate workflows or rewrite historical release notes.",
+            "Audit the installed SKILL.md and generated AGENTS.md guidance for duplicated instructions and obsolete simplest-sdd constraints. Preserve genuine user-authored policies and customizations; distinguish them from inherited framework defaults before retaining a conflicting rule.",
+            "Rewrite spec-library frontmatter with a concise description of when it should and should not activate. Reduce AGENTS.md to stable project context, essential commands and boundaries, and a precise router for workflow work versus read-only documentation questions and direct low-risk changes.",
+            "Keep activation, branch decisions, authorization boundaries, and close-out in the SKILL.md entry point. Create directly linked references/discovery.md, references/authoring.md, and references/execution.md for conditional detail; preserve HTML contracts and existing customized content while moving instructions, and load each reference only when relevant.",
+            "Preserve or restore at least eight material init questions and at least five material questions for every newly activated request, waiting for all answers before installation edits or documentation-branch decisions and implementation respectively. Goal and clues/examples prerequisites do not count; a consequential reuse choice can count toward the five. Use known facts to sharpen questions, preserve completed discovery and approvals on resume, and do not rerun bootstrap discovery during instruction migration. Retain explicit choice for consequential reuse while allowing routine compatible reuse without a separate options question.",
+            "Preserve Create a new spec versus Continue without a new spec when no owning spec exists, required approval of newly generated business specs, automatic existing-owner updates, and concrete technical approval boundaries. Recognize existing explicit authorization for unchanged scope rather than asking again; preserve approved reuse decisions in every branch without inventing historical approvals.",
+            "Replace compulsory strategy selection with task-appropriate execution under the user's authorized scope and explicit local policies. Allow useful bounded delegation when the runtime supports it, scale plan detail and executor context to actual dependencies and risks, and retain one integrated plan rather than separate task plans.",
+            "Keep the repository's resolved testing discipline and choose relevant checks for the changed behavior. Remove blanket full-context reading, irrelevant test requirements, repeated verification without new evidence, current-prompt-only authorization, and arbitrary retry stops from inherited guidance; persist through authorized implementation, verification, and close-out while honoring explicit stop points.",
+            "Validate routing examples, linked references, preserved approval boundaries, relevant verification, and absence of superseded framework rules in active instructions. Avoid bulk edits to historical specs, decisions, plans, or templates; preserve compatibility and legacy cleanup behavior. Set the schema marker to 0.17.0 only after the current workflow is present, then report changed files and rationale."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.16.0",
       "date": "2026-09-11",

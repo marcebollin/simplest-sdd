@@ -36,11 +36,11 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "blue"
   },
   "2. Ask The Project Discovery Questions": {
-    explanation: "Turns repository clues and the user’s answers into stable product context. The questions are intentionally material: they should change the generated guidance, not merely make the conversation feel thorough.",
+    explanation: "Asks at least eight material project, product, and workflow questions in one round and waits for all answers before editing files. Questions for a missing concrete goal or clues/examples are additional. Known facts inform sharper questions rather than requests to repeat them.",
     tone: "violet"
   },
   "3. Make `AGENTS.md` Canonical Without Losing Content": {
-    explanation: "Creates one durable source of project truth while preserving instructions that already exist. Compatibility files point back to that source instead of becoming competing copies.",
+    explanation: "Keeps project facts, local constraints, and concise skill routing in one canonical file. Detailed workflow rules belong in the skill’s references, while compatibility files point back to the same project guidance.",
     tone: "amber",
     reference: {
       label: "Theo’s spec-driven development video",
@@ -49,8 +49,13 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "4. Create The Canonical Spec Skill": {
-    explanation: "Installs the reusable workflow itself. Everything below this point becomes the project-specific skill that future agents load when work is ambiguous, risky, or expensive to review.",
-    tone: "indigo"
+    explanation: "Creates a short skill entrypoint that routes to discovery, authoring, and execution references. Future agents load only the guidance needed for the current phase; HTML templates remain output assets instead of always-loaded instructions.",
+    tone: "indigo",
+    reference: {
+      label: "OpenAI: Rethinking skills and prompts for GPT-6 Astra",
+      url: "https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra",
+      explanation: "The article informed smaller instruction entrypoints, selective context loading, and removing workflow steps that repeat settled decisions."
+    }
   },
   "Gate": {
     explanation: "Keeps the framework lightweight. Substantive, ambiguous, risky, or handed-off work receives discovery, while small and presentation-only changes proceed directly.",
@@ -61,7 +66,7 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "Resolve Context": {
-    explanation: "Begins with repository reality and classifies the spec that owns the behavior separately from specs and decisions that are merely consulted or may change.",
+    explanation: "Starts with task-relevant repository facts and uses indexes to find owning specs and applicable decisions. Existing conversation supplies settled answers and authorization; broader reading is justified by a concrete unknown.",
     tone: "blue",
     reference: {
       label: "shadcn/improve",
@@ -69,19 +74,19 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "Analyze Related Implementations And Reuse": {
-    explanation: "Checks real code, callers, and tests before offering reuse as-is, a separate implementation, or a custom adaptation or extraction with one reasoned recommendation. Implementation waits for an explicit choice; an earlier choice counts, while creating or skipping a spec grants no reuse approval. When no candidate fits, the agent reports the evidence instead of forcing options.",
+    explanation: "Checks real code, callers, and tests before proposing consequential reuse tradeoffs. Those choices receive alternatives and one reasoned recommendation; an earlier explicit choice counts. Routine compatible reuse proceeds directly, and no useful candidate means no forced options or abstraction.",
     tone: "blue"
   },
-  "Refine Request: Mandatory Discovery Questions": {
-    explanation: "Separates understanding from implementation and makes documentation impact visible. The discovery message names provisional owning, consulted, and potentially changed specs and decisions.",
+  "Refine Request: Resolve Material Unknowns": {
+    explanation: "Each newly activated request gets at least five material refinement questions in one round, with all answers required before documentation-branch decisions or implementation, even for clear existing-spec or no-new-spec work. Missing goal or clues/examples questions are extra. A reuse choice can count; a completed qualifying round need not be replayed for an unchanged request on resume.",
     tone: "violet"
   },
   "Resolve The Spec Branch After Discovery": {
-    explanation: "Refreshes an existing owning spec automatically. Only when no spec owns the behavior does the agent ask whether to create one. Continuing without a new spec still preserves approved reuse choices in canonical decisions and indexes, without creating new feature specs or plans.",
+    explanation: "Refreshes an owning spec automatically. When none exists, ask whether to create a spec only if the user has not already chosen; a newly generated business spec still needs approval before implementation. Skipping a new spec still preserves approved reuse choices in canonical decisions and indexes without creating feature artifacts.",
     tone: "amber"
   },
   "Preserve Independent Technical Approvals": {
-    explanation: "Keeps sensitive change approval separate from documentation choice. Migrations, data, auth, billing, security, public contracts, infrastructure, and active decisions require approval in every branch.",
+    explanation: "Keeps approval tied to concrete sensitive changes rather than topic keywords. Prior explicit authorization counts for its stated scope; only unresolved changes pause dependent implementation. Documentation selection alone grants no technical approval.",
     tone: "rose"
   },
   "HTML Artifacts": {
@@ -100,16 +105,8 @@ const initAnnotations: Record<string, Annotation> = {
     explanation: "Records every approved reuse-analysis choice, including separate implementations and work without a new spec. The decision captures alternatives, rationale, scope, approval, and implementation state; approved intent starts as pending and is reconciled with what shipped. Other decisions remain selective, and active-decision changes keep their technical approval gate.",
     tone: "green"
   },
-  "Generate A New Spec Only When Selected And Wait For Approval": {
-    explanation: "Creates a new contract only after the user selects it, records every consulted or changed spec and decision, then waits for the required approvals.",
-    tone: "rose",
-    reference: {
-      label: "Augment Code: What Is Spec-Driven Development?",
-      url: "https://www.augmentcode.com/guides/what-is-spec-driven-development"
-    }
-  },
-  "Recommend An Execution Strategy And Wait": {
-    explanation: "Treats model choice and delegation as part of the plan. The agent recommends a topology from the task boundaries, then waits for the user to choose before any subagent starts.",
+  "Choose An Execution Strategy": {
+    explanation: "Defaults to same-session execution and allows useful bounded parallel work where tools and local constraints permit it. Explicit delegation, model, cost, and stop instructions still govern. A strategy menu, capability profiles, and detailed packets are used only when they help resolve a real choice or assignment.",
     tone: "cyan",
     reference: {
       label: "shadcn/improve",
@@ -117,7 +114,7 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "Implement And Verify": {
-    explanation: "Connects execution to the approved plan, the repository’s real testing discipline, explicit STOP conditions, and scoped review. Delegation does not remove verification or human merge control.",
+    explanation: "Completes authorized implementation and documentation close-out under the repository’s real testing discipline. Scope checks to the change, expand verification when evidence warrants it, and honor explicit stop points. Delegation adds review responsibility without granting permission for commits, merges, or deployment.",
     tone: "yellow",
     reference: {
       label: "shadcn/improve",
@@ -125,7 +122,7 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "Close Out And Self-Improve": {
-    explanation: "Reconciles what was planned with what actually shipped, including approved reuse decisions. Close-out reports the outcome, verification, limitations, and exact spec and decision impact, then finishes without execution records, telemetry, or a rating question. Repeated friction can still inform a reusable skill guardrail.",
+    explanation: "Reconciles the specs and approved reuse decisions with the verified result, then reports the outcome, evidence, limitations, and exact documentation impact. Improve skill guidance only from reusable observed friction, with no execution telemetry or rating question.",
     tone: "green"
   },
   "Root Library Index": {
@@ -157,15 +154,15 @@ const updateAnnotations: Record<string, Annotation> = {
     tone: "slate"
   },
   "Rules": {
-    explanation: "Protects local instructions, custom workflow choices, specifications, plans, and decisions while an older installation is brought forward. Old execution records stay untouched unless the user explicitly selects deletion.",
+    explanation: "Focuses this update on the generated skill and AGENTS.md, preserving project facts, local constraints, specs, plans, and decisions. Retains or restores the eight-question installation and five-question feature discovery minimums while removing mandatory strategy pauses. Old execution records stay untouched unless the user selects deletion.",
     tone: "rose"
   },
   "1. Inspect Current Installation": {
     explanation: "Establishes what is actually installed before changing it: schema marker, compatibility links, document formats, testing discipline, local customizations, and durable project data.",
     tone: "blue"
   },
-  "2. Compare Against The Changelog": {
-    explanation: "Turns version history into a repository-specific gap analysis. Each migration is checked against local reality so already-completed work is not repeated and conflicting customizations are surfaced.",
+  "2. Audit The Skill And Agent Guidance": {
+    explanation: "Audits the actual installed skill and generated AGENTS.md against the current contract. Separates obsolete framework defaults from genuine local policy, then defines focused changes to routing, discovery, authoring, execution, and completion without replaying every historical version.",
     tone: "violet"
   },
   "3. Choose What To Do With Old Execution Records": {
@@ -173,7 +170,7 @@ const updateAnnotations: Record<string, Annotation> = {
     tone: "amber"
   },
   "4. Apply The Migration Conservatively": {
-    explanation: "Applies missing changes under the current rules: preserve approved reuse decisions, retire execution tracking and the analytics and codex-usage commands, and keep strategy, assignments, progress, and verification in plan.html. Readability guidance and illustrative examples improve new or intentionally revised documents while preserving custom styles and historical artifacts.",
+    explanation: "Moves detailed workflow guidance into discovery, authoring, and execution references, leaving concise AGENTS.md routing and a short skill entrypoint. Removes duplicate rules and mandatory strategy menus while retaining the discovery minimums, local constraints, approvals, approved reuse decisions, and history. Migrating instruction files does not rerun bootstrap discovery.",
     tone: "amber"
   },
   "5. Validate": {
@@ -278,7 +275,7 @@ const promptDefinitions = [
     id: "init",
     tabLabel: "Install",
     actionLabel: "installation",
-    summary: "Creates the project-specific skill, its approval gates, and the reusable specification workflow future agents will follow.",
+    summary: "Creates concise project routing, a short skill entrypoint, and references for discovery, authoring, and execution, with approvals tied to concrete choices and changes.",
     instruction: "Run npx simplest-sdd@latest init and follow the instructions",
     rawUrl: "/init-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/init.md",
@@ -288,7 +285,7 @@ const promptDefinitions = [
     id: "update",
     tabLabel: "Update",
     actionLabel: "migration",
-    summary: "Updates an existing installation and asks whether to leave old execution records untouched or delete them. Keeping them is the default; specifications, plans, and decisions are preserved.",
+    summary: "Improves the generated skill and AGENTS.md with focused references and proportional verification while retaining the eight-question installation and five-question feature discovery minimums. Preserves existing approvals, local context, specifications, plans, decisions, and old execution records unless deletion is explicitly selected.",
     instruction: "Run npx simplest-sdd@latest update and follow the instructions",
     rawUrl: "/update-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/update.md",
@@ -455,7 +452,7 @@ const currentRelease = schemaVersions.versions.find(
                   ?? (section.annotation.reference?.url.includes("augmentcode.com")
                     ? "Augment Code’s guide provides the spec-driven development model behind this approval-gated workflow."
                     : section.annotation.reference?.url.includes("shadcn/improve")
-                      ? "shadcn/improve informed the framework’s approach to focused context, explicit execution strategy, and verification."
+                      ? "shadcn/improve informed the framework’s approach to focused context, bounded execution, and verification."
                       : "This source directly informed the design of this part of the workflow.");
 
                 return (

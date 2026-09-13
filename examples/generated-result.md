@@ -8,7 +8,7 @@ The paragraph and list formatting below illustrates editorial judgment, not a fi
 
 ## Repository instructions
 
-The bootstrap preserves existing commands and technical rules, then adds concise product context:
+The bootstrap first asks at least eight material project, product, and workflow questions in one round and waits for all answers before editing. Missing concrete goal or clues/examples questions are additional to that minimum. It preserves existing commands and technical rules, then adds concise product context:
 
 ```markdown
 # Project agent guide
@@ -21,29 +21,26 @@ Prefer obvious workflows over configurable machinery. Push back when complexity 
 
 For simplest-sdd maintenance instructions, run `npx simplest-sdd@latest update` or `npx simplest-sdd@latest remove` and follow the printed agent prompt.
 
-## Execution boundaries
+## Execution constraints
 
-- Treat the user's current prompt as the authorized phase and honor every stated stop point.
-- During mandatory discovery, name the existing owning, consulted, and potentially changed specs and decisions. Refresh an existing owning spec automatically; ask whether to create a new spec only when no spec owns the behavior.
-- Inspect related implementation and ask the user to select reuse as-is, a separate implementation, or a custom adaptation/shared abstraction when a meaningful opportunity exists; recommend exactly one option with evidence. Record approved reuse/abstraction choices in canonical decisions, including when the user chooses no new spec.
-- Always offer same-session execution and show a concrete custom assignment example.
-- Without an explicit stop point, stop after the selected strategy completes the approved implementation, verification, and close-out.
-- Do not continue into commits, pull requests, deployment, monitoring, or review handling unless the current prompt explicitly requests it.
+Honor the user's authorized scope, existing approvals, and explicit stop, delegation, model, and cost constraints. Complete authorized implementation, verification, and documentation close-out. Commits, pull requests, deployment, monitoring, and review handling require authorization that includes those actions.
 
 ## Spec-driven workflow
 
 | When | Load |
 | --- | --- |
-| Business or product behavior change whose output review takes more than ~5 minutes, or work carries meaningful ambiguity or risk | `.agents/skills/spec-library/SKILL.md` |
+| Business or product behavior change whose output review takes more than ~5 minutes; meaningful ambiguity or risk; a handoff across sessions; or behavior owned by an existing spec | `.agents/skills/spec-library/SKILL.md` |
 | Question about past specs, plans, decisions, or internal spec documentation | `.agents/skills/spec-library/index.html` |
 | Question about a past decision | `.agents/skills/spec-library/decisions/index.html` |
-| Purely presentational design, styling, spacing, or layout change with no business requirement or behavior change, regardless of review time | Implement and verify directly |
-| Other clear low-risk output reviewable within ~5 minutes | Implement and verify directly |
+| Purely presentational change with no behavior change or independent workflow trigger, regardless of review time | Implement and verify directly |
+| Other clear low-risk output reviewable within ~5 minutes, with no affected spec or active decision | Implement and verify directly |
 ```
 
-When the skill activates, it inspects relevant specs, decisions, related code, callers, and tests and shows their exact paths or anchors with the request-refinement questions. It compares relevant reuse, separate-implementation, and custom adaptation or extraction options, recommends exactly one with concrete evidence, and waits for the user's selection. It does not infer approval from its own recommendation or create speculative abstractions.
+The repository guide supplies product facts and routing. Detailed workflow rules live in the skill's references rather than being duplicated in `AGENTS.md`.
 
-After the answers, an existing owning spec updates automatically without business-spec approval; that refresh does not approve a pending reuse/abstraction choice. Only when no existing spec owns the behavior does it separately present `Create a new spec` and `Continue without a new spec`, mark exactly one documentation choice `(Recommended)`, and wait. The no-new-spec branch creates no feature artifacts or feature entries in the spec indexes, but still records approved reuse/abstraction choices in canonical decisions and the necessary decision/library indexes. Sensitive technical changes retain explicit approval in every branch.
+Each newly activated feature discovery inspects relevant specs, decisions, code, callers, and tests and shows their exact paths or anchors. It asks at least five material request-refinement questions in one round and waits for every answer before documentation-branch decisions or implementation, even for clear existing-spec or no-new-spec work. Known facts inform sharper questions; missing concrete goal or clues/examples questions are extra. Consequential reuse tradeoffs receive alternatives and one evidence-backed recommendation and can count toward the five; routine compatible reuse needs no separate choice. A completed qualifying discovery round need not be repeated for an unchanged request on resume, and prior approvals remain valid.
+
+An existing owning spec updates automatically without business-spec approval. When no spec owns the behavior, the agent presents `Create a new spec` and `Continue without a new spec` only if the user has not already chosen, marking one `(Recommended)`. New business specs still require approval before implementation. The no-new-spec branch creates no feature artifacts or feature entries but preserves every explicitly approved reuse choice in canonical decisions and their indexes. Concrete sensitive changes require explicit authorization, including authorization already given for that scope.
 
 `CLAUDE.md` is a regular file:
 
@@ -58,6 +55,10 @@ AGENTS.md
 CLAUDE.md
 .agents/skills/spec-library/
 ├── SKILL.md
+├── references/
+│   ├── discovery.md
+│   ├── authoring.md
+│   └── execution.md
 ├── index.html
 ├── specs/
 │   ├── index.html
@@ -79,13 +80,36 @@ CLAUDE.md
 .claude/skills/spec-library -> ../../.agents/skills/spec-library
 ```
 
-The root library index is the read-first catalog. It links to all internal spec-library documents, keeps latest documents easy to reach, and summarizes each document's purpose, status, and update date:
+The short skill entrypoint routes to guidance needed for the current phase. The HTML templates are output assets, loaded when authoring an artifact. An abbreviated `SKILL.md` looks like:
+
+```markdown
+---
+name: spec-library
+description: Refine substantive or ambiguous product work, maintain owning specs, and implement approved contracts. Use for existing spec behavior, consequential risk, or work crossing sessions; skip clear presentation-only changes unless another trigger applies.
+---
+
+<!-- simplest-sdd-schema-version: 0.17.0 -->
+
+# Spec library
+
+Use the request, repository facts, and existing conversation as context. Honor approved scope and local constraints. Load only the references needed now:
+
+- [Discovery](references/discovery.md): ask at least five material refinement questions for each newly activated request, wait for all answers, inspect reuse, identify documentation impact, and choose the spec branch. Missing goal or clues/examples questions are additional; do not replay a completed qualifying round for an unchanged request on resume.
+- [Authoring](references/authoring.md): maintain contracts, durable decisions, relationships, and readable HTML using `templates/`.
+- [Execution](references/execution.md): complete authorized implementation, follow the repository's testing discipline, verify the result, and close out documentation.
+
+Use `index.html` to locate relevant specs and decisions; do not read the entire library by default.
+```
+
+The generated execution reference names the project's resolved testing discipline and real verification commands. Detail follows the task's risk and complexity; it does not require broad repeated test runs or detailed delegation packets for routine work.
+
+The root library index is the browsable catalog. It links to all internal spec-library documents, keeps latest documents easy to reach, and summarizes each document's purpose, status, and update date:
 
 ```html
 <main>
   <header>
     <h1>Spec Library</h1>
-    <p class="meta">Read-first catalog for internal product and technical specification documents.</p>
+    <p class="meta">Catalog for internal product and technical specification documents.</p>
   </header>
   <section>
     <h2>Latest documents</h2>
@@ -182,6 +206,9 @@ The business document describes the product contract and the user's reuse choice
       <ul>
         <li><strong>Recognizable results.</strong> Discovery clearly identifies result types.</li>
         <li><strong>Complete export.</strong> Export includes the complete active result set in visible order.</li>
+        <li><strong>Stable scope.</strong> Discovery export keeps the filters and ordering captured at its start, even if the reader changes the view.</li>
+        <li><strong>Empty results.</strong> Explain when the captured discovery scope contains no results and produce no download.</li>
+        <li><strong>Long exports.</strong> Show progress, prevent a second simultaneous discovery export, and allow cancellation that discards unfinished results.</li>
         <li>
           <p><strong>Existing behavior preserved.</strong> Saved-library export retains its current scope, ordering, permissions, and failure behavior.</p>
           <p>These guarantees continue to hold after the shared logic is introduced.</p>
@@ -241,6 +268,7 @@ The technical document records durable boundaries and may include a simple diagr
   <p>Both consumers have concrete requirements; the helper and discovery exporter are <strong>proposed additions</strong>, and no general export framework is justified.</p>
   <h3>Approved boundary and verification</h3>
   <p>The helper accepts a feature-provided page loader for a captured active scope and completes results in that scope's existing order.</p>
+  <p>Discovery captures filters and ordering at export start. Its caller handles progress, prevents duplicate runs, and exposes cancellation; empty or cancelled discovery exports produce no download. Keep these interface choices outside the shared helper and preserve saved-library behavior.</p>
   <p><strong>Each feature owns query construction, permission enforcement, and record conversion.</strong> The helper introduces no shared cache, new access rights, or schema change.</p>
   <p>Keep consumers' error handling and output contracts explicit: <mark>do not serialize a partial set</mark> when any page fails.</p>
   <ul>
@@ -284,7 +312,7 @@ The technical document records durable boundaries and may include a simple diagr
 
 ## Implementation plan
 
-The plan carries execution details and explicitly keeps the users visible:
+The plan carries the execution details this task needs and keeps the users visible. Capability profiles, confidence fields, and detailed delegation packets are optional when they help with a real assignment:
 
 ```html
 <main>
@@ -302,17 +330,18 @@ The plan carries execution details and explicitly keeps the users visible:
     <p><strong>Stop after reporting</strong> the outcome, verification, remaining limitations, and documentation impact. Merge, pull request, deployment, monitoring, and review handling remain out of scope.</p>
   </section>
   <section>
-    <h2>Execution recommendation and decision</h2>
-    <p><strong>Selected by user:</strong> hybrid, as recommended.</p>
-    <p>Keep the shared discovery design in the current session; delegate bounded tests and browser verification to efficient workers.</p>
+    <h2>Execution approach</h2>
+    <p><strong>Same-session implementation.</strong> Keep the coupled extraction and discovery changes together.</p>
+    <p>Available parallel work: a bounded review of existing export regression coverage may run independently while implementation proceeds, if local delegation and cost constraints allow it. No separate strategy selection is needed.</p>
   </section>
   <section>
     <h2>Integrated task plan</h2>
     <table>
-      <thead><tr><th>ID</th><th>Task</th><th>Category</th><th>Effort</th><th>Plan / delegation confidence</th><th>Assignment</th></tr></thead>
+      <thead><tr><th>ID</th><th>Task</th><th>Dependencies</th><th>Assignment</th><th>Verification</th></tr></thead>
       <tbody>
-        <tr><td>T1</td><td>Normalize discovery inputs and extract approved page completion for both export consumers</td><td>design</td><td>M</td><td>high / medium</td><td>same-session, strong-worker, high</td></tr>
-        <tr><td>T2</td><td>Verify complete-set, ordering, permission, and failure behavior in both export flows</td><td>tests</td><td>S</td><td>high / high</td><td>delegated, efficient-worker, medium</td></tr>
+        <tr><td>T1</td><td>Normalize discovery inputs and extract approved page completion for both export consumers</td><td>Approved business spec and sharing boundary</td><td>Current session</td><td>Existing export behavior remains unchanged; discovery supports all required result types</td></tr>
+        <tr><td>T2</td><td>Review existing export coverage for completion, ordering, permissions, and failure gaps</td><td>None; read-only review</td><td>Bounded parallel reviewer when available</td><td>Report concrete missing guarantees and relevant tests</td></tr>
+        <tr><td>T3</td><td>Verify both consumers and reconcile the specs and decision</td><td>T1 and T2 findings</td><td>Current session</td><td>Run relevant export checks and user-visible flow checks under the repository's testing discipline</td></tr>
       </tbody>
     </table>
   </section>
@@ -325,7 +354,7 @@ The plan carries execution details and explicitly keeps the users visible:
         <tr><td>Technical design</td><td><a href="technical.html">Technical spec</a></td><td>Supplies the approved boundaries and verification strategy.</td></tr>
         <tr><td>Related spec</td><td><a href="../saved-library/business.html">Saved library</a></td><td>Consulted unchanged: supplies regression expectations for the existing consumer.</td></tr>
         <tr><td>Decision constraint</td><td><a href="../../decisions/design.html#DES-002">DES-002</a></td><td>Consulted unchanged: preserves established interaction constraints during verification.</td></tr>
-        <tr><td>Decision constraint</td><td><a href="../../decisions/architecture.html#ARC-001">ARC-001</a></td><td>Newly approved reuse/abstraction choice: constrains T1 to the selected sharing boundary and T2 to both consumers.</td></tr>
+        <tr><td>Decision constraint</td><td><a href="../../decisions/architecture.html#ARC-001">ARC-001</a></td><td>Newly approved reuse/abstraction choice: constrains T1 to the selected sharing boundary and T2–T3 to both consumers.</td></tr>
       </tbody>
     </table>
   </section>
@@ -391,4 +420,4 @@ Approved reuse and abstraction choices are recorded in the canonical decision re
 
 The decision index links directly to `architecture.html#ARC-001` with its title, active status, scope, and update date; the root index exposes the populated category and decision index. If the user instead chose `Continue without a new spec`, the same approved choice and approval evidence would remain in the canonical decision and necessary index entries, with no links to nonexistent feature artifacts and no feature entry in the spec indexes. An unapproved recommendation would not become an active decision or authorize extraction.
 
-The business and technical specs remain useful after shipping. `plan.html` holds the integrated task plan, selected execution strategy, and verification results, while the decision registry preserves approved choices and their history.
+The business and technical specs remain useful after shipping. `plan.html` holds the integrated task plan, relevant assignments, and verification results, while the decision registry preserves approved choices and their history.

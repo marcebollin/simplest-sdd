@@ -52,54 +52,24 @@ test("retains argument validation for the supported commands", () => {
   }
 });
 
-test("prints init instructions with the existing discovery and approval workflow", () => {
+test("prints the maintained init template with the current schema version", () => {
+  const template = fs.readFileSync(path.join(root, "prompts", "init.md"), "utf8");
   const output = run(["init"]);
 
-  assert.match(output, /Simplest SDD Init Instructions/);
-  assert.match(output, /@AGENTS\.md/);
-  assert.ok(output.includes(`simplest-sdd-schema-version: ${versions.currentSchemaVersion}`));
-  assert.match(output, /purely presentational design, styling, spacing, or layout change/i);
-  assert.match(output, /must not activate the workflow solely because reviewing/i);
-  assert.match(output, /mandatory discovery/i);
-  assert.match(output, /Documentation impact/);
-  assert.match(output, /Existing spec likely to update automatically/);
-  assert.match(output, /Automatically update the existing owning business and technical spec files/);
-  assert.match(output, /without requiring business-spec approval/);
-  assert.match(output, /Any existing spec classified `changed` is maintained automatically/);
-  assert.match(output, /Create a new spec/);
-  assert.match(output, /Continue without a new spec/);
-  assert.match(output, /Mark exactly one option with `\(Recommended\)`/);
-  assert.match(output, /Discovery answers never imply consent to create a new spec/);
-  assert.match(output, /No independent technical approval required/);
-  assert.match(output, /Creating no new spec does not imply technical approval/);
-  assert.match(output, /Every discovery message.*final result must expose.*exact path or anchor/s);
-  assert.match(output, /Inspect And Discover The Testing Discipline/);
-  assert.match(output, /resolved testing discipline/);
-  assert.match(output, /npx skills add https:\/\/github\.com\/mattpocock\/skills --skill tdd -y/);
-  assert.match(output, /always offer same-session/i);
-  assert.match(output, /delegation confidence/);
-  assert.match(output, /explicit user selection/);
-  assert.match(output, /efficient-worker/);
+  assert.equal(output, template.replaceAll("{{schemaVersion}}", versions.currentSchemaVersion).trimEnd() + "\n");
+  assert.doesNotMatch(output, /\{\{[a-zA-Z]+\}\}/);
 });
 
-test("retains HTML documents, durable decisions, and relationship guidance", () => {
-  const output = run(["init"]);
+test("delivers the complete current update contract even without migration history", (t) => {
+  const template = fs.readFileSync(path.join(root, "prompts", "update.md"), "utf8");
+  const output = run(["update", "--cwd", project(t, versions.currentSchemaVersion)]);
+  const currentRules = template.slice(template.indexOf("## Rules"))
+    .replaceAll("{{schemaVersion}}", versions.currentSchemaVersion)
+    .replaceAll("{{packageVersion}}", packageJson.version);
 
-  assert.match(output, /\.agents\/skills\/spec-library\/index\.html/);
-  assert.match(output, /business\.html/);
-  assert.match(output, /:focus-visible/);
-  assert.match(output, /Decision impact/);
-  assert.match(output, /No durable decision impact/);
-  assert.match(output, /load only those category documents/);
-  assert.match(output, /default is not to create a decision/i);
-  assert.match(output, /decision-category\.html/);
-  assert.match(output, /data-artifact="business-spec"/);
-  assert.match(output, /body\[data-artifact="technical-spec"\]/);
-  assert.match(output, /\.keyword, mark/);
-  assert.match(output, /Document relationships/);
-  assert.match(output, /\| Role \| Document \| Why it matters \|/);
-  assert.match(output, /direct behavior dependency, owns a shared contract, overlaps scope.*or is superseded/i);
-  assert.match(output, /Do not add a direct link because two documents share keywords/i);
+  assert.ok(output.endsWith(currentRules.trimEnd() + "\n"));
+  assert.doesNotMatch(output, /\{\{[a-zA-Z]+\}\}/);
+  assert.deepEqual(migrationVersions(output), []);
 });
 
 test("fresh init does not prescribe execution artifacts or request ratings", (t) => {
@@ -127,19 +97,6 @@ test("prints detected update state and applicable migration history", (t) => {
   assert.match(output, /regular file importing @AGENTS\.md/);
   assert.match(output, /found \(0\.2\.0\)/);
   assert.match(output, /library index: HTML index found/);
-  assert.match(output, /wait for explicit approval before implementation/);
-  assert.match(output, /resolved testing discipline/);
-  assert.match(output, /always offer same-session/i);
-  assert.match(output, /Create a new spec.*Continue without a new spec/s);
-  assert.match(output, /automatically (?:refresh|update) an existing spec/i);
-  assert.match(output, /provisional documentation-impact/i);
-  assert.match(output, /Preserve explicit technical approvals in every branch/i);
-  assert.match(output, /semantic artifact accents/i);
-  assert.match(output, /Document relationships table/i);
-  assert.match(output, /topic similarity/i);
-  assert.match(output, /no business requirement or behavior change/i);
-  assert.match(output, /Decision impact/);
-  assert.match(output, /create no empty categories/i);
   const history = migrationVersions(output);
   assert.equal(history[0], versions.currentSchemaVersion);
   assert.ok(history.includes("0.3.0"));
@@ -150,8 +107,9 @@ test("prints detected update state and applicable migration history", (t) => {
 
 test("prints only applicable migrations for recent installations", (t) => {
   for (const [installedVersion, expectedMigrations] of [
-    ["0.14.0", ["0.16.0", "0.15.0"]],
-    ["0.15.0", ["0.16.0"]]
+    ["0.14.0", ["0.17.0", "0.16.0", "0.15.0"]],
+    ["0.15.0", ["0.17.0", "0.16.0"]],
+    ["0.16.0", ["0.17.0"]]
   ]) {
     const cwd = project(t, installedVersion);
     const before = snapshot(cwd);
@@ -184,7 +142,7 @@ test("current removal rules override historical tracking and evaluation migratio
   assert.ok(migrationVersions(output).includes("0.13.0"));
   const precedence = output.indexOf("The current rules below take precedence over historical migration steps");
   assert.ok(precedence >= 0 && precedence < output.indexOf("## Simplest SDD Schema Versions"));
-  assert.match(output, /overrides every older instruction to create, upgrade, record, validate, export, or rebuild execution data or to request human feedback/);
+  assert.match(output, /overrides? every older instruction to create, upgrade, record, validate, export, or rebuild execution data or to request human feedback/);
   assert.match(output, /Skip those older steps entirely, including for missing or unversioned installations/);
   assert.match(output, /never create intermediate records or ratings only to remove them later/);
   assert.match(output, /Do not create or maintain execution records.*or ask for execution ratings or qualification/);
