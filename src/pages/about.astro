@@ -545,11 +545,15 @@ CLAUDE.md                         # imports AGENTS.md for Claude
 
   .why-grid,
   .activation-grid,
-  .artifact-grid,
   .inspiration-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(2rem, 7vw, 7rem);
+  }
+
+  .artifact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .prose p {
@@ -806,10 +810,6 @@ CLAUDE.md                         # imports AGENTS.md for Claude
     padding: clamp(1rem, 2.5vw, 1.6rem);
     color: var(--ink-soft);
     font: 500 clamp(.69rem, 1vw, .8rem)/1.75 var(--font-mono);
-  }
-
-  .artifact-copy {
-    align-self: center;
   }
 
   .artifact-copy code {
