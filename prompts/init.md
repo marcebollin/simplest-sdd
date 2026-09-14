@@ -8,6 +8,7 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 
 - Preserve unrelated and user-authored instructions, skills, conventions, specs, decisions, and history. Replace obsolete simplest-sdd defaults with this workflow; do not mistake generated defaults for explicit local policy.
 - Honor user instructions and authorization already established in the conversation, subject to the host's higher-priority instructions and actual permissions. Skill guidance does not create extra authority or override the user's task. Complete the required discovery question rounds below; outside those rounds, ask only for missing material information or an approval that is still required.
+- Questions and spec interactions are user-facing outputs. Deliver required questions in an assistant response or a visible question interface before waiting. Report consulted, created, and updated specs in the assistant's answer with exact paths or links and a brief purpose or change summary. Private reasoning, internal plans, tool calls, and file edits alone do not satisfy these communication requirements.
 - Keep `AGENTS.md` canonical, `.agents/skills/` the canonical skill directory, `CLAUDE.md` a regular file importing `@AGENTS.md`, and `.claude/skills/spec-library -> ../../.agents/skills/spec-library` a relative compatibility symlink.
 - Keep durable library artifacts as clean static HTML. Workflow references can be Markdown. Preserve legacy data, but do not create or maintain execution records, telemetry ledgers, human evaluations, or rating prompts.
 - Write project facts and non-obvious constraints once, where they belong. Use task-specific links instead of copying discoverable implementation details or generic coding advice.
@@ -26,7 +27,7 @@ If no discipline is discoverable, record that none is established and use availa
 
 Infer the project goal, intended users, useful examples, product priorities, boundaries, and done criteria from the request and repository before asking questions. If the concrete goal or useful clues/examples are missing, ask about them separately; these prerequisite questions do not count toward the minimum below.
 
-Ask at least eight material product, business, and workflow questions in one concise round and wait for every answer before editing files. Adapt them to the project and cover:
+Explicitly ask the user at least eight material product, business, and workflow questions in one concise round. Present the questions in the conversation as a numbered list or through an available question tool, ask the user to answer each one, and wait for their answers before editing files. Adapt them to the project and cover:
 
 1. The inferred primary users, their context, and their most important need.
 2. The product or business outcome that defines success.
@@ -37,7 +38,7 @@ Ask at least eight material product, business, and workflow questions in one con
 7. Risks or changes requiring explicit technical approval.
 8. Commands and user-visible checks that demonstrate completion.
 
-The minimum applies even when the project appears clear. Use established facts to ask sharper tradeoff, boundary, or edge-case questions instead of asking the user to restate them. Keep inspecting relevant context while waiting, but do not begin installation edits until the round is answered. An already completed qualifying round for this same installation need not be repeated when resuming unchanged scope; continue any unanswered questions and retain established approvals.
+The minimum applies even when the project appears clear. Use established facts to ask sharper tradeoff, boundary, or edge-case questions instead of asking the user to restate them. Only the user's answers or explicit confirmation of answers to the presented questions satisfy the round. Repository facts, inferred answers, the agent's own recommendations, and silence do not count. Keep inspecting relevant context while waiting, but do not begin installation edits until the user has answered every question. Reuse a completed round only when the conversation contains the required questions actually asked of and answered by the user for this same installation and unchanged scope. If the round is incomplete, ask for the missing answers and any questions still needed to reach the minimum; retain established approvals.
 
 ## 3. Make `AGENTS.md` Canonical Without Losing Content
 
@@ -51,12 +52,16 @@ Consolidate existing instructions without losing unique content:
 - If `CLAUDE.md` is already a symlink to `AGENTS.md`, preserve the resolved target's unique instructions in `AGENTS.md` before replacing the symlink with the import file.
 - If `CLAUDE.md` points elsewhere or contains unrelated Claude-specific guidance, preserve those instructions before changing it.
 
-Keep the generated `AGENTS.md` addition small: project purpose and users, stable product principles, non-obvious technical boundaries, verified essential commands, and the resolver below. Preserve unrelated local instructions rather than rewriting the whole file. Link contextual docs with a reason to read them; do not require a project tour before every edit. Do not repeat discovery, HTML formatting, approval checklists, or executor instructions here.
+Keep the generated `AGENTS.md` addition small: project purpose and users, stable product principles, non-obvious technical boundaries, verified essential commands, and the resolver below. Preserve unrelated local instructions rather than rewriting the whole file. Link contextual docs with a reason to read them; do not require a project tour before every edit. Keep the short mandatory question gate below; do not duplicate the full discovery procedure, HTML formatting, approval checklists, or executor instructions here.
 
 ```markdown
 ## Spec-driven workflow
 
 Use `.agents/skills/spec-library/SKILL.md` when changing behavior owned by an existing spec, or when a product change needs a durable contract because of review effort, material ambiguity, architectural/data/security risk, or a handoff across sessions. Handle clear low-risk edits and presentation-only work directly unless one of those conditions independently applies.
+
+When the workflow activates, explicitly ask the user at least five material refinement questions and wait for their answers to every question before documentation-branch decisions or implementation. Follow the skill's discovery reference; only an actual completed user question-and-answer round for unchanged scope can be reused.
+
+Put questions and spec activity in user-visible responses. Name specs consulted, created, or updated with exact links or paths and a brief explanation; include the complete concise spec summary in the final answer even if progress messages already reported it. Internal reasoning or tool logs alone do not count.
 
 For past specs or plans, use `.agents/skills/spec-library/index.html`; for recorded choices, use `.agents/skills/spec-library/decisions/index.html`. Read the relevant document directly when its path is known.
 
@@ -99,14 +104,14 @@ description: Maintain feature specs and decisions for changes to specified behav
 
 Keep product contracts and decisions accurate while completing the authorized change. Clear low-risk edits and presentation-only work proceed directly unless they change a specified contract or introduce independent risk.
 
-- For a new request or changed scope, use [discovery](references/discovery.md) to resolve relevant context, complete the required request-refinement question round, and determine documentation ownership. Preserve completed discovery and approvals when resuming unchanged scope.
+- For a new request or changed scope, use [discovery](references/discovery.md): explicitly ask the user at least five material refinement questions and wait for their answers to every question before documentation-branch decisions or implementation. Inferred answers do not satisfy this gate. Reuse only a round actually asked of and answered by the user for unchanged scope; preserve established approvals.
 - When creating or revising specs, plans, decisions, or indexes, use [authoring](references/authoring.md) and only the relevant HTML template.
-- For implementation or resuming an approved plan, use [execution](references/execution.md). Load discovery again only if scope, assumptions, or required approval changed.
+- For implementation or resuming an approved plan, use [execution](references/execution.md) after the required user question-and-answer round is complete. If that round is missing or incomplete, or scope, assumptions, or required approval changed, return to discovery first.
 - For a historical question, open the known document or find it through [the library](index.html) or [decision index](decisions/index.html); this does not start feature discovery.
 
 Keep existing owning specs current automatically. New feature specs require the user's selection and business-spec approval before implementation. Preserve required approval for consequential reuse and concrete sensitive changes; an explicit authorization already covering the same scope counts. If a local instruction blocks work, cite its exact path and rule and explain the unresolved conflict while continuing independent authorized work.
 
-Finish with the outcome, verification, limitations, and exact changed or consulted spec paths and decision anchors. Do not create execution records or request ratings.
+Make questions and spec interactions visible in assistant responses; private reasoning, internal plans, tool calls, and file edits alone do not count. Questions must reach the user before waiting. In the final answer, report the outcome, verification, limitations, and every consulted, created, or updated spec and decision with exact links or paths, status, and a brief explanation, even if already reported in progress. Distinguish pending proposals from completed edits. Do not create execution records or request ratings.
 ```
 
 The detailed contract below belongs in the named references, not duplicated in `SKILL.md` or `AGENTS.md`. Put Gate through Preserve Independent Technical Approvals in `references/discovery.md`; HTML Artifacts through Record Decision Impact and Root Library Index in `references/authoring.md`; execution and close-out in `references/execution.md`. References should link to one another at actual transitions, not instruct readers to load all three. Resolve links relative to the file containing them (for example, `authoring.md` from `references/discovery.md`, and `../templates/business-spec.html` from `references/authoring.md`). Keep project-specific operational invariants; omit inapplicable examples and instructions. Templates contain output structure and embedded styles, not another copy of the workflow.
@@ -131,15 +136,15 @@ For a consequential shared boundary or product tradeoff, present a concise `Reus
 
 When no useful candidate exists, briefly record what was inspected and why it did not fit; do not invent alternatives. Preserve each explicitly approved reuse-analysis choice in a canonical decision even on the no-new-spec branch. Use `references/authoring.md` when writing that record; distinguish approved intent from shipped behavior.
 
-### Refine Request: Resolve Material Unknowns
+### Refine Request: Ask The User And Wait
 
-Whenever a new request activates the workflow, ask at least five material request-refinement questions in one concise round and wait for every answer before choosing the documentation branch or implementing the request. This applies even when the request is clear, an existing spec owns the behavior, or the user already chose to continue without a new spec.
+Whenever a new request activates the workflow, explicitly ask the user at least five material request-refinement questions in one concise round. Present the questions in the conversation as a numbered list or through an available question tool, ask the user to answer each one, and wait for their answers before choosing the documentation branch or implementing the request. This applies even when the request is clear, an existing spec owns the behavior, or the user already chose to continue without a new spec.
 
 Infer users, goal, scope, constraints, and proof from available evidence. Cover the intended outcome for those users, scope, behavior, constraints, and verification; use known facts to ask sharper tradeoff and edge-case questions rather than repeat settled facts. A consequential reuse choice can count toward the five. If the concrete goal or useful clues/examples are missing, ask about them separately without counting those prerequisite questions toward the minimum.
 
-An already completed qualifying round for the same request need not be repeated when resuming unchanged scope. Continue any unanswered questions before advancing and preserve established approvals. Prior context alone does not waive a required round that has not happened.
+Only the user's answers or explicit confirmation of answers to the presented questions satisfy the round. Repository facts, inferred answers, the agent's own recommendations, and silence do not count; do not answer on the user's behalf or proceed with assumed defaults. Reuse a completed round only when the conversation contains the required questions actually asked of and answered by the user for the same request and unchanged scope. If the round is incomplete, ask for the missing answers and any questions still needed to reach the minimum before advancing. Preserve established approvals; prior context or an approved plan alone does not waive a required round that has not happened.
 
-Show a concise `Documentation impact` summary with exact paths and decision anchors: existing owner, other specs and decisions consulted, and proposed changes. Mark proposals and uncertainty clearly. Update this summary when the scope changes and at close-out; do not repeat unchanged lists at every interaction. Continue relevant read-only inspection while waiting for discovery answers.
+The discovery response must deliver the actual questions to the user and explicitly request their answers before waiting; a visible question interface may deliver them when used. Questions kept only in private reasoning, an internal plan, or tool logs have not been asked. Include a concise `Documentation impact` summary in the assistant's response with exact links or paths and decision anchors: the existing owner, specs and decisions actually consulted and why, and proposed creations or updates. Label consulted documents as unchanged unless actually edited, and proposals as pending. When creating or updating documents, report the completed edits and their purpose in a user-visible response; the final answer must also include the complete concise interaction summary. Group related activity rather than narrating every file read. For a read-only documentation question, name the consulted sources in the answer without starting feature discovery. Continue relevant read-only inspection while waiting for discovery answers.
 
 ### Resolve The Spec Branch After Discovery
 
@@ -318,6 +323,8 @@ Complete the requested implementation, inspect the relevant result, fix attribut
 
 Run feature artifact close-out for new and automatically updated existing owning specs. In every branch, reconcile all existing specs classified `changed` and report their exact paths. The no-new-spec branch ends after implementation, verification, and reconciliation of approved decisions without creating new feature artifacts. Persist approved reuse-analysis decisions and approved changes to existing decisions, update their decision/root indexes, and report the exact paths and anchors.
 
+The final assistant answer must include a concise `Documentation impact` summary covering every spec and decision consulted, created, or updated: exact links or paths/anchors, whether consulted unchanged or actually created/updated, and why it mattered or what changed. List unresolved proposals as pending. Include this summary even when progress messages already described the activity; private reasoning, tool logs, and updated files do not replace the answer. Report outcomes and useful rationale, without narrating internal deliberation.
+
 - Make business and technical specs describe what shipped, and verify their sibling and qualifying related-document links still express the actual relationship.
 - Complete the plan with verification evidence.
 - Reconcile approved decisions with what actually shipped. For approved reuse-analysis decisions recorded earlier, retain the approval and set implementation state to `shipped`, `partially implemented`, or `not implemented` with the reason and remaining scope. Do not delete approved intent or mark unshipped work as applied. Update the canonical category section in place for clarifications or scope extensions, add a compact change-history entry linking back to the feature spec when one exists (otherwise record request context and date without a fabricated link), and change the spec's decision-impact wording to reflect the outcome. Create a replacement and mark the old decision superseded only when its meaning is fundamentally reversed.
@@ -426,9 +433,10 @@ Check the generated installation as a usable workflow:
 
 - Verify the schema marker, valid skill frontmatter, regular `CLAUDE.md` import, and relative Claude skill link. Run a skill validator if available.
 - Verify every reference route and local template link resolves. Confirm `SKILL.md` is a short entrypoint and `AGENTS.md` does not duplicate the workflow; detailed instructions belong in conditional references.
-- Confirm setup asks at least eight material questions before installation edits and activated request refinement asks at least five before documentation-branch decisions or implementation, waiting for every answer. Goal and clues/examples prerequisites are additional. Walk through a clear existing-spec correction, an ambiguous new feature, a resume with completed discovery and prior approvals, a presentation-only edit, and a historical question; keep the required rounds within their activation boundaries.
+- Confirm setup explicitly asks the user at least eight material questions before installation edits and activated request refinement explicitly asks at least five before documentation-branch decisions or implementation, waiting for the user's answers to every question. Keep the short gate visible in `AGENTS.md` and `SKILL.md`; inferred answers never satisfy it. Goal and clues/examples prerequisites are additional. Walk through a clear existing-spec correction, an ambiguous new feature, a partial answer round, a resume with actual user questions/answers and prior approvals, a presentation-only edit, and a historical question; keep the required rounds within their activation boundaries.
 - Check current templates and indexes for readable HTML, semantic artifact accents, text status labels, focus styles, illustrative content clearly labeled as examples, and valid document relationships/decision anchors. Review a representative rendered template when presentation changed.
 - Confirm existing owning specs remain automatic, new specs retain selection and business approval, consequential reuse choices retain approval and decision records, and concrete technical changes retain only their outstanding approvals.
+- Check the actual user-visible responses: required questions are delivered before waiting, discovery names consulted documents and proposed changes, and the final answer lists every consulted, created, or updated spec with exact links or paths and a brief explanation. Internal reasoning, tool output, or document edits alone are insufficient; do not claim pending edits are complete. Read-only lookups cite consulted documents without triggering feature questions.
 - Confirm existing local policies, user instructions, specs, decisions, and legacy history survived. Preserve the fixed question minimums while removing contradictory defaults such as skipping required discovery, unconditional strategy stops, repeated broad tests, execution records, and rating prompts.
 - Run relevant documentation or build checks once; fix introduced failures. Report files changed, assumptions, verification, and any limitations.
 

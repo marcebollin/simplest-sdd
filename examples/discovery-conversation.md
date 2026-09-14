@@ -12,13 +12,17 @@ From the repository, the agent infers:
 - **Intended users:** people who read heavily online and want to preserve attention instead of managing a complicated knowledge system.
 - **Existing clues:** saving links is already fast, content is organized through several entity types, and the interface favors calm, compact workflows.
 
-The request and repository already establish the goal, users, scope, and most acceptance criteria. The agent uses that context to ask sharper questions in the mandatory discovery round rather than asking the user to restate known facts. No additional prerequisite questions are needed here; if the concrete goal or clues/examples were missing, those questions would be separate from the five-question minimum. Discovery checks the relevant implementation and documentation, beginning with:
+The request and repository already establish the goal, users, scope, and most acceptance criteria. The agent uses that context to ask sharper questions in the mandatory discovery round rather than asking the user to restate known facts. No additional prerequisite questions are needed here; if the concrete goal or clues/examples were missing, those questions would be separate from the five-question minimum. Discovery checks the relevant implementation and documentation, then includes this summary in the agent’s visible response:
 
 ```text
 Documentation impact (provisional)
 - Existing spec likely to update automatically: None found — this may require a new spec
-- Other specs consulted: .agents/skills/spec-library/specs/saved-library/business.html
-- Decisions consulted: .agents/skills/spec-library/decisions/design.html#DES-002
+- Specs consulted unchanged: .agents/skills/spec-library/specs/saved-library/business.html
+- Decisions consulted unchanged: .agents/skills/spec-library/decisions/design.html#DES-002
+- Proposed new spec, subject to the documentation choice:
+  - .agents/skills/spec-library/specs/content-discovery-export/business.html
+  - .agents/skills/spec-library/specs/content-discovery-export/technical.html
+  - .agents/skills/spec-library/specs/content-discovery-export/plan.html
 - Decisions that may change: None
 - New decision proposed if approved: .agents/skills/spec-library/decisions/architecture.html#ARC-001
 ```
@@ -36,7 +40,10 @@ Both saved-library export and the requested discovery export need the same page-
 
 The proposed extraction, if selected, is `completeActiveResults()` in `src/shared/export/complete-active-results.ts`. The existing `exportSavedLibrary()` and the new `exportDiscoveryResults()` in `src/features/discovery/export.ts` would call it. These are proposed changes, not claims that the helper or discovery exporter already exists.
 
-The agent asks five material request-refinement questions in one round and waits for every answer before resolving the documentation branch or implementing:
+The agent explicitly presents five material request-refinement questions in one round in its visible response or question UI and requests the user’s answers:
+
+> Please answer all five questions below. I’ll wait for your answer to every question before choosing the documentation branch or implementing.
+
 
 1. If a later result page fails, should the flow produce no file and offer a retry of the complete export?
 2. If the reader changes filters or ordering during export, should the running export keep the scope captured when they started it?
@@ -47,6 +54,8 @@ The agent asks five material request-refinement questions in one round and waits
    - **Reuse as-is:** call the existing exporter. This is the smallest change, but its saved-item contract would require narrowing the requested discovery export to saved items; it cannot satisfy the current full-scope requirement unchanged.
    - **Create a separate implementation:** keep discovery export independent. This preserves isolation and supports all discovery result types, but duplicates the page-completion behavior and its future fixes.
    - **Custom: adapt by extracting shared logic (Recommended):** extract only page completion into a helper used by saved-library and discovery exports, with each feature keeping its own permission-scoped query and record conversion. The two concrete consumers need the same ordering and failure guarantees, while their query contracts differ. This adds a shared dependency and requires checking both flows. The user may specify another custom boundary instead.
+
+The agent waits here after the questions actually reach the user. Questions kept only in private reasoning, internal plans, or tool logs do not count as asked. Repository facts, inferred answers, its own recommendations, and silence cannot satisfy the question gate.
 
 Exactly one implementation option is recommended, based on inspected behavior and compatibility. This choice matters because it introduces a shared dependency and affects two consumers, and it counts as one of the five material questions. Routine use of an already compatible utility would not need a separate options menu or a decision record unless the user explicitly made a reuse choice. If inspection found no useful candidate, the agent would briefly state the finding without inventing an extraction and ask another material refinement question to meet the minimum.
 
@@ -72,10 +81,10 @@ Only the recommended documentation choice is labeled. If the user had already re
 
 If the user chooses the second, the agent creates no `business.html`, `technical.html`, `plan.html`, or feature entry in the spec indexes. It implements the refined request directly in the same session. The approved reuse/abstraction choice still persists in `decisions/architecture.html#ARC-001` and the necessary decision/library index entries; these narrow decision writes do not create a new feature spec. Concrete sensitive changes still require explicit authorization in either branch, and any authorization already given remains valid within its scope. Here, preserving existing permissions does not itself introduce a new auth approval. A newly discovered migration or changed permission boundary would need approval before dependent implementation.
 
-If `specs/content-discovery-export/business.html` and `technical.html` already owned this behavior, the same five-question discovery minimum and wait for all answers would apply, but the agent would not show the two documentation choices. After discovery it would update those files automatically and notify:
+If `specs/content-discovery-export/business.html` and `technical.html` already owned this behavior, the same five-question discovery minimum and wait for all answers would apply, but the agent would not show the two documentation choices. After discovery it would update those files automatically and notify in its visible response, naming the actual writes and their purpose:
 
 ```text
-Updated automatically
+Updated automatically to document the approved export scope, failure behavior, shared-helper boundary, and verification
 - .agents/skills/spec-library/specs/content-discovery-export/business.html
 - .agents/skills/spec-library/specs/content-discovery-export/technical.html
 - .agents/skills/spec-library/specs/content-discovery-export/plan.html
@@ -94,4 +103,6 @@ Decision recorded after explicit reuse approval
 - .agents/skills/spec-library/index.html
 ```
 
-No business-spec approval is required for that automatic refresh. The consequential sharing choice still needs explicit selection, which the user already supplied above. If any discovery answer were unresolved, documentation-branch decisions and implementation would wait while read-only investigation could continue. Once applicable approvals are resolved, the agent completes implementation, relevant verification, and documentation close-out without adding a strategy-selection pause. Resuming this unchanged request after its completed qualifying discovery round preserves those answers and approvals without replaying the questions.
+The final answer includes a complete concise spec and decision interaction summary even if the agent already reported it during progress. It names consulted unchanged, created, updated, and pending documents with exact paths and what changed or why; proposed changes are never reported as completed writes. A read-only question about these documents would still receive consulted-spec paths in the answer, without activating the five-question workflow.
+
+No business-spec approval is required for that automatic refresh. The consequential sharing choice still needs explicit selection, which the user already supplied above. If any discovery answer were unresolved, documentation-branch decisions and implementation would wait while read-only investigation could continue. Once applicable approvals are resolved, the agent completes implementation, relevant verification, and documentation close-out without adding a strategy-selection pause. Resuming this unchanged request preserves those answers and approvals without replaying the questions because all five required questions were actually asked and answered by the user for this same scope. If only some had been answered, the agent would explicitly request the missing answers and keep waiting.

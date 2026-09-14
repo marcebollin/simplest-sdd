@@ -36,11 +36,11 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "blue"
   },
   "2. Ask The Project Discovery Questions": {
-    explanation: "Asks at least eight material project, product, and workflow questions in one round and waits for all answers before editing files. Questions for a missing concrete goal or clues/examples are additional. Known facts inform sharper questions rather than requests to repeat them.",
+    explanation: "Explicitly presents at least eight material project, product, and workflow questions in one round in its response or visible question UI, requests your answers, and waits for your answer to every question before editing files. Missing goal or clues/examples questions are extra. Repository facts, inferred answers, recommendations, and silence do not count as your answers.",
     tone: "violet"
   },
   "3. Make `AGENTS.md` Canonical Without Losing Content": {
-    explanation: "Keeps project facts, local constraints, and concise skill routing in one canonical file. Detailed workflow rules belong in the skill’s references, while compatibility files point back to the same project guidance.",
+    explanation: "Keeps project facts, local constraints, concise skill routing, a brief explicit question gate, and a visible spec-reporting reminder in one canonical file. Detailed workflow rules belong in the skill’s references, while compatibility files point back to the same project guidance.",
     tone: "amber",
     reference: {
       label: "Theo’s spec-driven development video",
@@ -49,7 +49,7 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "4. Create The Canonical Spec Skill": {
-    explanation: "Creates a short skill entrypoint that routes to discovery, authoring, and execution references. Future agents load only the guidance needed for the current phase; HTML templates remain output assets instead of always-loaded instructions.",
+    explanation: "Creates a short skill entrypoint that retains the explicit ask-and-wait gate and visible spec-reporting reminder, then routes to discovery, authoring, and execution references. Future agents load only the guidance needed for the current phase; HTML templates remain output assets.",
     tone: "indigo",
     reference: {
       label: "OpenAI: Rethinking skills and prompts for GPT-6 Astra",
@@ -66,7 +66,7 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "Resolve Context": {
-    explanation: "Starts with task-relevant repository facts and uses indexes to find owning specs and applicable decisions. Existing conversation supplies settled answers and authorization; broader reading is justified by a concrete unknown.",
+    explanation: "Starts with task-relevant repository facts and uses indexes to find owning specs and applicable decisions. Existing conversation preserves actual user answers and authorization for their scope. The visible discovery response names consulted unchanged documents and proposed creations or updates with exact links or paths. Read-only lookups report consulted specs without activating questions.",
     tone: "blue",
     reference: {
       label: "shadcn/improve",
@@ -77,12 +77,12 @@ const initAnnotations: Record<string, Annotation> = {
     explanation: "Checks real code, callers, and tests before proposing consequential reuse tradeoffs. Those choices receive alternatives and one reasoned recommendation; an earlier explicit choice counts. Routine compatible reuse proceeds directly, and no useful candidate means no forced options or abstraction.",
     tone: "blue"
   },
-  "Refine Request: Resolve Material Unknowns": {
-    explanation: "Each newly activated request gets at least five material refinement questions in one round, with all answers required before documentation-branch decisions or implementation, even for clear existing-spec or no-new-spec work. Missing goal or clues/examples questions are extra. A reuse choice can count; a completed qualifying round need not be replayed for an unchanged request on resume.",
+  "Refine Request: Ask The User And Wait": {
+    explanation: "For each newly activated request, explicitly presents at least five material refinement questions in one round in its response or visible question UI, requests your answers, and waits for every answer before documentation-branch decisions or implementation. Private reasoning, internal plans, and tool logs alone do not count as asking. This includes clear existing-spec or no-new-spec work; missing goal or clues/examples questions are extra. Resume without repeating only when the required questions were actually asked and answered by you for the same unchanged scope.",
     tone: "violet"
   },
   "Resolve The Spec Branch After Discovery": {
-    explanation: "Refreshes an owning spec automatically. When none exists, ask whether to create a spec only if the user has not already chosen; a newly generated business spec still needs approval before implementation. Skipping a new spec still preserves approved reuse choices in canonical decisions and indexes without creating feature artifacts.",
+    explanation: "Refreshes an owning spec automatically and reports the exact updated files, what changed, and why in the visible response. When none exists, ask whether to create a spec only if the user has not already chosen; a newly generated business spec still needs approval before implementation. Skipping a new spec still preserves approved reuse choices in canonical decisions and indexes without creating feature artifacts.",
     tone: "amber"
   },
   "Preserve Independent Technical Approvals": {
@@ -122,7 +122,7 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "Close Out And Self-Improve": {
-    explanation: "Reconciles the specs and approved reuse decisions with the verified result, then reports the outcome, evidence, limitations, and exact documentation impact. Improve skill guidance only from reusable observed friction, with no execution telemetry or rating question.",
+    explanation: "Reconciles specs and approved reuse decisions with the verified result. The final visible answer includes the outcome, evidence, limitations, and complete concise documentation impact with exact links or paths: consulted unchanged, created, updated, and pending. Earlier progress reports do not replace this summary, and proposed edits are not reported as completed. Improve skill guidance only from reusable observed friction, with no execution telemetry or rating question.",
     tone: "green"
   },
   "Root Library Index": {
@@ -154,7 +154,7 @@ const updateAnnotations: Record<string, Annotation> = {
     tone: "slate"
   },
   "Rules": {
-    explanation: "Focuses this update on the generated skill and AGENTS.md, preserving project facts, local constraints, specs, plans, and decisions. Retains or restores the eight-question installation and five-question feature discovery minimums while removing mandatory strategy pauses. Old execution records stay untouched unless the user selects deletion.",
+    explanation: "Focuses this update on the generated skill and AGENTS.md, preserving project facts, local constraints, specs, plans, and decisions. Retains the eight-question installation and five-question feature discovery minimums and makes explicit questions, waiting for your answers, and visible spec-interaction reporting mandatory in both entrypoints. Old execution records stay untouched unless the user selects deletion.",
     tone: "rose"
   },
   "1. Inspect Current Installation": {
@@ -170,7 +170,7 @@ const updateAnnotations: Record<string, Annotation> = {
     tone: "amber"
   },
   "4. Apply The Migration Conservatively": {
-    explanation: "Moves detailed workflow guidance into discovery, authoring, and execution references, leaving concise AGENTS.md routing and a short skill entrypoint. Removes duplicate rules and mandatory strategy menus while retaining the discovery minimums, local constraints, approvals, approved reuse decisions, and history. Migrating instruction files does not rerun bootstrap discovery.",
+    explanation: "Keeps concise AGENTS.md routing and a short skill entrypoint, with the explicit question gate and visible-reporting reminder in both, plus detailed answer and reporting requirements in the phase references. Preserves the discovery minimums, local constraints, approvals, approved reuse decisions, and history. Migrating instruction files does not rerun bootstrap discovery.",
     tone: "amber"
   },
   "5. Validate": {
@@ -275,7 +275,7 @@ const promptDefinitions = [
     id: "init",
     tabLabel: "Install",
     actionLabel: "installation",
-    summary: "Creates concise project routing, a short skill entrypoint, and references for discovery, authoring, and execution, with approvals tied to concrete choices and changes.",
+    summary: "Explicitly asks you at least eight installation questions and waits for your answers, then creates concise project routing, a short skill entrypoint, and phase references that preserve the five-question feature gate.",
     instruction: "Run npx simplest-sdd@latest init and follow the instructions",
     rawUrl: "/init-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/init.md",
@@ -285,7 +285,7 @@ const promptDefinitions = [
     id: "update",
     tabLabel: "Update",
     actionLabel: "migration",
-    summary: "Improves the generated skill and AGENTS.md with focused references and proportional verification while retaining the eight-question installation and five-question feature discovery minimums. Preserves existing approvals, local context, specifications, plans, decisions, and old execution records unless deletion is explicitly selected.",
+    summary: "Makes explicit questions, waiting for user answers, and visible reporting of spec consultations and writes mandatory in the generated skill and AGENTS.md, while retaining the eight-question installation and five-question feature discovery minimums. Preserves existing approvals, local context, specifications, plans, decisions, and old execution records unless deletion is explicitly selected.",
     instruction: "Run npx simplest-sdd@latest update and follow the instructions",
     rawUrl: "/update-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/update.md",

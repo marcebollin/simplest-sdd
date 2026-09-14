@@ -13,11 +13,11 @@ const steps = [
   },
   {
     title: "Refines the request visibly",
-    description: "It inspects related implementations and names affected specs and decisions, then asks at least five material questions in one round. It waits for every answer before documentation-branch decisions or implementation, using known facts to ask sharper questions."
+    description: "Its visible discovery response names consulted specs and decisions and proposed changes with exact paths. It presents at least five material questions in one round in the response or visible question UI and requests your answers. It waits for your answer to every question before documentation-branch decisions or implementation."
   },
   {
     title: "Reuses an existing contract",
-    description: "If a spec owns the behavior, it updates that contract automatically and reports the exact files changed."
+    description: "If a spec owns the behavior, it updates that contract automatically and visibly reports the exact files changed, what changed, and why."
   },
   {
     title: "Asks before a new spec",
@@ -33,7 +33,7 @@ const steps = [
   },
   {
     title: "Closes out clearly",
-    description: "It reports the outcome, verification, remaining limitations, and every durable spec and decision impact. Close-out ends there, without execution telemetry or a rating request."
+    description: "Its final visible answer reports the outcome, verification, limitations, and complete spec and decision summary with exact paths: consulted unchanged, created, updated, and pending. Earlier progress reports do not replace this summary."
   }
 ];
 
@@ -215,8 +215,9 @@ CLAUDE.md                         # imports AGENTS.md for Claude
             when visual review takes more than five minutes, unless another trigger applies. After discovery, an
             owning spec updates automatically; you choose whether to create a spec when none owns the behavior
             and you have not already chosen. Every newly activated request receives the five-question discovery
-            round, including clear existing-spec and no-new-spec work. A completed qualifying round need not
-            be replayed for an unchanged request on resume, and existing approvals remain valid.
+            round, including clear existing-spec and no-new-spec work. It explicitly asks you and waits for your
+            answers. Resume without replaying only when the required questions were actually asked and
+            answered by you for the same unchanged scope; existing approvals remain valid.
           </span>
         </aside>
       </div>
@@ -235,12 +236,12 @@ CLAUDE.md                         # imports AGENTS.md for Claude
         <CopyInstruction
           label="Install"
           action="init"
-          description="Add the framework after at least eight material project, product, and workflow questions are answered in one round, before files are edited."
+          description="Present at least eight material project, product, and workflow questions in the response or visible question UI, request your answers, and wait for every answer before editing files."
         />
         <CopyInstruction
           label="Update"
           action="update"
-          description="Improve the skill and AGENTS.md while preserving project context, local constraints, specs, plans, and decisions."
+          description="Require visible questions and spec-interaction reports in the skill and AGENTS.md while preserving project context, local constraints, specs, plans, and decisions."
         />
         <CopyInstruction
           label="Remove"
@@ -249,12 +250,20 @@ CLAUDE.md                         # imports AGENTS.md for Claude
         />
       </div>
       <p class="update-note">
-        Schema 0.17.0 makes <code>AGENTS.md</code> a concise router and moves detailed skill guidance into
-        references loaded when needed. It removes mandatory strategy menus, preserves existing approvals,
-        and scales context and verification to the work. Updates retain or restore the eight-question
-        installation and five-question feature discovery minimums without rerunning bootstrap discovery
-        merely to migrate instruction files. Missing concrete goal or clues/examples questions are additional
-        to those minimums.
+        Schema 0.17.1 puts a brief, explicit question gate and visible-reporting reminder in
+        <code>AGENTS.md</code> and <code>SKILL.md</code>, with detailed requirements in the phase references.
+        Questions must reach you in the response or visible question UI before the agent waits for your answers.
+        Private reasoning, internal plans, and tool logs alone do not count. Repository facts, inferred answers, recommendations,
+        and silence do not count as your answers. The eight-question installation and five-question feature
+        discovery minimums stay fixed; missing goal or clues/examples questions are extra. Updating
+        instruction files does not rerun bootstrap discovery.
+      </p>
+      <p class="update-note">
+        Spec interactions also belong in the visible answer. Discovery names consulted documents and proposed
+        changes; after writes, the agent reports exact created or updated files and what changed and why.
+        Its final answer includes the complete concise summary of consulted unchanged, created, updated, and
+        pending documents, even when earlier progress reported them. Read-only lookups name consulted specs
+        without activating discovery questions.
       </p>
       <p class="update-note">
         <strong>Old execution data stays yours.</strong> If old records exist, the update instruction lists their

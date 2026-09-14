@@ -2,6 +2,22 @@
 
 This changelog tracks the installed simplest-sdd schema. Workflow releases advance the schema version; CLI-only releases may leave it unchanged.
 
+## 0.17.1 - 2026-09-14
+
+- Requires the agent to explicitly present the discovery questions to the user, request their answers, and wait for every answer. The fixed minimums remain eight material init questions before installation edits and five material feature-refinement questions before documentation-branch decisions or implementation.
+- Makes the short question gate visible in generated `AGENTS.md` and `SKILL.md`, with the full procedure in `references/discovery.md`.
+- Prevents repository facts, inferred answers, agent recommendations, or silence from counting as user answers. An approved plan alone does not bypass an incomplete round.
+- Reuses discovery only when the required questions were actually asked of and answered by the user for unchanged scope. Partial rounds obtain missing answers and any questions still needed to reach the minimum; existing approvals and activation boundaries remain intact.
+- Requires questions and spec interactions in user-visible responses. The final answer summarizes every consulted, created, or updated spec with exact links or paths and a brief explanation, even when already reported in progress. Private reasoning, internal plans, tool logs, and file edits alone do not count; pending proposals remain distinct from completed edits.
+
+### Migration from 0.17.0
+
+1. Add the explicit five-question ask-and-wait gate to generated `AGENTS.md` and the `SKILL.md` discovery route. Route execution back to discovery if the required user question-and-answer round is missing or incomplete.
+2. Update `references/discovery.md` and any existing setup guidance to require presenting the questions in the conversation or an available question tool and requesting the user's answers. Preserve the eight/five minimums and additional goal/clues prerequisites. Only user answers or explicit confirmation of presented answers satisfy discovery.
+3. Require actual prior user questions and answers before reusing a round for unchanged scope. Obtain missing answers and questions for partial rounds, retain established approvals, and do not rerun bootstrap discovery solely to migrate instructions.
+4. Add the visible interaction requirement to `AGENTS.md` and `SKILL.md`, with discovery-response details in `references/discovery.md` and final reporting in `references/execution.md`. Require actual questions and spec activity in assistant responses, including exact links or paths, statuses, and explanations. Read-only documentation answers name consulted sources without starting feature discovery.
+5. Validate clear existing-owner work, partial answers, an approved plan without discovery, and a completed same-scope round. Check actual user-facing questions, consulted-source reporting, and a complete final spec summary that distinguishes pending proposals from completed edits. Preserve project policies, artifacts, and history; set the marker to `0.17.1` after validation.
+
 ## 0.17.0 - 2026-09-12
 
 - Applies [OpenAI's GPT-6 Astra skill and prompt guidance](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra) while keeping model recommendations provider-independent.

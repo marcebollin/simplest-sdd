@@ -1,6 +1,30 @@
 {
-  "currentSchemaVersion": "0.17.0",
+  "currentSchemaVersion": "0.17.1",
   "versions": [
+    {
+      "version": "0.17.1",
+      "date": "2026-09-14",
+      "summary": "Requires user-visible discovery questions and explicit reporting of consulted, created, or updated specs in agent answers, with concise rules in SKILL.md and AGENTS.md.",
+      "changes": [
+        "Keep the fixed minimums of eight material init questions and five material questions per activated feature request. Explicitly present the questions to the user and request their answers before installation edits or documentation-branch decisions and implementation, respectively.",
+        "Only user answers or explicit confirmation of answers to the presented questions satisfy discovery. Repository facts, inferred answers, agent recommendations, and silence do not count.",
+        "Keep a short mandatory user-question gate in generated AGENTS.md and SKILL.md, with the detailed procedure in references/discovery.md. An approved plan alone cannot bypass an incomplete round.",
+        "Reuse discovery only when the required questions were actually asked of and answered by the user for unchanged scope. Resume partial rounds by obtaining missing answers and any questions still needed to reach the minimum; preserve existing approvals and activation boundaries.",
+        "Deliver required questions in user-visible responses or a visible question interface before waiting. Report consulted, created, and updated specs with exact links or paths and useful explanations in assistant answers, including a complete concise final summary. Private reasoning, internal plans, tool calls, or file edits alone do not count; distinguish pending proposals from completed edits."
+      ],
+      "migrations": [
+        {
+          "from": "0.17.0",
+          "steps": [
+            "Add the explicit ask-and-wait gate to generated AGENTS.md and the SKILL.md discovery route: ask the user at least five material refinement questions and wait for their answers to every question before documentation-branch decisions or implementation. Route execution back to discovery when the required round is missing or incomplete.",
+            "Update references/discovery.md and any existing setup guidance to require presenting the questions in the conversation or an available question tool and requesting the user's answers. Preserve the eight-question init and five-question feature minimums and additional goal/clues prerequisites. Do not accept repository facts, inferred answers, agent recommendations, or silence as user answers.",
+            "Allow reuse only for an actual completed user question-and-answer round for unchanged scope. Obtain missing answers and any questions still needed to reach the minimum for incomplete rounds; retain established approvals. Preserve activation boundaries and do not rerun bootstrap discovery solely to migrate instructions.",
+            "Add a short user-visible interaction requirement to AGENTS.md and SKILL.md. In discovery, deliver the actual questions and report consulted documents and proposed changes to the user. In execution, require the final assistant answer to summarize every consulted, created, or updated spec with exact links or paths, status, and explanation even if already reported in progress. Internal reasoning or tool logs alone are insufficient; read-only documentation answers cite consulted sources without feature discovery.",
+            "Validate actual user-facing questions and spec reports for clear existing-owner work, partial answers, an approved plan without discovery, read-only lookups, and completion; verify completed same-scope rounds are reused and pending edits are not claimed as complete. Preserve project policies, artifacts, and history, then set the marker to 0.17.1."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.17.0",
       "date": "2026-09-12",

@@ -23,12 +23,12 @@ The result is less guessing, clearer human control, and project knowledge that i
 For work that activates its discovery workflow, Simplest SDD:
 
 1. **Understands the project.** The agent inspects the repository, existing instructions, intended users, product goals, and testing approach before proposing changes.
-2. **Refines the request visibly.** It inspects relevant implementations and names the specs and decisions it expects to consult or change. Each newly activated request receives at least five material questions in one round, with all answers required before documentation-branch decisions or implementation. Known facts inform sharper questions. Consequential reuse tradeoffs receive alternatives and a recommendation for your choice; routine compatible reuse needs no separate choice.
+2. **Refines the request visibly.** It inspects relevant implementations and includes a visible `Documentation impact` summary with exact links or paths for consulted specs and decisions and proposed creations or updates. For each newly activated request, the agent explicitly presents at least five material questions in one round in its response or visible question UI, requests your answers, and waits for your answer to every question before documentation-branch decisions or implementation. Repository facts, inferred answers, its own recommendations, and silence do not count as your answers. Consequential reuse tradeoffs receive alternatives and a recommendation for your choice; routine compatible reuse needs no separate choice.
 3. **Reuses an existing contract automatically.** If an existing spec owns the behavior, it updates that spec after discovery, preserves its history, and reports the exact files changed.
 4. **Resolves new-spec creation.** When no existing spec owns the behavior and you have not already chosen, it recommends creating a new spec or continuing without one and waits. A newly generated business spec still needs your approval before implementation.
 5. **Preserves sensitive approvals.** Concrete changes to migrations, data, auth, billing, security, public contracts, infrastructure boundaries, and active decisions require explicit approval. Authorization you already gave counts; mentioning one of these topics alone does not add an approval step.
 6. **Implements and verifies.** It completes the authorized work using the repository's testing discipline and checks proportional to the change. Same-session work is the default; useful bounded work may run in parallel when local instructions and your constraints permit it.
-7. **Closes out clearly.** It reports the outcome, verification, remaining limitations, and every spec and decision consulted, unchanged, pending, or changed.
+7. **Closes out clearly.** Its final answer reports the outcome, verification, limitations, and complete spec and decision interaction summary, even when progress updates already covered it. Exact links or paths distinguish consulted unchanged, created, updated, and pending documents, explaining what changed and why.
 
 The HTML documents use a small semantic color system—violet for business, blue for technical design, green for plans, and amber for decisions—plus restrained highlights for important contract terms. Each feature document also identifies its relationship to the product contract, technical design, implementation plan, applicable decisions, and only genuinely dependent specs.
 
@@ -55,9 +55,9 @@ Run discovery when:
 - work needs a handoff across sessions; or
 - the behavior is already covered by an existing spec.
 
-Purely presentational design, styling, spacing, or layout changes with no business requirement or behavior change should be implemented directly, even when visual review may take more than five minutes, unless another trigger above applies. Other clear, low-risk changes that are easy to review can also be implemented directly. Topic mentions, historical documentation questions, and delegating a bounded subtask do not activate feature discovery by themselves.
+Purely presentational design, styling, spacing, or layout changes with no business requirement or behavior change should be implemented directly, even when visual review may take more than five minutes, unless another trigger above applies. Other clear, low-risk changes that are easy to review can also be implemented directly. Topic mentions, historical documentation questions, and delegating a bounded subtask do not activate feature discovery by themselves. A read-only lookup still names the consulted specs in the visible answer.
 
-Once discovery activates, the five-question minimum applies even to clear existing-spec changes or work that will create no new spec. Missing concrete goals or clues/examples require additional questions outside that minimum. A completed qualifying discovery round need not be repeated when resuming the unchanged request, and existing approvals remain valid. After discovery, an owning spec updates automatically; the agent asks about a new spec only when none owns the behavior and you have not already selected a branch.
+Once discovery activates, the five-question minimum applies even to clear existing-spec changes or work that will create no new spec. Missing concrete goals or clues/examples require additional questions outside that minimum. A discovery round can be reused on resume only when the required questions were actually asked and answered by you for the same unchanged scope; existing approvals remain valid. After discovery, an owning spec updates automatically; the agent asks about a new spec only when none owns the behavior and you have not already selected a branch.
 
 ## How To Use It
 
@@ -69,7 +69,7 @@ Copy the instruction you need and give it to your coding agent.
 Run npx simplest-sdd@latest init and follow the instructions
 ```
 
-Installation asks at least eight material project, product, and workflow questions in one round and waits for all answers before editing files. Questions needed to establish a missing concrete goal or clues/examples are additional and do not count toward the eight.
+Installation explicitly presents at least eight material project, product, and workflow questions in one round in the agent’s response or visible question UI, requests your answers, and waits for your answer to every question before editing files. Repository facts, inferred answers, the agent’s recommendations, and silence do not satisfy this gate. You may answer directly or explicitly confirm answers presented for your confirmation. Questions needed to establish a missing concrete goal or clues/examples are additional and do not count toward the eight.
 
 ### Update
 
@@ -77,7 +77,7 @@ Installation asks at least eight material project, product, and workflow questio
 Run npx simplest-sdd@latest update and follow the instructions
 ```
 
-Schema 0.17.0 updates the generated skill and `AGENTS.md` to reduce repeated instructions and unnecessary pauses. It moves detailed workflow guidance into references, preserves project facts and local constraints, and removes mandatory strategy menus. Updates retain or restore the eight-question installation and five-question feature discovery minimums without rerunning bootstrap discovery merely to migrate instruction files. Existing specifications, plans, and decisions are preserved.
+Schema 0.17.1 makes the discovery gate explicit in generated `AGENTS.md`, the skill entrypoint, and its discovery reference: present the questions to you, request your answers, and wait for every answer. Questions must reach the visible response or question UI, and spec interactions must appear in the visible answer. Private reasoning, internal plans, and tool logs alone do not count. It preserves the eight-question installation and five-question feature discovery minimums, focused references, project facts, and local constraints. Updating instruction files does not rerun bootstrap discovery. Existing specifications, plans, and decisions are preserved.
 
 If old execution records exist, the update instruction asks whether to leave them untouched (the default) or delete them. Deletion requires your explicit choice. New work no longer creates execution records or asks for a rating.
 

@@ -8,7 +8,7 @@ The paragraph and list formatting below illustrates editorial judgment, not a fi
 
 ## Repository instructions
 
-The bootstrap first asks at least eight material project, product, and workflow questions in one round and waits for all answers before editing. Missing concrete goal or clues/examples questions are additional to that minimum. It preserves existing commands and technical rules, then adds concise product context:
+The bootstrap first explicitly presents at least eight material project, product, and workflow questions in one round, requests the user’s answers, and waits for their answer to every question before editing. Missing concrete goal or clues/examples questions are additional to that minimum. It preserves existing commands and technical rules, then adds concise product context:
 
 ```markdown
 # Project agent guide
@@ -34,11 +34,13 @@ Honor the user's authorized scope, existing approvals, and explicit stop, delega
 | Question about a past decision | `.agents/skills/spec-library/decisions/index.html` |
 | Purely presentational change with no behavior change or independent workflow trigger, regardless of review time | Implement and verify directly |
 | Other clear low-risk output reviewable within ~5 minutes, with no affected spec or active decision | Implement and verify directly |
+
+For each newly activated feature workflow, explicitly ask at least five material questions in one round in the visible response or question UI, request the user’s answers, and wait for their answer to every question before documentation-branch decisions or implementation. Follow the discovery reference; inference does not satisfy this gate. Report spec consultations and proposed or completed writes visibly, with exact paths; include the complete concise interaction summary in the final answer.
 ```
 
-The repository guide supplies product facts and routing. Detailed workflow rules live in the skill's references rather than being duplicated in `AGENTS.md`.
+The repository guide supplies product facts, routing, a brief question gate, and a visible-reporting reminder. Detailed workflow rules live in the skill’s references.
 
-Each newly activated feature discovery inspects relevant specs, decisions, code, callers, and tests and shows their exact paths or anchors. It asks at least five material request-refinement questions in one round and waits for every answer before documentation-branch decisions or implementation, even for clear existing-spec or no-new-spec work. Known facts inform sharper questions; missing concrete goal or clues/examples questions are extra. Consequential reuse tradeoffs receive alternatives and one evidence-backed recommendation and can count toward the five; routine compatible reuse needs no separate choice. A completed qualifying discovery round need not be repeated for an unchanged request on resume, and prior approvals remain valid.
+Each newly activated feature discovery inspects relevant specs, decisions, code, callers, and tests and shows their exact paths or anchors. It explicitly presents at least five material request-refinement questions in one round, requests the user’s answers, and waits for their answer to every question before documentation-branch decisions or implementation, even for clear existing-spec or no-new-spec work. Known facts inform sharper questions; missing concrete goal or clues/examples questions are extra. Consequential reuse tradeoffs receive alternatives and one evidence-backed recommendation and can count toward the five; routine compatible reuse needs no separate choice. Resume without repeating a round only when the required questions were actually asked and answered by the user for the same unchanged scope; prior approvals remain valid.
 
 An existing owning spec updates automatically without business-spec approval. When no spec owns the behavior, the agent presents `Create a new spec` and `Continue without a new spec` only if the user has not already chosen, marking one `(Recommended)`. New business specs still require approval before implementation. The no-new-spec branch creates no feature artifacts or feature entries but preserves every explicitly approved reuse choice in canonical decisions and their indexes. Concrete sensitive changes require explicit authorization, including authorization already given for that scope.
 
@@ -88,17 +90,35 @@ name: spec-library
 description: Refine substantive or ambiguous product work, maintain owning specs, and implement approved contracts. Use for existing spec behavior, consequential risk, or work crossing sessions; skip clear presentation-only changes unless another trigger applies.
 ---
 
-<!-- simplest-sdd-schema-version: 0.17.0 -->
+<!-- simplest-sdd-schema-version: 0.17.1 -->
 
 # Spec library
 
 Use the request, repository facts, and existing conversation as context. Honor approved scope and local constraints. Load only the references needed now:
 
-- [Discovery](references/discovery.md): ask at least five material refinement questions for each newly activated request, wait for all answers, inspect reuse, identify documentation impact, and choose the spec branch. Missing goal or clues/examples questions are additional; do not replay a completed qualifying round for an unchanged request on resume.
+- [Discovery](references/discovery.md): for each newly activated request, explicitly ask at least five material refinement questions in one round, request the user’s answers, and wait for their answer to every question before documentation-branch decisions or implementation. Inference does not satisfy this gate. Follow the reference for context, reuse, answer requirements, and resuming an answered round.
 - [Authoring](references/authoring.md): maintain contracts, durable decisions, relationships, and readable HTML using `templates/`.
-- [Execution](references/execution.md): complete authorized implementation, follow the repository's testing discipline, verify the result, and close out documentation.
+- [Execution](references/execution.md): after the required user question round is complete, implement authorized work, follow the repository's testing discipline, verify the result, and close out documentation. An approved plan alone does not bypass missing questions or answers.
 
-Use `index.html` to locate relevant specs and decisions; do not read the entire library by default.
+Use `index.html` to locate relevant specs and decisions; do not read the entire library by default. Questions must reach the user in the response or visible question UI. Report consulted, proposed, created, updated, and pending documents with exact paths; include the complete concise interaction summary in the final answer.
+```
+
+The discovery reference carries the detailed gate:
+
+```markdown
+## Ask the user and wait
+
+Present the required questions in the assistant’s response or visible question UI and explicitly request the user’s answer to every question before waiting. Private reasoning, internal plans, and tool logs alone do not count as asking. Missing concrete goal or clues/examples questions are additional to the five-question feature minimum.
+
+Repository facts, inferred answers, the agent’s recommendations, and silence do not count as user answers. The user may answer directly or explicitly confirm answers presented for their confirmation. Use known context to make questions more useful, then wait for the user. If answers are incomplete, request the missing answers and keep documentation-branch decisions and implementation paused; read-only investigation may continue.
+
+On resume, reuse a round only when the required questions were actually asked and answered by the user for the same unchanged scope. Preserve those answers and existing approvals; do not invent a completed discovery round from repository context.
+
+## Report documentation impact visibly
+
+In the discovery response, include a concise Documentation impact summary with exact links or paths: consulted unchanged documents and proposed creations or updates. Proposed changes are not completed writes. A read-only lookup reports consulted specs in the visible answer without activating discovery questions.
+
+After writing documents, report the exact created or updated files, what changed, and why. The final answer includes a complete concise summary of specs and decisions consulted unchanged, created, updated, or pending, even when progress updates already covered them. Private reasoning, internal plans, and tool logs alone do not satisfy this reporting requirement.
 ```
 
 The generated execution reference names the project's resolved testing discipline and real verification commands. Detail follows the task's risk and complexity; it does not require broad repeated test runs or detailed delegation packets for routine work.
@@ -363,9 +383,16 @@ The plan carries the execution details this task needs and keeps the users visib
 
 ## Close-out
 
-After implementation and verification, the agent reports what changed, the verification performed, any remaining limitations, and the exact specs and decisions consulted or changed:
+After implementation and verification, the agent includes the outcome and complete documentation summary in its final visible answer, even if progress updates already reported those interactions. This example follows the create-new-spec branch; the new documents are subsequently updated to record verification:
 
-> Both export flows now share active-result completion while preserving their own queries, permissions, and record conversion. Verification covered complete results, visible ordering, permissions, and later-page failure in both consumers. The content-discovery-export business spec, technical spec, and plan were updated. `ARC-001` is applied and verified; the saved-library business spec and `DES-002` were consulted unchanged. No remaining limitations were identified in the approved scope.
+> Both export flows now share active-result completion while preserving their own queries, permissions, and record conversion. Verification covered complete results, visible ordering, permissions, and later-page failure in both consumers. No remaining limitations were identified in the approved scope.
+>
+> Documentation impact:
+>
+> - **Created, then updated after verification:** `.agents/skills/spec-library/specs/content-discovery-export/business.html`, `.agents/skills/spec-library/specs/content-discovery-export/technical.html`, and `.agents/skills/spec-library/specs/content-discovery-export/plan.html` — record the approved export contract, shared-helper boundary, and verified implementation.
+> - **Updated:** `.agents/skills/spec-library/decisions/architecture.html#ARC-001` — added the approved sharing decision and marked it applied and verified. `.agents/skills/spec-library/specs/index.html`, `.agents/skills/spec-library/decisions/index.html`, and `.agents/skills/spec-library/index.html` now expose the new feature and decision.
+> - **Consulted unchanged:** `.agents/skills/spec-library/specs/saved-library/business.html` and `.agents/skills/spec-library/decisions/design.html#DES-002` — checked existing export and presentation constraints.
+> - **Pending:** None.
 
 ## Durable decision
 
