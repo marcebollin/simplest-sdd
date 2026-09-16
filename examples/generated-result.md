@@ -35,7 +35,7 @@ Honor the user's authorized scope, existing approvals, and explicit stop, delega
 | Purely presentational change with no behavior change or independent workflow trigger, regardless of review time | Implement and verify directly |
 | Other clear low-risk output reviewable within ~5 minutes, with no affected spec or active decision | Implement and verify directly |
 
-For each newly activated feature workflow, explicitly ask at least five material questions in one round in the visible response or question UI, request the user’s answers, and wait for their answer to every question before documentation-branch decisions or implementation. Follow the discovery reference; inference does not satisfy this gate. Report spec consultations and proposed or completed writes visibly, with exact paths; include the complete concise interaction summary in the final answer.
+For each newly activated feature workflow, explicitly ask at least five material questions in one round as a numbered Discovery questions section in the response, request the user’s answers, and wait for their answer to every question before documentation-branch decisions or implementation. Question tools supplement the written list; include every unanswered question in the final response when ending the turn with answers pending. Follow the discovery reference; inference does not satisfy this gate. Report spec consultations and proposed or completed writes visibly, with exact paths; include the complete concise interaction summary in the final answer.
 ```
 
 The repository guide supplies product facts, routing, a brief question gate, and a visible-reporting reminder. Detailed workflow rules live in the skill’s references.
@@ -90,7 +90,7 @@ name: spec-library
 description: Refine substantive or ambiguous product work, maintain owning specs, and implement approved contracts. Use for existing spec behavior, consequential risk, or work crossing sessions; skip clear presentation-only changes unless another trigger applies.
 ---
 
-<!-- simplest-sdd-schema-version: 0.17.1 -->
+<!-- simplest-sdd-schema-version: 0.17.2 -->
 
 # Spec library
 
@@ -100,7 +100,7 @@ Use the request, repository facts, and existing conversation as context. Honor a
 - [Authoring](references/authoring.md): maintain contracts, durable decisions, relationships, and readable HTML using `templates/`.
 - [Execution](references/execution.md): after the required user question round is complete, implement authorized work, follow the repository's testing discipline, verify the result, and close out documentation. An approved plan alone does not bypass missing questions or answers.
 
-Use `index.html` to locate relevant specs and decisions; do not read the entire library by default. Questions must reach the user in the response or visible question UI. Report consulted, proposed, created, updated, and pending documents with exact paths; include the complete concise interaction summary in the final answer.
+Use `index.html` to locate relevant specs and decisions; do not read the entire library by default. Write every discovery question in the response under `## Discovery questions` as a numbered list. Question tools supplement this list; include every unanswered question in the final response when ending the turn with answers pending. Report consulted, proposed, created, updated, and pending documents with exact paths; include the complete concise interaction summary in the final answer.
 ```
 
 The discovery reference carries the detailed gate:
@@ -108,7 +108,7 @@ The discovery reference carries the detailed gate:
 ```markdown
 ## Ask the user and wait
 
-Present the required questions in the assistant’s response or visible question UI and explicitly request the user’s answer to every question before waiting. Private reasoning, internal plans, and tool logs alone do not count as asking. Missing concrete goal or clues/examples questions are additional to the five-question feature minimum.
+Write every required question in full under `## Discovery questions` in the assistant’s response, as a numbered list with any choices and recommendation alongside the relevant question. Explicitly request the user’s answer to every question before waiting. Question tools supplement the written list. If ending the turn with answers pending, include every unanswered question with its original number in the final response even if already shown in progress or a tool. Private reasoning, internal plans, and tool logs alone do not count as asking. Missing concrete goal or clues/examples questions are additional to the five-question feature minimum.
 
 Repository facts, inferred answers, the agent’s recommendations, and silence do not count as user answers. The user may answer directly or explicitly confirm answers presented for their confirmation. Use known context to make questions more useful, then wait for the user. If answers are incomplete, request the missing answers and keep documentation-branch decisions and implementation paused; read-only investigation may continue.
 

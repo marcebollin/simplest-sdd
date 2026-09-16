@@ -36,11 +36,11 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "blue"
   },
   "2. Ask The Project Discovery Questions": {
-    explanation: "Explicitly presents at least eight material project, product, and workflow questions in one round in its response or visible question UI, requests your answers, and waits for your answer to every question before editing files. Missing goal or clues/examples questions are extra. Repository facts, inferred answers, recommendations, and silence do not count as your answers.",
+    explanation: "Writes at least eight complete project, product, and workflow questions under Discovery questions in its response, as a numbered list, and waits for every answer before editing files. Question tools supplement the list. If answers are pending when the turn ends, the final response includes every unanswered question. Missing goal or clues/examples questions are extra. Repository facts, inferred answers, recommendations, and silence do not count as your answers.",
     tone: "violet"
   },
   "3. Make `AGENTS.md` Canonical Without Losing Content": {
-    explanation: "Keeps project facts, local constraints, concise skill routing, a brief explicit question gate, and a visible spec-reporting reminder in one canonical file. Detailed workflow rules belong in the skill’s references, while compatibility files point back to the same project guidance.",
+    explanation: "Keeps project facts, local constraints, and concise skill routing in one canonical file. Its question gate requires a numbered Discovery questions section in the response and unanswered questions in the final response while waiting. It also retains visible spec reporting. Detailed workflow rules belong in the skill’s references, while compatibility files point back to the same project guidance.",
     tone: "amber",
     reference: {
       label: "Theo’s spec-driven development video",
@@ -49,7 +49,7 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "4. Create The Canonical Spec Skill": {
-    explanation: "Creates a short skill entrypoint that retains the explicit ask-and-wait gate and visible spec-reporting reminder, then routes to discovery, authoring, and execution references. Future agents load only the guidance needed for the current phase; HTML templates remain output assets.",
+    explanation: "Creates a short skill entrypoint that requires written, numbered discovery questions, unanswered questions in the final response while waiting, and visible spec reporting. It routes to discovery, authoring, and execution references so future agents load only the guidance needed for the current phase; HTML templates remain output assets.",
     tone: "indigo",
     reference: {
       label: "OpenAI: Rethinking skills and prompts for GPT-6 Astra",
@@ -78,7 +78,7 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "blue"
   },
   "Refine Request: Ask The User And Wait": {
-    explanation: "For each newly activated request, explicitly presents at least five material refinement questions in one round in its response or visible question UI, requests your answers, and waits for every answer before documentation-branch decisions or implementation. Private reasoning, internal plans, and tool logs alone do not count as asking. This includes clear existing-spec or no-new-spec work; missing goal or clues/examples questions are extra. Resume without repeating only when the required questions were actually asked and answered by you for the same unchanged scope.",
+    explanation: "For each newly activated request, explicitly presents at least five material refinement questions in one round as a numbered Discovery questions section in its response, requests your answers, and waits for every answer before documentation-branch decisions or implementation. Question tools supplement the written list; when a turn ends with answers pending, every unanswered question appears in the final response. Private reasoning, internal plans, and tool logs alone do not count as asking. This includes clear existing-spec or no-new-spec work; missing goal or clues/examples questions are extra. Resume without repeating only when the required questions were actually asked and answered by you for the same unchanged scope.",
     tone: "violet"
   },
   "Resolve The Spec Branch After Discovery": {
@@ -143,18 +143,18 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "violet"
   },
   "7. Validate": {
-    explanation: "Checks that installation produced a coherent system: the links resolve, the schema marker is current, history survived, and the agent stops at the requested boundary.",
+    explanation: "Checks that installation produced a coherent system: links resolve, the schema marker is current, and history survived. Verifies complete numbered questions in the response and unanswered questions in the final response, including with question tools and partial answers. The agent honors the requested stopping point.",
     tone: "lime"
   }
 };
 
 const updateAnnotations: Record<string, Annotation> = {
   "Start here": {
-    explanation: "Defines the migration target and explains that the CLI generates state and changelog blocks for the current installation. Current rules override historical tracking and rating instructions, so upgrades from older versions never recreate intermediate execution records or telemetry.",
+    explanation: "Introduces the requirement to write discovery questions in the response and keep unanswered questions in the final response while waiting. The CLI supplies the current installation state and relevant migration history. Current rules take precedence over older workflow instructions, including retired tracking and ratings.",
     tone: "slate"
   },
   "Rules": {
-    explanation: "Focuses this update on the generated skill and AGENTS.md, preserving project facts, local constraints, specs, plans, and decisions. Retains the eight-question installation and five-question feature discovery minimums and makes explicit questions, waiting for your answers, and visible spec-interaction reporting mandatory in both entrypoints. Old execution records stay untouched unless the user selects deletion.",
+    explanation: "Requires complete numbered discovery questions in the response and every unanswered question in the final response while waiting. Question tools supplement the written list. Preserves the eight-question installation and five-question feature minimums, waiting for your answers, visible spec reporting, and project knowledge. Old execution records stay untouched unless you select deletion.",
     tone: "rose"
   },
   "1. Inspect Current Installation": {
@@ -162,7 +162,7 @@ const updateAnnotations: Record<string, Annotation> = {
     tone: "blue"
   },
   "2. Audit The Skill And Agent Guidance": {
-    explanation: "Audits the actual installed skill and generated AGENTS.md against the current contract. Separates obsolete framework defaults from genuine local policy, then defines focused changes to routing, discovery, authoring, execution, and completion without replaying every historical version.",
+    explanation: "Checks the installed skill and generated AGENTS.md for the numbered Discovery questions section and final-response requirements. Replaces generated wording that lets a question tool substitute for the written list. Preserves genuine local policies and checks routing, authoring, execution, and completion against the current contract.",
     tone: "violet"
   },
   "3. Choose What To Do With Old Execution Records": {
@@ -170,11 +170,11 @@ const updateAnnotations: Record<string, Annotation> = {
     tone: "amber"
   },
   "4. Apply The Migration Conservatively": {
-    explanation: "Keeps concise AGENTS.md routing and a short skill entrypoint, with the explicit question gate and visible-reporting reminder in both, plus detailed answer and reporting requirements in the phase references. Preserves the discovery minimums, local constraints, approvals, approved reuse decisions, and history. Migrating instruction files does not rerun bootstrap discovery.",
+    explanation: "Applies the written-question and final-response requirements to AGENTS.md, the skill entrypoint, and discovery guidance. Preserves concise routing, visible spec reporting, discovery minimums, local constraints, approvals, approved reuse decisions, and history. Migrating instruction files does not rerun bootstrap discovery.",
     tone: "amber"
   },
   "5. Validate": {
-    explanation: "Proves that the upgraded workflow is coherent and current without losing project knowledge, changing unrelated behavior, or continuing into feature delivery.",
+    explanation: "Checks discovery with and without a question tool and after partial answers: complete numbered questions must appear in the response, and unanswered questions must remain in the final response while waiting. Also verifies current instructions, valid links, preserved project knowledge, and the requested stopping point.",
     tone: "lime"
   }
 };
@@ -275,7 +275,7 @@ const promptDefinitions = [
     id: "init",
     tabLabel: "Install",
     actionLabel: "installation",
-    summary: "Explicitly asks you at least eight installation questions and waits for your answers, then creates concise project routing, a short skill entrypoint, and phase references that preserve the five-question feature gate.",
+    summary: "Shows at least eight complete questions in a numbered Discovery questions section in the response and waits for every answer before installing. Unanswered questions remain in the final response while waiting; question tools supplement the written list. The installed workflow applies the same format to its five-question feature discovery minimum.",
     instruction: "Run npx simplest-sdd@latest init and follow the instructions",
     rawUrl: "/init-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/init.md",
@@ -285,7 +285,7 @@ const promptDefinitions = [
     id: "update",
     tabLabel: "Update",
     actionLabel: "migration",
-    summary: "Makes explicit questions, waiting for user answers, and visible reporting of spec consultations and writes mandatory in the generated skill and AGENTS.md, while retaining the eight-question installation and five-question feature discovery minimums. Preserves existing approvals, local context, specifications, plans, decisions, and old execution records unless deletion is explicitly selected.",
+    summary: "Updates existing installations to require a numbered Discovery questions section in the response and every unanswered question in the final response while waiting. Question tools supplement the written list. Preserves discovery minimums, visible spec reporting, existing approvals, project knowledge, and old execution records unless deletion is explicitly selected.",
     instruction: "Run npx simplest-sdd@latest update and follow the instructions",
     rawUrl: "/update-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/update.md",

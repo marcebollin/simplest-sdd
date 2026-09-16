@@ -1,6 +1,26 @@
 {
-  "currentSchemaVersion": "0.17.1",
+  "currentSchemaVersion": "0.17.2",
   "versions": [
+    {
+      "version": "0.17.2",
+      "date": "2026-09-15",
+      "summary": "Requires complete numbered discovery questions in the assistant response, with unanswered questions retained in the final response while awaiting answers.",
+      "changes": [
+        "Write every discovery question in full under a Discovery questions heading in the assistant response, as a numbered list with any choices and recommendation alongside the relevant question.",
+        "Question tools may collect answers but never replace the written list. When ending a turn with answers pending, include every unanswered question with its original number in the final response, even if already shown in progress or a tool.",
+        "Preserve the eight-question init and five-question feature minimums, actual user answer requirements, completed same-scope rounds, existing approvals, and visible documentation impact reporting."
+      ],
+      "migrations": [
+        {
+          "from": "0.17.1",
+          "steps": [
+            "Update generated AGENTS.md, SKILL.md, references/discovery.md, and any existing setup guidance to require complete numbered questions under Discovery questions in the assistant response. Replace generated wording that allows question UI or tool delivery to substitute for the written list.",
+            "Require every unanswered question with its original number in the final response when ending a turn with answers pending. Question tools supplement the response; summaries of topics, private reasoning, and progress-only or tool-only questions do not satisfy this requirement.",
+            "Validate discovery with and without a question tool and with partial answers. Preserve completed same-scope rounds, approvals, local policies, artifacts, and history; do not rerun bootstrap discovery solely to migrate instructions. Set the marker to 0.17.2 after validation."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.17.1",
       "date": "2026-09-14",

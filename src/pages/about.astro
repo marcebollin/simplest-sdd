@@ -13,7 +13,7 @@ const steps = [
   },
   {
     title: "Refines the request visibly",
-    description: "Its visible discovery response names consulted specs and decisions and proposed changes with exact paths. It presents at least five material questions in one round in the response or visible question UI and requests your answers. It waits for your answer to every question before documentation-branch decisions or implementation."
+    description: "Its visible discovery response names consulted specs and decisions and proposed changes with exact paths. It presents at least five material questions in one round as a numbered Discovery questions section in the response and requests your answers. It waits for your answer to every question before documentation-branch decisions or implementation."
   },
   {
     title: "Reuses an existing contract",
@@ -236,7 +236,7 @@ CLAUDE.md                         # imports AGENTS.md for Claude
         <CopyInstruction
           label="Install"
           action="init"
-          description="Present at least eight material project, product, and workflow questions in the response or visible question UI, request your answers, and wait for every answer before editing files."
+          description="Present at least eight material project, product, and workflow questions as a numbered Discovery questions section in the response, request your answers, and wait for every answer before editing files."
         />
         <CopyInstruction
           label="Update"
@@ -250,10 +250,10 @@ CLAUDE.md                         # imports AGENTS.md for Claude
         />
       </div>
       <p class="update-note">
-        Schema 0.17.1 puts a brief, explicit question gate and visible-reporting reminder in
+        Schema 0.17.2 puts a brief, explicit question gate and visible-reporting reminder in
         <code>AGENTS.md</code> and <code>SKILL.md</code>, with detailed requirements in the phase references.
-        Questions must reach you in the response or visible question UI before the agent waits for your answers.
-        Private reasoning, internal plans, and tool logs alone do not count. Repository facts, inferred answers, recommendations,
+        Questions must reach you as a numbered Discovery questions section in the response before the agent waits for your answers.
+        Question tools supplement the written list. When answers are pending at the end of a turn, the final response includes every unanswered question. Private reasoning, internal plans, and tool logs alone do not count. Repository facts, inferred answers, recommendations,
         and silence do not count as your answers. The eight-question installation and five-question feature
         discovery minimums stay fixed; missing goal or clues/examples questions are extra. Updating
         instruction files does not rerun bootstrap discovery.

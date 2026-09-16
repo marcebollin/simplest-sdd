@@ -40,10 +40,11 @@ Both saved-library export and the requested discovery export need the same page-
 
 The proposed extraction, if selected, is `completeActiveResults()` in `src/shared/export/complete-active-results.ts`. The existing `exportSavedLibrary()` and the new `exportDiscoveryResults()` in `src/features/discovery/export.ts` would call it. These are proposed changes, not claims that the helper or discovery exporter already exists.
 
-The agent explicitly presents five material request-refinement questions in one round in its visible response or question UI and requests the user’s answers:
+The agent explicitly presents five material request-refinement questions in one round as a numbered Discovery questions section in its final response and requests the user’s answers:
 
-> Please answer all five questions below. I’ll wait for your answer to every question before choosing the documentation branch or implementing.
+## Discovery questions
 
+Please answer all five questions below. I’ll wait for your answer to every question before choosing the documentation branch or implementing.
 
 1. If a later result page fails, should the flow produce no file and offer a retry of the complete export?
 2. If the reader changes filters or ordering during export, should the running export keep the scope captured when they started it?
@@ -55,7 +56,7 @@ The agent explicitly presents five material request-refinement questions in one 
    - **Create a separate implementation:** keep discovery export independent. This preserves isolation and supports all discovery result types, but duplicates the page-completion behavior and its future fixes.
    - **Custom: adapt by extracting shared logic (Recommended):** extract only page completion into a helper used by saved-library and discovery exports, with each feature keeping its own permission-scoped query and record conversion. The two concrete consumers need the same ordering and failure guarantees, while their query contracts differ. This adds a shared dependency and requires checking both flows. The user may specify another custom boundary instead.
 
-The agent waits here after the questions actually reach the user. Questions kept only in private reasoning, internal plans, or tool logs do not count as asked. Repository facts, inferred answers, its own recommendations, and silence cannot satisfy the question gate.
+The agent ends the discovery turn with the complete numbered questions above in its final response. A question tool may also collect answers, but the response still includes the written questions. If only some questions are answered, the next response lists every unanswered question in full with its original number. Questions kept only in private reasoning, internal plans, or tool logs do not count as asked. Repository facts, inferred answers, its own recommendations, and silence cannot satisfy the question gate.
 
 Exactly one implementation option is recommended, based on inspected behavior and compatibility. This choice matters because it introduces a shared dependency and affects two consumers, and it counts as one of the five material questions. Routine use of an already compatible utility would not need a separate options menu or a decision record unless the user explicitly made a reuse choice. If inspection found no useful candidate, the agent would briefly state the finding without inventing an extraction and ask another material refinement question to meet the minimum.
 

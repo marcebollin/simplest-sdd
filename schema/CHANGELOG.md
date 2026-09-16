@@ -2,6 +2,18 @@
 
 This changelog tracks the installed simplest-sdd schema. Workflow releases advance the schema version; CLI-only releases may leave it unchanged.
 
+## 0.17.2 - 2026-09-15
+
+- Requires every discovery question in full under a `Discovery questions` heading in the assistant's response, as a numbered list with any choices and recommendation alongside the relevant question.
+- Makes question tools supplementary to the written list. When ending a turn with answers pending, the final response includes every unanswered question with its original number, even if already shown in progress or a tool.
+- Preserves the eight-question init and five-question feature minimums, actual user answer requirements, completed same-scope rounds, existing approvals, and visible documentation impact reporting.
+
+### Migration from 0.17.1
+
+1. Update generated `AGENTS.md`, `SKILL.md`, `references/discovery.md`, and any existing setup guidance to require the numbered `Discovery questions` section in the assistant's response. Replace generated wording that permits a question UI or tool to substitute for the written list.
+2. Require every unanswered question in the final response when ending a turn with answers pending, preserving its original number. Topic summaries, private reasoning, and progress-only or tool-only delivery do not satisfy this requirement.
+3. Validate discovery with and without a question tool and with partial answers. Preserve completed same-scope rounds, approvals, local policies, artifacts, and history; do not rerun bootstrap discovery solely to migrate instructions. Set the marker to `0.17.2` after validation.
+
 ## 0.17.1 - 2026-09-14
 
 - Requires the agent to explicitly present the discovery questions to the user, request their answers, and wait for every answer. The fixed minimums remain eight material init questions before installation edits and five material feature-refinement questions before documentation-branch decisions or implementation.
