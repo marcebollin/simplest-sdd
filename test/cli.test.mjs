@@ -72,6 +72,38 @@ test("delivers the complete current update contract even without migration histo
   assert.deepEqual(migrationVersions(output), []);
 });
 
+test("fresh init provides content-led HTML authoring without format scaffolds", () => {
+  const output = run(["init"]);
+
+  assertAuthoringContract(output);
+  assert.match(output, /Do not create a `templates\/` directory on fresh installs/);
+  assert.doesNotMatch(output, /```html|Use this baseline style|business is violet|no JavaScript unless|templates\/(?:business-spec|technical-spec|plan|decision-category)\.html/);
+});
+
+test("authoring keeps reader guidance primary and excludes blanket skill mandates", (t) => {
+  const outputs = [
+    run(["init"]),
+    run(["update", "--cwd", project(t, versions.currentSchemaVersion)])
+  ];
+
+  for (const output of outputs) {
+    assert.match(output, /reader and the reading task/);
+    assert.match(output, /clear hierarchy with readable typography/);
+    assert.match(output, /Lead with the outcome or change[^\n]*current state/);
+    assert.match(output, /natural, direct prose/);
+    assert.match(output, /one bounded action or testable condition per item/i);
+    assert.match(output, /never a completeness limit: retain every requirement, alternative, exception, and required discovery question/);
+    assert.match(output, /without another user request/);
+    assert.match(output, /Each control must perform a clear reading task and show its (?:current )?state/);
+    assert.match(output, /Use motion only to explain a user-triggered change/);
+    assert.match(output, /(?:Keep|keep) information still by default/);
+    assert.match(output, /not installation or runtime dependencies/);
+    assert.match(output, /No dictionary check or compliance report is required/);
+    assert.doesNotMatch(output, /ASD-STE100 Simplified Technical English for (?:all )?new or revised artifact prose|descriptions to 25 words|Check the official specification and dictionary/);
+    assert.doesNotMatch(output, /Cap lists to 5 items|Display them only when the user asks|\bMOTION_INTENSITY\b|\bDESIGN_VARIANCE\b|\*\*Framework:\*\*|\*\*Animation:\*\*/);
+  }
+});
+
 test("fresh init does not prescribe execution artifacts or request ratings", (t) => {
   const cwd = project(t);
   const output = run(["init", "--cwd", cwd]);
@@ -107,11 +139,12 @@ test("prints detected update state and applicable migration history", (t) => {
 
 test("prints only applicable migrations for recent installations", (t) => {
   for (const [installedVersion, expectedMigrations] of [
-    ["0.14.0", ["0.17.2", "0.17.1", "0.17.0", "0.16.0", "0.15.0"]],
-    ["0.15.0", ["0.17.2", "0.17.1", "0.17.0", "0.16.0"]],
-    ["0.16.0", ["0.17.2", "0.17.1", "0.17.0"]],
-    ["0.17.0", ["0.17.2", "0.17.1"]],
-    ["0.17.1", ["0.17.2"]]
+    ["0.14.0", ["0.18.0", "0.17.2", "0.17.1", "0.17.0", "0.16.0", "0.15.0"]],
+    ["0.15.0", ["0.18.0", "0.17.2", "0.17.1", "0.17.0", "0.16.0"]],
+    ["0.16.0", ["0.18.0", "0.17.2", "0.17.1", "0.17.0"]],
+    ["0.17.0", ["0.18.0", "0.17.2", "0.17.1"]],
+    ["0.17.1", ["0.18.0", "0.17.2"]],
+    ["0.17.2", ["0.18.0"]]
   ]) {
     const cwd = project(t, installedVersion);
     const before = snapshot(cwd);
@@ -119,6 +152,38 @@ test("prints only applicable migrations for recent installations", (t) => {
 
     assert.deepEqual(migrationVersions(output), expectedMigrations);
     assert.deepEqual(snapshot(cwd), before);
+  }
+});
+
+test("every upgrade path preserves existing HTML, templates, and custom instructions", (t) => {
+  const installedVersions = [undefined, "unversioned", ...versions.versions.map(({ version }) => version)];
+
+  for (const installedVersion of installedVersions) {
+    const cwd = project(t, installedVersion);
+    const skillDir = path.join(cwd, ".agents", "skills", "spec-library");
+    for (const [relative, contents] of [
+      ["specs/checkout/business.html", '<!doctype html><title>Approved contract</title><section id="scope">Keep this exact text.</section>\n'],
+      ["specs/checkout/technical.html", '<!doctype html><a href="business.html#scope">Existing scope</a>\n'],
+      ["specs/checkout/plan.html", '<!doctype html><p>Implemented and verified.</p>\n'],
+      ["decisions/design.html", '<!doctype html><article id="DES-001">Approved decision</article>\n'],
+      ["templates/business-spec.html", '<!doctype html><style>body { color: purple; }</style><p>Legacy format</p>\n'],
+      ["references/local-policy.md", "# Custom policy\nPreserve these instructions.\n"]
+    ]) {
+      const target = path.join(skillDir, relative);
+      fs.mkdirSync(path.dirname(target), { recursive: true });
+      fs.writeFileSync(target, contents);
+    }
+    const before = snapshot(cwd);
+    const output = run(["update", "--cwd", cwd]);
+
+    assert.deepEqual(snapshot(cwd), before, `${installedVersion ?? "missing"} installation was modified`);
+    const currentRules = output.slice(output.indexOf("## Rules"));
+    assertAuthoringContract(currentRules);
+    assert.match(currentRules, /unchanged during (?:this )?(?:instruction )?migration/);
+    assert.match(currentRules, /next intentional spec content update/);
+    assert.match(currentRules, /Preserve customized, ambiguously owned, or still-linked files as inactive history/);
+    assert.match(currentRules, /Delete only unmodified generated templates with no remaining document references/);
+    assert.match(output, /The current rules below take precedence over historical migration steps/);
   }
 });
 
@@ -144,7 +209,7 @@ test("current removal rules override historical tracking and evaluation migratio
   assert.ok(migrationVersions(output).includes("0.13.0"));
   const precedence = output.indexOf("The current rules below take precedence over historical migration steps");
   assert.ok(precedence >= 0 && precedence < output.indexOf("## Simplest SDD Schema Versions"));
-  assert.match(output, /overrides? every older instruction to create, upgrade, record, validate, export, or rebuild execution data or to request human feedback/);
+  assert.match(output, /every older instruction to create, upgrade, record, validate, export, or rebuild execution data or to request human feedback/);
   assert.match(output, /Skip those older steps entirely, including for missing or unversioned installations/);
   assert.match(output, /never create intermediate records or ratings only to remove them later/);
   assert.match(output, /Do not create or maintain execution records.*or ask for execution ratings or qualification/);
@@ -224,14 +289,40 @@ test("does not ship the retired execution helpers, schema, or example", () => {
   }
 });
 
+function assertAuthoringContract(output) {
+  assert.match(output, /(?:model (?:choose|design)|model-designed)/i);
+  assert.match(output, /compact.*interactive|interactive[\s\S]*?compact/);
+  assert.match(output, /Do not (?:copy an HTML template or )?prescribe a layout, palette, CSS class set/);
+  assert.match(output, /suggestions[\s\S]*?separate from accepted requirements/);
+  assert.match(output, /diagrams and images wherever they explain/);
+  assert.match(output, /embedded (?:CSS and[^\n]*?embedded )?JavaScript|small embedded JavaScript/);
+  assert.match(output, /complete reading path (?:when|with) JavaScript (?:is )?disabled/);
+  assert.match(output, /keyboard access, visible focus/);
+  assert.match(output, /design-taste-frontend/);
+  assert.match(output, /i-have-adhd/);
+  assert.match(output, /Use ASD-STE100 as a complement for structured content, not a document-wide controlled-language requirement/);
+  assert.match(output, /structured lists, action steps, checklists, and acceptance criteria/);
+  assert.match(output, /last approved and implemented content as the review baseline/);
+  assert.match(output, /Show removals in a[^\n]*?(?:removal note|before\/after)/);
+  assert.match(output, /Partial or failed implementation and incomplete verification/);
+  assert.match(output, /Remove revision highlighting only when the same change is approved or already authorized under the workflow, implemented, and verified/);
+  assert.match(output, /Existing-owner maintenance does not gain a new approval gate/);
+  assert.match(output, /Keep other pending highlights intact/);
+  assert.match(output, /(?:rejected|Rejected) or withdrawn/);
+  assert.match(output, /(?:must leave|Leave) existing specs, plans, and decisions unchanged/);
+  assert.match(output, /When a spec next needs an intentional content update/);
+  assert.match(output, /`Document relationships` section[^\n]*?(?:`Role`|Role)[^\n]*?(?:`Document`|Document)[^\n]*?(?:`Why it matters`|Why it matters)/);
+}
+
 function project(t, installedVersion) {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "simplest-sdd-test-"));
   t.after(() => fs.rmSync(cwd, { recursive: true, force: true }));
   if (installedVersion) {
     const skillDir = path.join(cwd, ".agents", "skills", "spec-library");
     fs.mkdirSync(skillDir, { recursive: true });
+    const marker = installedVersion === "unversioned" ? "" : `<!-- simplest-sdd-schema-version: ${installedVersion} -->\n`;
     fs.writeFileSync(path.join(skillDir, "SKILL.md"),
-      `---\nname: spec-library\ndescription: Test skill.\n---\n\n<!-- simplest-sdd-schema-version: ${installedVersion} -->\n`);
+      `---\nname: spec-library\ndescription: Test skill.\n---\n\n${marker}`);
   }
   return cwd;
 }

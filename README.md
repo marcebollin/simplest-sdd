@@ -30,7 +30,11 @@ For work that activates its discovery workflow, Simplest SDD:
 6. **Implements and verifies.** It completes the authorized work using the repository's testing discipline and checks proportional to the change. Same-session work is the default; useful bounded work may run in parallel when local instructions and your constraints permit it.
 7. **Closes out clearly.** Its final answer reports the outcome, verification, limitations, and complete spec and decision interaction summary, even when progress updates already covered it. Exact links or paths distinguish consulted unchanged, created, updated, and pending documents, explaining what changed and why.
 
-The HTML documents use a small semantic color system—violet for business, blue for technical design, green for plans, and amber for decisions—plus restrained highlights for important contract terms. Each feature document also identifies its relationship to the product contract, technical design, implementation plan, applicable decisions, and only genuinely dependent specs.
+The model designs each HTML document around its audience, content, and what the reader needs to understand or decide. It chooses coherent typography, spacing, and colors without a fixed page template or palette. A compact opening makes the purpose, current state, and any pending next action easy to find. Small, meaningful groups and optional detail keep the page easy to scan while preserving the complete contract. Diagrams, images, and calm interactions clarify rules, flows, and choices.
+
+Explanations and rationale use natural, concise prose. ASD-STE100 complements structured content such as action lists, acceptance criteria, and checklists: use consistent terms, short steps with one action each, and explicit checks. It does not impose sentence limits or dictionary compliance across the document. Keep the content divisions, including suggestions, requirements, and decisions, with links to the applicable specs and decisions.
+
+Mark proposed additions, changes, and removals with visible labels and emphasis. Keep these marks until the change has approval and its implementation is complete and verified. Existing authorization for a change to an owning spec counts. The marks do not add an approval gate. Then remove the marks and keep the accepted content as normal spec text.
 
 For example, a payment report request may reveal reporting logic in another section. The agent checks whether the rules actually match and whether extracting a shared calculation would help both sections. The business spec records the alternatives, recommendation, your approved choice, and its product consequences; the technical spec records the code boundaries and verification. Approved reuse, adaptation, abstraction, or isolation choices are also stored in the decision registry, even when you continue without a new spec. Automatic spec updates do not approve a reuse proposal.
 
@@ -77,7 +81,11 @@ Installation explicitly presents at least eight material project, product, and w
 Run npx simplest-sdd@latest update and follow the instructions
 ```
 
-Schema 0.17.2 requires every discovery question in a numbered `Discovery questions` section in the agent's response. Generated `AGENTS.md`, the skill entrypoint, and its discovery reference all carry this rule. Question tools supplement the written list. If the agent ends a turn with answers pending, its final response must include every unanswered question, even if already shown in progress or a tool. Private reasoning, internal plans, and tool logs alone do not count. The update preserves the eight-question installation and five-question feature discovery minimums, waiting for every answer, visible spec reporting, focused references, project facts, and local constraints. Updating instruction files does not rerun bootstrap discovery. Existing specifications, plans, and decisions are preserved.
+Schema 0.18.0 removes fixed HTML presentation templates. The model chooses a compact design for each document's audience and content, with a clear current state and pending next action. Natural prose explains the reasoning; ASD-STE100 principles help make structured actions and checks precise. Proposed changes stay visible until they have approval and their implementation is complete and verified.
+
+The update leaves existing specs, plans, and decisions unchanged. When a later task revises an old spec, the agent updates its presentation and preserves its content, links, and history. The update removes active use of HTML format templates. It preserves custom or ambiguously owned template files as inactive history.
+
+The update also preserves the numbered `Discovery questions` section, the eight-question installation minimum, and the five-question feature discovery minimum. The agent waits for every answer. If it ends a turn with answers pending, its final response includes each unanswered question. Existing approvals, project facts, local constraints, and spec reporting remain in force. Updating instructions does not rerun bootstrap discovery.
 
 If old execution records exist, the update instruction asks whether to leave them untouched (the default) or delete them. Deletion requires your explicit choice. New work no longer creates execution records or asks for a rating.
 
@@ -103,11 +111,10 @@ CLAUDE.md                         # imports AGENTS.md for Claude
 │   ├── business.html             # why and what
 │   ├── technical.html            # how and boundaries
 │   └── plan.html                 # tasks and verification
-├── decisions/                    # durable decisions only
-└── templates/                    # HTML output assets
+└── decisions/                    # durable decisions only
 ```
 
-The library uses plain, static files that remain readable by people and agents. A concise `AGENTS.md` routes to the skill; the short `SKILL.md` loads only the references needed for the current phase. HTML templates provide output structure instead of adding instructions to every task. Cross-document links name both the target's role and why it matters. `AGENTS.md` and `.agents/skills` are the source of truth, with a compatibility link for Claude skills.
+The library uses standalone HTML files that people and agents can read. Core content stays available without scripts. Embedded interactions can help readers explore details. A concise `AGENTS.md` routes to the skill. The short `SKILL.md` loads only the references needed for the current phase. The authoring reference defines content and review requirements without a fixed HTML format. Cross-document links state the target's role and why it matters. `AGENTS.md` and `.agents/skills` are the source of truth, with a compatibility link for Claude skills.
 
 See the [examples](examples/) for an anonymized request-refinement conversation and generated specs, plans, and decisions.
 
@@ -125,6 +132,7 @@ Simplest SDD combines a few ideas into a deliberately small framework.
 - [Augment Code](https://www.augmentcode.com/blog)
 - [Theo's videos](https://www.youtube.com/@t3dotgg)
 - [shadcn/improve](https://github.com/shadcn/improve)
+- [design-taste-frontend](https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/SKILL.md) and [i-have-adhd](https://github.com/ayghri/i-have-adhd/blob/main/skills/i-have-adhd/SKILL.md) informed the design and reading guidance; neither skill is an installation dependency.
 - [OpenAI: Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra) — informed smaller instruction entrypoints, selective context loading, and removing workflow steps that repeat settled decisions.
 - Small refinements shaped by my own experience working with coding agents.
 

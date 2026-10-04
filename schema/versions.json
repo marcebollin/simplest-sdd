@@ -1,6 +1,33 @@
 {
-  "currentSchemaVersion": "0.17.2",
+  "currentSchemaVersion": "0.18.0",
   "versions": [
+    {
+      "version": "0.18.0",
+      "date": "2026-10-04",
+      "summary": "Lets the model design compact, interactive HTML with content-specific visual hierarchy and attention-friendly writing, uses ASD-STE100-inspired structure for actionable content, and keeps pending spec changes visible until authorization and verified implementation.",
+      "changes": [
+        "Remove fixed HTML format templates, baseline CSS, layouts, and artifact color mappings. Adapt design-taste-frontend and i-have-adhd principles to the audience and reading task: use coherent visual hierarchy, a clear answer or next action, visible state, and small meaningful groups. Preserve complete requirements without a fixed item limit.",
+        "Choose useful local interactions, diagrams, and images that explain the content. Keep accessible controls and a complete static reading path. Do not import marketing layouts, framework requirements, motion presets, or mandatory animation from the source skills.",
+        "Keep the existing document divisions and content contracts: business, technical, plan, decisions, suggestions, relationships, metadata, links, stable anchors, and indexes. Change their presentation without losing requirements or history.",
+        "Use natural, concise explanatory prose for new or revised documents. Apply ASD-STE100-inspired clarity only as a complement for structured lists, actions, steps, checklists, and acceptance criteria: one action per instruction, direct verbs, explicit conditions, and consistent terms. Preserve exact identifiers and contract meaning; do not impose a document-wide dictionary gate or sentence-length cap.",
+        "Keep existing specs, plans, and decisions unchanged during instruction migration. Convert a legacy spec layout only on its next intentional update, preserving its facts, approval evidence, history, links, and anchors.",
+        "Show added, revised, and removed spec content with a visible pending-change treatment and text labels. Preserve the review baseline across draft edits. Clear the treatment for each change only after required approval or existing authorization and verified implementation; approval alone is insufficient.",
+        "Preserve automatic maintenance of existing owning specs without a new business-spec approval gate. Keep new-spec approval and independent technical approval boundaries. Retire generated format templates safely and preserve custom or linked legacy resources as inactive history."
+      ],
+      "migrations": [
+        {
+          "from": "0.17.2",
+          "steps": [
+            "Apply the current contract directly from every older or unversioned installation. Override historical instructions that create or refresh HTML format templates, enforce baseline CSS or artifact colors, or bulk-convert existing documents. Preserve historical release entries.",
+            "Update generated SKILL.md, references/authoring.md, references/execution.md, and relevant AGENTS.md guidance with audience- and task-led visual hierarchy, answer/action-first writing, visible state, small meaningful groups, purposeful interactions, accessible visuals, and a static reading path. Keep natural explanatory prose and use ASD-STE100-inspired guidance only for structured or actionable content. Preserve all document divisions and requirements; remove blanket STE mandates, fixed item limits, and imported framework or motion requirements.",
+            "Remove active template dependencies and generated format-template rules. Delete only unmodified generated templates that have no remaining references; preserve custom, linked, or ambiguously owned resources as inactive history. Do not change existing specs, plans, decisions, or their content merely to migrate the workflow.",
+            "On the next intentional spec update, replace its legacy presentation and retain its factual contract, metadata, stable paths, anchors, relationships, approval evidence, and history. Apply the new visual and writing guidance only to new or revised content, with STE-inspired structure for actionable material. Do not treat a layout conversion as a change to every requirement.",
+            "Add pending-change labels and local highlighting for additions, revisions, and removals. Keep the last settled baseline across repeated draft edits and maintain unresolved changes on partial completion. Clear each change only after required approval or existing authorization and implementation with relevant verification. Rejection restores the settled contract; never mark unshipped intent as applied.",
+            "Preserve completed discovery rounds, existing approvals, automatic existing-owner maintenance, new-spec selection and approval, independent technical approvals, and legacy execution-record cleanup choices. Validate fresh init and every upgrade path, verify that unrelated artifacts remain unchanged, then set the marker to 0.18.0."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.17.2",
       "date": "2026-09-15",

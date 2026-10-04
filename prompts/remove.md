@@ -28,7 +28,7 @@ Read:
 - `.agents/skills/spec-library/index.html`;
 - `.agents/skills/spec-library/specs/`;
 - `.agents/skills/spec-library/decisions/`;
-- `.agents/skills/spec-library/templates/`;
+- legacy `.agents/skills/spec-library/templates/`, if present;
 - `.agents/skills/spec-library/data/` and every feature `execution.json`;
 - `.claude/skills/spec-library` and its target if present.
 
@@ -51,7 +51,7 @@ Remove `.claude/skills/spec-library` if it is the simplest-sdd compatibility sym
 The safest default is:
 
 - remove or rename `.agents/skills/spec-library/SKILL.md` only if doing so does not delete user-authored content;
-- remove generated HTML templates only if they have not been customized;
+- remove legacy generated HTML templates, if present, only if they have not been customized;
 - preserve `specs/`, `decisions/`, and any non-template documents;
 - preserve any legacy feature execution records and analytics ledger;
 - if the skill directory would become an empty generated shell, remove the empty directories;

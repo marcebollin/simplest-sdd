@@ -1,6 +1,6 @@
 # Simplest SDD Init Instructions
 
-Install simplest-sdd schema version `{{schemaVersion}}` in the repository opened in the current working directory. Completion means a project-specific skill, concise canonical agent guidance, working references and compatibility links, and validated HTML templates and indexes.
+Install simplest-sdd schema version `{{schemaVersion}}` in the repository opened in the current working directory. Completion means a project-specific skill, concise canonical agent guidance, working references and compatibility links, and validated HTML authoring guidance and indexes.
 
 The `npx simplest-sdd` CLI prints instructions only. It has not modified files for you. This is the installation contract, not text to copy wholesale into `SKILL.md`.
 
@@ -10,7 +10,7 @@ The `npx simplest-sdd` CLI prints instructions only. It has not modified files f
 - Honor user instructions and authorization already established in the conversation, subject to the host's higher-priority instructions and actual permissions. Skill guidance does not create extra authority or override the user's task. Complete the required discovery question rounds below; outside those rounds, ask only for missing material information or an approval that is still required.
 - Questions and spec interactions are user-facing outputs. Write every discovery question in the assistant's response under `## Discovery questions`, as a numbered list of complete questions. Ask the user to answer each one. A question tool may also collect answers, but never replaces the written list. If ending the turn with answers pending, include every unanswered question in the final response even if already shown in progress or a tool. Report consulted, created, and updated specs in the assistant's answer with exact paths or links and a brief purpose or change summary. Private reasoning, internal plans, tool calls, and file edits alone do not satisfy these communication requirements.
 - Keep `AGENTS.md` canonical, `.agents/skills/` the canonical skill directory, `CLAUDE.md` a regular file importing `@AGENTS.md`, and `.claude/skills/spec-library -> ../../.agents/skills/spec-library` a relative compatibility symlink.
-- Keep durable library artifacts as clean static HTML. Workflow references can be Markdown. Preserve legacy data, but do not create or maintain execution records, telemetry ledgers, human evaluations, or rating prompts.
+- Keep durable library artifacts as standalone HTML with useful local interactions and a complete static reading path. Let the model design each document from its content. Do not create or require HTML format templates, fixed layouts, baseline CSS, or artifact color mappings. Workflow references can be Markdown. Preserve legacy data, but do not create or maintain execution records, telemetry ledgers, human evaluations, or rating prompts.
 - Write project facts and non-obvious constraints once, where they belong. Use task-specific links instead of copying discoverable implementation details or generic coding advice.
 - Honor explicit local delegation, model, cost, and stop policies. Otherwise choose the simplest suitable execution approach, with bounded parallel work when the runtime supports it and it saves time or improves quality.
 - Finish installation and validation within the authorized scope. Feature implementation, commits, pull requests, deployment, monitoring, and review handling require authorization for those actions; completing setup does not grant it.
@@ -82,13 +82,8 @@ Create or carefully update this structure. Preserve existing specs, decisions, h
 ├── index.html
 ├── specs/
 │   └── index.html
-├── decisions/
-│   └── index.html
-└── templates/
-    ├── business-spec.html
-    ├── technical-spec.html
-    ├── plan.html
-    └── decision-category.html
+└── decisions/
+    └── index.html
 ```
 
 Make `SKILL.md` a short entrypoint. Preserve supported optional frontmatter fields and existing invocation policy when updating; a fresh skill needs only `name` and `description` and normal automatic discovery. Use a concise description of the actual workflow, not a catchall such as “use for any coding, planning, or documentation.” Adapt this entrypoint to the project:
@@ -105,7 +100,7 @@ description: Maintain feature specs and decisions for changes to specified behav
 Keep product contracts and decisions accurate while completing the authorized change. Clear low-risk edits and presentation-only work proceed directly unless they change a specified contract or introduce independent risk.
 
 - For a new request or changed scope, use [discovery](references/discovery.md): explicitly ask the user at least five material refinement questions and wait for their answers to every question before documentation-branch decisions or implementation. Inferred answers do not satisfy this gate. Reuse only a round actually asked of and answered by the user for unchanged scope; preserve established approvals.
-- When creating or revising specs, plans, decisions, or indexes, use [authoring](references/authoring.md) and only the relevant HTML template.
+- When creating or revising specs, plans, decisions, or indexes, use [authoring](references/authoring.md). Design compact interactive HTML around the reader and content. Use natural prose, with ASD-STE100 as a complement for structured instructions. Retain pending change highlights until approval and verified implementation. Convert an old layout only when that document needs an update.
 - For implementation or resuming an approved plan, use [execution](references/execution.md) after the required user question-and-answer round is complete. If that round is missing or incomplete, or scope, assumptions, or required approval changed, return to discovery first.
 - For a historical question, open the known document or find it through [the library](index.html) or [decision index](decisions/index.html); this does not start feature discovery.
 
@@ -114,7 +109,7 @@ Keep existing owning specs current automatically. New feature specs require the 
 Write every discovery question in the response under `## Discovery questions` as a numbered list; question tools supplement this list. If ending the turn with answers pending, include every unanswered question in the final response. Private reasoning, internal plans, tool calls, and file edits alone do not count. In the final answer, report the outcome, verification, limitations, and every consulted, created, or updated spec and decision with exact links or paths, status, and a brief explanation, even if already reported in progress. Distinguish pending proposals from completed edits. Do not create execution records or request ratings.
 ```
 
-The detailed contract below belongs in the named references, not duplicated in `SKILL.md` or `AGENTS.md`. Put Gate through Preserve Independent Technical Approvals in `references/discovery.md`; HTML Artifacts through Record Decision Impact and Root Library Index in `references/authoring.md`; execution and close-out in `references/execution.md`. References should link to one another at actual transitions, not instruct readers to load all three. Resolve links relative to the file containing them (for example, `authoring.md` from `references/discovery.md`, and `../templates/business-spec.html` from `references/authoring.md`). Keep project-specific operational invariants; omit inapplicable examples and instructions. Templates contain output structure and embedded styles, not another copy of the workflow.
+The detailed contract below belongs in the named references, not duplicated in `SKILL.md` or `AGENTS.md`. Put Gate through Preserve Independent Technical Approvals in `references/discovery.md`; HTML Artifacts through Record Decision Impact, Root Library Index, and section 5's content requirements in `references/authoring.md`; execution and close-out in `references/execution.md`. References should link to one another at actual transitions, not instruct readers to load all three. Resolve links relative to the file containing them (for example, `authoring.md` from `references/discovery.md`). Keep project-specific operational invariants; omit inapplicable examples and instructions. Authoring guidance defines content, readability, and revision behavior, not reusable HTML or CSS templates.
 
 ### Gate
 
@@ -165,87 +160,74 @@ When a consequential change remains unauthorized, describe its scope and implica
 
 ### HTML Artifacts
 
-Create the library index, specs, plans, decisions, and supporting indexes as standalone HTML documents. Keep them readable in a browser and easy for agents to parse as text.
+Create the library index, specs, plans, decisions, and supporting indexes as standalone HTML documents. Let the model choose the presentation for each document's actual content. Do not copy an HTML template or prescribe a layout, palette, CSS class set, or fixed visual pattern.
 
-Every artifact should use:
+Keep the current content divisions: product contract, technical design, plan, decisions, suggestions, open questions, and document relationships. Keep suggestions separate from accepted requirements. Preserve the meaning and labels of existing sections. These are content requirements, not a page layout. Do not add empty sections or invented suggestions for visual symmetry.
 
-- semantic HTML: `main`, `header`, `section`, `h1`-`h2`, lists, tables, and links;
-- `<meta name="artifact-type">`, `<meta name="status">`, and only the additional metadata needed by that artifact;
-- a matching `data-artifact` value on `body`, so artifact identity controls its accent without hiding the document type from text-only readers;
-- one small embedded `<style>` block;
-- a comfortable reading column, calm semantic colors, high contrast, visible `:focus-visible` outlines, and no external assets;
-- a visible artifact label and text status badge; color reinforces these labels but never carries their meaning alone;
-- restrained `.keyword` or `mark` highlights for short, consequential contract terms, never whole paragraphs or repeated decoration;
-- optional inline SVG, tables, or simple HTML/CSS charts only when they explain a decision or technical tradeoff better than prose;
-- no JavaScript unless the user explicitly asks and the project already permits it.
+Adapt the relevant principles from [design-taste-frontend](https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/SKILL.md) and [i-have-adhd](https://github.com/ayghri/i-have-adhd/blob/main/skills/i-have-adhd/SKILL.md) for spec reading. Keep the guidance below in `references/authoring.md`; these source links are optional provenance, not installation or runtime dependencies. They guide presentation and reading flow. ASD-STE100 complements structured instructions as described below. The skill sources do not add framework dependencies, marketing layouts, motion quotas, reader diagnoses, or new workflow gates.
 
-Write for readability inside each section, not only at the heading level. Keep the following editorial guidance in `references/authoring.md` and apply it when authoring or intentionally revising HTML artifacts:
+#### Choose A Coherent Visual Direction
 
-- Make paragraphs and lists as readable as possible for someone scanning for the main point and then reading the detail. Choose formatting from the meaning and density of the actual content; do not use keyword-matching rules, fixed emphasis quotas, or a requirement to decorate every paragraph or list item.
-- Lead a paragraph with its main idea; separate a commitment, its rationale, and an exception when combining them would bury the important point. Keep related sentences together and leave short, clear prose plain when formatting would add nothing.
-- Use `<strong>` for a consequential clause or a useful list lead-in, `<em>` for emphasis that changes how a phrase is read, and `<code>` for literal identifiers, paths, commands, or values. Reserve `mark` or `.keyword` for a short phrase that deserves more attention than ordinary bold text. Avoid emphasizing whole paragraphs, long italic passages, or every occurrence of a term.
-- Make parallel items easy to compare: a descriptive lead-in such as `<strong>Complete results.</strong>` can distinguish the requirement from its explanation. Use a supporting paragraph within a list item when the detail needs breathing room. Use unordered lists for peers and ordered lists when sequence or priority matters; nest only for a real subrelationship. Do not turn connected prose into a list merely to add visual variety.
-- Before finishing, skim the body text independently of the headings. Can the reader find the commitments, distinctions, exceptions, and next actions without reading every word? Adjust wording, grouping, spacing, and selective emphasis where it helps, while preserving the exact requirements and qualifiers. Formatting must remain understandable without color.
+- Start with the reader and the reading task: understand a contract, compare choices, review changes, or implement a plan. Infer the direction from the request, content, and relevant project design cues. When revising an old spec, inspect its useful hierarchy and interactions before changing presentation. This does not require a separate design document or approval.
+- Build a clear hierarchy with readable typography, deliberate spacing, aligned content, and consistent visual treatment within the document. Keep prose at a comfortable line length; give diagrams or comparisons more room when needed. Keep the same status meaning across light and dark modes. Choose colors and type for the content instead of a fixed artifact palette.
+- Let structure do most of the work. Use whitespace and meaningful headings to group content; use cards, borders, badges, or emphasis when they express an actual relationship or state. Avoid oversized marketing headers, repeated decorative labels, identical card grids for unrelated content, and ornament that competes with the contract.
+- Match presentation to the question: a flow diagram for a sequence, a state diagram for transitions, a comparison for alternatives, or plain prose for a short explanation. Repeat a pattern when it makes similar facts easier to compare. Vary layouts only when the content benefits.
 
-Every generated or updated business, technical, and plan artifact must contain a visible `Documentation impact` or `Document relationships` section that names every other spec and decision it consulted, used, or changed. Use exact relative links and decision anchors, distinguish unchanged context from changed contracts, and explicitly state `None` for an empty category.
+#### Make Visuals And Interactions Useful
 
-Use this baseline style. Preserve the stable artifact-to-accent mapping when adapting the palette to the project: business is violet, technical is blue, plan is green, decisions are amber, and indexes use the default slate/blue accent.
+- Use diagrams and images wherever they explain a flow, boundary, state, interface, or comparison more clearly than prose. Prefer semantic HTML or inline SVG for precise diagrams. Use relevant screenshots or generated images when useful and available. Label illustrative images and proposed interfaces accurately; never present them as evidence of implemented behavior. Use real project facts, not invented metrics or decorative placeholders.
+- Put a visual near the requirement it explains, with a brief caption stating its point. Keep diagrams and images local: inline SVG or embedded image data avoids network and file-path dependencies. Include meaningful alternative text and put essential labels, relationships, and exact contracts in readable HTML too. Keep visuals legible on narrow screens. A useful visual has a clear reading order and agrees with the text.
+- Make each document as interactive as is useful for understanding, while keeping it compact, simple, and easy to scan. Consider native `details`/`summary`, linked flow steps, scenario comparisons, diagram controls, or local filters when they reduce reading effort. Keep the core contract, status, and pending change summary visible. A reader must not need to open every disclosure to discover the scope or a blocker.
+- Each control must perform a clear reading task and show its current state. Filters need a visible result state and a way to reset; disclosures need descriptive labels and clear expanded states. Use motion only to explain a user-triggered change, with reduced-motion support. Keep information still by default. Avoid autoplay, scroll hijacking, decorative animation, and controls that merely make the page look interactive.
 
-```html
-<style>
-  :root { color-scheme: light dark; --bg: #f8f7f3; --ink: #202124; --muted: #5f6368; --line: #d9d4c7; --accent: #475569; --accent-soft: #e8edf3; --accent-ink: #27364a; --panel: #ffffff; --mark: #fff0a6; --mark-ink: #4b3500; }
-  body[data-artifact="business-spec"] { --accent: #7c3aed; --accent-soft: #ede9fe; --accent-ink: #4c1d95; }
-  body[data-artifact="technical-spec"] { --accent: #0369a1; --accent-soft: #e0f2fe; --accent-ink: #0c4a6e; }
-  body[data-artifact="implementation-plan"] { --accent: #047857; --accent-soft: #d1fae5; --accent-ink: #064e3b; }
-  body[data-artifact="decision-category"] { --accent: #b45309; --accent-soft: #fef3c7; --accent-ink: #78350f; }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-  main { width: min(76ch, calc(100% - 32px)); margin: 0 auto; padding: 48px 0; }
-  header { margin-bottom: 32px; padding: 24px; background: var(--accent-soft); border-left: 6px solid var(--accent); border-radius: 8px; }
-  h1, h2 { line-height: 1.2; }
-  h1 { font-size: 2rem; margin: 0 0 8px; }
-  h2 { font-size: 1.2rem; margin-top: 32px; border-top: 1px solid var(--line); padding-top: 18px; }
-  p { margin: .8em 0; }
-  ul, ol { margin: .8em 0; padding-left: 1.5em; }
-  li + li { margin-top: .65em; }
-  li > p { margin: .35em 0; }
-  li > ul, li > ol { margin: .4em 0; }
-  strong { font-weight: 700; }
-  em { font-style: italic; }
-  a { color: var(--accent); }
-  a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-  .kicker { margin: 0 0 6px; color: var(--accent-ink); font-size: .78rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
-  .badge { display: inline-block; margin-right: 6px; padding: 2px 8px; color: var(--accent-ink); background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 999px; font-size: .82rem; font-weight: 700; }
-  .keyword, mark { padding: .05em .24em; color: var(--mark-ink); background: var(--mark); border-radius: 3px; font-weight: 700; }
-  .meta, .note { color: var(--muted); }
-  .panel, .callout, table { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
-  .panel { padding: 16px; }
-  .callout { padding: 14px 16px; border-left: 5px solid var(--accent); }
-  .callout > :first-child { margin-top: 0; }
-  .callout > :last-child { margin-bottom: 0; }
-  table { width: 100%; border-collapse: collapse; overflow: hidden; }
-  th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-  th { background: var(--accent-soft); color: var(--accent-ink); font-weight: 700; }
-  tr:last-child td { border-bottom: 0; }
-  code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 0.95em; }
-  :not(pre) > code { padding: .1em .3em; background: var(--accent-soft); color: var(--accent-ink); border-radius: 3px; overflow-wrap: anywhere; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #171717; --ink: #f2f2f2; --muted: #b7b7b7; --line: #3f3f3f; --accent: #a8b3c4; --accent-soft: #27303d; --accent-ink: #edf2f7; --panel: #202020; --mark: #5c4600; --mark-ink: #fff1a8; }
-    body[data-artifact="business-spec"] { --accent: #c4b5fd; --accent-soft: #302652; --accent-ink: #f1edff; }
-    body[data-artifact="technical-spec"] { --accent: #7dd3fc; --accent-soft: #12364a; --accent-ink: #e0f2fe; }
-    body[data-artifact="implementation-plan"] { --accent: #6ee7b7; --accent-soft: #143c32; --accent-ink: #d1fae5; }
-    body[data-artifact="decision-category"] { --accent: #fcd34d; --accent-soft: #493515; --accent-ink: #fef3c7; }
-  }
-</style>
-```
+#### Keep The Document Portable And Accessible
 
-Let the document's purpose guide which phrases deserve emphasis; these are useful candidates, not automatic highlighting rules:
+- Use semantic headings, sections, lists, tables, and links. Keep artifact identity and status as text and metadata: `<meta name="artifact-type">`, `<meta name="status">`, `<meta name="last-updated">`, and a matching `data-artifact` on `body`. These identify content, not a required color or CSS class.
+- Use embedded CSS and, when useful and allowed by project policy, small embedded JavaScript for local reading controls. No server, build step, external fonts, CDN, or runtime fetch is needed to read a spec. Reader controls must not change canonical approval or implementation state.
+- Keep a complete reading path when JavaScript is disabled. Keep all contract text in the HTML, not only in scripts, images, canvas, or hover states. Hide JS-only controls until they can work. Native disclosures must remain usable; printing must reveal their content and any filtered or tabbed sections. Preserve normal scrolling, text selection, and direct section links.
+- Check narrow screens, keyboard access, visible focus, text contrast, and readable light/dark presentation. Never use color alone to identify a status or change. Review both the rendered page and its text: polish is useful when the reader can find and understand the contract faster.
 
-- Business specs: product commitments, exclusions, named outcomes, and acceptance thresholds.
-- Technical specs: constraints, contracts, failure or security behavior, and stable decision IDs.
-- Plans: task IDs, dependencies, `STOP` conditions, and verification outcomes.
-- Decision documents: decision IDs, status, scope, and mandatory application rules.
-- Prefer the most useful occurrence of a phrase over repeated highlights. A callout can help a short critical rule stand out, and a table can make repeated structured facts easier to compare.
+Every new or intentionally revised business, technical, and plan artifact must include `Documentation impact` or `Document relationships`. Name the specs and decisions it consulted, used, or changed. Use exact relative links and decision anchors. Distinguish unchanged context from changed contracts. State `None` for an empty relationship category.
+
+### Write For The Reader
+
+Use the reader-focused principles from the two skills as the primary writing guidance. Keep explanations, rationale, examples, and tradeoffs in natural, direct prose. Give enough context to understand the decision. Use ASD-STE100 as a complement for structured content, not a document-wide controlled-language requirement.
+
+- Lead with the outcome or change, the current state, and the next reader action when one is pending. For a review, point to the unresolved decision and its affected section. For implementation, identify the next bounded task. A completed or reference-only spec does not need an invented task or approval button.
+- Make each section answer one recognizable question. Use short, descriptive headings and put the useful point first. Keep context, conditions, and exceptions near the rule they qualify. Remove tangents, filler introductions, repetitive recaps, and vague claims; keep necessary reasoning and uncertainty.
+- Keep the visible working set small. Group long lists into meaningful clusters, usually three to five related items when that fits the content. Order by reader priority, or use numbers when sequence matters. This is a scanning aid, never a completeness limit: retain every requirement, alternative, exception, and required discovery question. Supporting detail can use labeled disclosures or exact links, but it must remain available without another user request.
+- Make progress and open work explicit. Distinguish proposed, approved, implemented, and verified states; describe completed outcomes with evidence. Keep one clear next action when work remains. Do not invent progress percentages, effort estimates, deadlines, or extra work to fill a status area. Explain errors with their cause, consequence, and recovery when known.
+
+For structured lists, action steps, checklists, and acceptance criteria, use ASD-STE100-inspired discipline:
+
+- Write one bounded action or testable condition per item. Use an active verb for an instruction and identify the actor when it is not clear. Put a condition before the action it controls.
+- Aim for short, complete instructions, usually no more than 20 words per sentence. Split compound steps when that improves execution. Preserve necessary conditions, thresholds, and exceptions even when they need more explanation.
+- Use consistent terms, explicit objects, and exact references. Keep identifiers, commands, API names, quotations, and historical approval evidence unchanged. Avoid ambiguous pronouns and unexplained jargon.
+- Use ordered steps for sequences and parallel phrasing for comparable checks. Keep a prerequisite or expected result beside the relevant step so the reader does not need to remember distant context.
+
+These are selected readability practices from [ASD-STE100](https://www.asd-ste100.org/), not a claim of full compliance. Do not enforce its dictionary or sentence limits on explanatory prose, captions, or an entire guide. No dictionary check or compliance report is required to author a spec. Review whether the text is clear and complete for its reader.
+
+### Show Pending Changes
+
+When creating or updating a spec, make pending content changes easy to notice in the document itself. Use a visible change label plus a distinct background, border, or other treatment. Choose styling for the document; do not prescribe a highlighting template. Reserve this treatment for revision status so ordinary emphasis cannot be confused with an unapproved change.
+
+- Use the last approved and implemented content as the review baseline. Preserve that baseline across edits and sessions until each pending change is resolved. Use available version history or a compact before/after note; never invent an earlier version. For a legacy spec with no reliable baseline, identify the pre-edit content and its unknown approval state. Do not retroactively approve it.
+- Identify pending revisions with stable change IDs or section anchors, a date, and separate approval and implementation states. Add a compact visible change summary with links to affected sections. Preserve any pending changes outside the current request.
+- Highlight additions and revised passages where they appear, including affected diagrams or images. Show removals in a concise labeled removal note or before/after comparison so reviewers can see what disappears. For a wholly new spec, label the document as new and pending; avoid coloring every paragraph.
+- Keep highlights while approval is missing. After approval, label the change as approved with implementation pending, and keep its highlights. Partial or failed implementation and incomplete verification also retain highlights for the unresolved scope. Repeated edits compare against the review baseline, not just the preceding edit.
+- Remove revision highlighting only when the same change is approved or already authorized under the workflow, implemented, and verified. Required new-spec business approval and technical approvals still apply. Existing-owner maintenance does not gain a new approval gate: use the user's established authorization for that scope and never invent approval evidence. A documentation-only correction is implemented when the authorized edit and its relevant checks are complete.
+- At close-out, remove the resolved change's labels, wrappers, and temporary comparison notes. Keep accepted content as normal spec content and preserve a concise history entry with approval or authorization and verification evidence. Keep other pending highlights intact. Approval alone, a date change, an instruction upgrade, or a browser toggle must never clear them.
+- If a change is rejected or withdrawn, remove its proposal and restore the baseline where needed. Record that outcome in history without claiming implementation. A later material revision needs its own applicable approval and highlighting.
+
+### Preserve Existing Documents
+
+Instruction installation or migration must leave existing specs, plans, and decisions unchanged. Do not restyle, translate, or add highlights to historical documents just because the authoring rules changed.
+
+When a spec next needs an intentional content update, replace its old template presentation in that same document with a compact design suited to its content. Preserve section divisions, facts, identifiers, paths, anchors, links, suggestions, approvals, and history. Convert only documents that need updates; an unchanged sibling or consulted spec stays untouched. Apply the reader-focused writing guidance to new or rewritten prose, with STE-style discipline only for structured instructions. Do not silently change the meaning of unchanged requirements.
+
+Separate presentation conversion from content changes. Note the conversion briefly, but highlight the actual pending content changes rather than the whole reformatted document. Do not reset an existing approval for a presentation-only conversion. Preserve unresolved review baselines and change IDs when converting a pending document.
+
+Do not create a `templates/` directory on fresh installs. On an existing installation, remove active template instructions and inherited HTML format templates that have no remaining document references. Preserve customized, ambiguously owned, or still-linked files as inactive history. Do not break links in unchanged documents or use retained historical templates as authoring inputs. Migrate unique factual guidance into the relevant reference without retaining fixed presentation rules. Never delete specs or decisions as template cleanup.
 
 ### Create One Feature Folder
 
@@ -256,7 +238,7 @@ specs/<domain>-<feature>/
 └── plan.html
 ```
 
-- `business.html`: durable product contract. Goal, intended users, problem, outcomes, primary flow, clues/examples, scope, acceptance criteria, reuse analysis and approved approach in product terms, and open product questions. No implementation file paths or implementation checklist; document links belong in the relevant sections and relationships table.
+- `business.html`: durable product contract. Goal, intended users, problem, outcomes, primary flow, clues/examples, scope, acceptance criteria, reuse analysis and approved approach in product terms, and open product questions. No implementation file paths or implementation checklist; document links belong in the relevant sections and document relationships.
 - `technical.html`: durable design. Current system, proposed approach, reuse analysis and approved approach with exact code references and shared boundaries, failure/security/compatibility concerns, verification strategy, feature-local choices, decision impact, and optional diagrams or charts for non-obvious tradeoffs.
 - `plan.html`: implementation handoff. Goal and intended users, links to both specs and relevant decisions, ordered tasks, useful starting code surfaces, verification, discoveries, deviations, and completion summary.
 
@@ -264,10 +246,7 @@ Keep all artifacts concise. Let the implementing agent inspect ordinary code det
 
 ### Connect Documents With Explicit Relationships
 
-Every business spec, technical spec, and plan must end with a `Document relationships` section. Use a table with exactly these columns:
-
-| Role | Document | Why it matters |
-| --- | --- | --- |
+Every business spec, technical spec, and plan must include a `Document relationships` section. Preserve these fields for each relationship: `Role`, `Document`, and `Why it matters`. Choose a table, list, or another semantic presentation that makes those fields easy to read.
 
 The link text names the target artifact, while `Role` uses one of these stable labels: `Product contract`, `Technical design`, `Implementation plan`, `Decision constraint`, `Related spec`, or `Supersedes`. The explanation must say how the target affects this document; never use “related” as the explanation.
 
@@ -327,7 +306,8 @@ Run feature artifact close-out for new and automatically updated existing owning
 
 The final assistant answer must include a concise `Documentation impact` summary covering every spec and decision consulted, created, or updated: exact links or paths/anchors, whether consulted unchanged or actually created/updated, and why it mattered or what changed. List unresolved proposals as pending. Include this summary even when progress messages already described the activity; private reasoning, tool logs, and updated files do not replace the answer. Report outcomes and useful rationale, without narrating internal deliberation.
 
-- Make business and technical specs describe what shipped, and verify their sibling and qualifying related-document links still express the actual relationship.
+- Make business and technical specs distinguish what shipped from unresolved proposals, and verify their sibling and qualifying related-document links still express the actual relationship.
+- Follow the pending change rules in `authoring.md`: clear highlights only for scope with approval or established authorization, completed implementation, and verification evidence. Keep approved but unimplemented, partial, failed, or unverified changes highlighted. Preserve the review baseline for remaining changes and record resolved outcomes in history.
 - Complete the plan with verification evidence.
 - Reconcile approved decisions with what actually shipped. For approved reuse-analysis decisions recorded earlier, retain the approval and set implementation state to `shipped`, `partially implemented`, or `not implemented` with the reason and remaining scope. Do not delete approved intent or mark unshipped work as applied. Update the canonical category section in place for clarifications or scope extensions, add a compact change-history entry linking back to the feature spec when one exists (otherwise record request context and date without a fabricated link), and change the spec's decision-impact wording to reflect the outcome. Create a replacement and mark the old decision superseded only when its meaning is fundamentally reversed.
 - Keep the decision registry sparse outside the required approved reuse-analysis records. Use the spec's “No durable decision impact” statement and create nothing only when no approved reuse-analysis choice or other durable decision applies.
@@ -352,70 +332,18 @@ Prefer metadata from each artifact, such as `<meta name="last-updated" content="
 
 Maintain `decisions/index.html` as a compact routing page for both humans and agents. It must list only categories that contain decisions and provide each decision's stable ID, title, status, one-line summary, last-updated date, and a direct link to its section. Store decisions in living category documents such as `business.html`, `design.html`, or `architecture.html`; create a category document only when its first qualifying decision is approved. Use project-relevant categories rather than pre-creating a fixed taxonomy.
 
-## 5. Create Concise HTML Templates
+## 5. Validate Content Without Prescribing A Layout
 
-Each template should be a complete HTML document with the baseline style from `references/authoring.md`. The installer creates all four templates; future agents load only the template needed for the artifact they are writing.
+Keep these content requirements in `references/authoring.md`. Do not create HTML examples, starter pages, or CSS scaffolds that become replacement templates. Let the model choose how to present the required content for each real document.
 
-The templates should provide these sections:
+- Business: Goal, Intended users, Problem, Outcomes, User flow, Clues and examples, Scope in/out, Acceptance criteria, Reuse analysis and approved approach, Open questions, Document relationships. In the reuse section record related product behavior, alternatives, recommendation and rationale, user choice/custom conditions, approval status, consequences, and decision links, or the evidence-backed no-candidate conclusion.
+- Technical: Current system, Proposed approach, Reuse analysis and approved approach, Boundaries and contracts, Failure/security/compatibility, Verification strategy, Feature-local choices, Decision impact, Open questions, Document relationships. Include exact inspected source paths/symbols, existing/new consumers, approved shared or separate boundaries, compatibility and verification for affected consumers, and canonical decision links.
+- Plan: Goal and intended users, Completion boundary, one integrated set of tasks with IDs, outcomes, scope, dependencies, verification and status, task-specific context links, discoveries and deviations, completion summary, and Document relationships. Add risk, effort, capability recommendations, assignments, or STOP conditions only when they change execution or enable a handoff.
+- Decision category: a living category document containing concise decision sections with stable IDs/anchors. Each section has Decision, Applies to, Why, How to apply, Exceptions, and Change history. Approved reuse-analysis records also capture alternatives considered, recommendation, selected scope/consumers, custom conditions, approval/date, and implementation state. Distinguish approved intent awaiting implementation from an applied rule. Amend in place for compatible changes; supersede only for a fundamental reversal.
 
-- Business: Goal, Intended users, Problem, Outcomes, User flow, Clues and examples, Scope in/out, Acceptance criteria, Reuse analysis and approved approach, Open questions, Document relationships. In the reuse section record related product behavior, alternatives, recommendation and rationale, user choice/custom conditions, approval status, consequences, and decision links, or the evidence-backed no-candidate conclusion. Include status and last-updated metadata.
-- Technical: Current system, Proposed approach, Reuse analysis and approved approach, Boundaries and contracts, Failure/security/compatibility, Verification strategy, Feature-local choices, Decision impact, Open questions, Document relationships. Include exact inspected source paths/symbols, existing/new consumers, approved shared or separate boundaries, compatibility and verification for affected consumers, and canonical decision links. Include status and last-updated metadata.
-- Plan: Goal and intended users, Completion boundary, one integrated task table (ID, outcome, scope, dependencies, verification, status), task-specific context links, discoveries and deviations, completion summary, and Document relationships. Add risk, effort, capability recommendations, assignments, or STOP conditions only when they change execution or enable a handoff. Include status and last-updated metadata.
-- Decision category: a living category document containing concise decision sections with stable IDs/anchors. Each section has Decision, Applies to, Why, How to apply, Exceptions, and Change history. Approved reuse-analysis records also capture alternatives considered, recommendation, selected scope/consumers, custom conditions, approval/date, and implementation state. Include approved/active/superseded status and last-updated metadata; distinguish approved intent awaiting implementation from an applied rule. Amend in place for compatible changes; supersede only for a fundamental reversal.
+Keep suggestions and open questions separate from accepted content wherever they occur. All documents show artifact type, status, and last-updated metadata. Use pending change indicators as defined in the authoring reference. The content requirements do not fix the order, visual arrangement, interaction type, or colors. Preserve existing stable section anchors when changing presentation.
 
-Use `data-artifact`, the corresponding visible `.kicker`, a text `.badge` for status, and the artifact's stable accent in every HTML template. Include a filled example `Document relationships` table with correct relative sibling paths and explanations; use placeholders only for optional decisions and related specs. Make important-keyword examples specific to the document type and restrained enough to demonstrate the contract without turning the page into a collection of highlights.
-
-Include concise, filled paragraph and list examples in the relevant sections of each template so agents can see body-level hierarchy as well as headings. Use the examples below as inspiration, adapting the amount and kind of emphasis to the content. Label sample content visibly as illustrative in the template; replace it with actual project facts and remove the sample label when creating a real document. These examples do not establish project requirements, approvals, or a fixed formatting pattern.
-
-Business — a clear commitment, supporting context, and comparable acceptance criteria:
-
-```html
-<p class="note">Illustrative content — replace with this feature's actual requirements.</p>
-<p><strong>Export the complete active result set.</strong> Readers can reuse their saved material without collecting pages by hand.</p>
-<p>The export follows the current filters and visible order. The scope remains fixed while the download is prepared.</p>
-<ul>
-  <li><strong>Complete results.</strong> Include <em>all</em> matching items, even when they span several pages.</li>
-  <li><strong>Visible order.</strong> Keep the same ordering the reader selected.</li>
-  <li><strong>Failed page.</strong> Explain the failure and offer a retry; <mark>no partial download</mark> is produced.</li>
-</ul>
-```
-
-Technical — a design boundary with literal identifiers and supporting detail:
-
-```html
-<p class="note">Illustrative content — replace identifiers and behavior with inspected or explicitly proposed design.</p>
-<p><strong>Share page completion only.</strong> The proposed <code>completeActiveResults()</code> helper accepts a feature-owned page loader. Each caller retains its query and record conversion.</p>
-<ul>
-  <li><strong>Access checks stay with the caller.</strong><p>The helper receives only results the active user may access; it does not broaden permissions.</p></li>
-  <li><strong>A failed page rejects the operation.</strong> Callers serialize only after completion succeeds.</li>
-</ul>
-```
-
-Plan — an actual sequence with clear actions and verification detail:
-
-```html
-<p class="note">Illustrative content — replace with approved tasks and the repository's real commands.</p>
-<p><strong>Preserve both export flows while sharing completion.</strong> Verify the existing consumer before connecting the new one.</p>
-<ol>
-  <li><strong>Establish the baseline.</strong> Run the existing export checks and record the result.</li>
-  <li><strong>Extract the approved helper.</strong> Keep queries, permissions, and conversion in each feature.</li>
-  <li><strong>Verify both consumers.</strong><p>Check complete results, ordering, and later-page failure. <strong>STOP</strong> if the approved behavior cannot be preserved.</p></li>
-</ol>
-```
-
-Decision category — an explicit scope and a short tradeoff list without forced emphasis on every item:
-
-```html
-<p class="note">Illustrative content — this is not an approved project decision.</p>
-<p><strong>Limit shared completion to the two named export consumers.</strong> Each feature owns its query, permission checks, and record conversion.</p>
-<ul>
-  <li><strong>Benefit.</strong> Completion fixes reach both flows through one helper.</li>
-  <li><strong>Cost.</strong> Changes to the helper require regression checks for both consumers.</li>
-  <li>Revisit the boundary when a concrete new consumer has different completion requirements.</li>
-</ul>
-```
-
-Write HTML index instructions that make entries short descriptions used for progressive disclosure. Create a root library index with no fake project documents, an empty latest-documents state, links to the focused spec and decision indexes, and optional filtering/search scaffolding only if it stays small and readable. Do not pre-create fake project decisions or empty decision category documents.
+Create missing HTML indexes with short descriptions for progressive disclosure. The root library index has no fake project documents, an empty latest-documents state, and links to the spec and decision indexes. Use local filtering or search only when it improves reading. Preserve existing index content. Do not create sample feature documents, fake decisions, or empty decision categories.
 
 ## 6. Add Claude Compatibility
 
@@ -434,9 +362,10 @@ Preserve every other existing skill and compatibility link. If a physical Claude
 Check the generated installation as a usable workflow:
 
 - Verify the schema marker, valid skill frontmatter, regular `CLAUDE.md` import, and relative Claude skill link. Run a skill validator if available.
-- Verify every reference route and local template link resolves. Confirm `SKILL.md` is a short entrypoint and `AGENTS.md` does not duplicate the workflow; detailed instructions belong in conditional references.
+- Verify every reference route and document link resolves. Confirm fresh installs have no HTML format templates or active template dependencies. Confirm `SKILL.md` is a short entrypoint and `AGENTS.md` does not duplicate the workflow; detailed instructions belong in conditional references.
 - Confirm setup explicitly asks the user at least eight material questions before installation edits and activated request refinement explicitly asks at least five before documentation-branch decisions or implementation, waiting for the user's answers to every question. Keep the short gate visible in `AGENTS.md` and `SKILL.md`; inferred answers never satisfy it. Goal and clues/examples prerequisites are additional. Walk through a clear existing-spec correction, an ambiguous new feature, a partial answer round, a resume with actual user questions/answers and prior approvals, a presentation-only edit, and a historical question; keep the required rounds within their activation boundaries.
-- Check current templates and indexes for readable HTML, semantic artifact accents, text status labels, focus styles, illustrative content clearly labeled as examples, and valid document relationships/decision anchors. Review a representative rendered template when presentation changed.
+- Check new or changed HTML for compact content-driven presentation, useful interactions and visuals, natural explanations, clear structured instructions, text status labels, accessible controls, and valid document relationships/decision anchors. Render the changed index or document with JavaScript on and off, at narrow width, with keyboard access, and in print. Check whether a returning reader can locate the outcome, current state, pending change, and next action without rereading the whole document. Check that visuals agree with the text, controls work in every relevant state, and no requirement disappeared to shorten a list. Do not generate a fake spec for validation.
+- Walk through new pending content, a revision and removal, approval without implementation, partial implementation, verified close-out, rejection, and a later edit. Confirm only resolved changes lose their highlights. Check that an old spec converts on its next intentional update while unchanged siblings and historical documents remain untouched.
 - Confirm existing owning specs remain automatic, new specs retain selection and business approval, consequential reuse choices retain approval and decision records, and concrete technical changes retain only their outstanding approvals.
 - Check the actual user-visible responses: all required questions appear in full under `Discovery questions` as a numbered list, including unanswered questions with their original numbers in the final response when ending a turn with answers pending. Check this with and without a question tool and after partial answers; a topic summary or progress-only or tool-only questions must fail. Confirm discovery names consulted documents and proposed changes, and the final answer lists every consulted, created, or updated spec with exact links or paths and a brief explanation. Internal reasoning, tool output, or document edits alone are insufficient; do not claim pending edits are complete. Read-only lookups cite consulted documents without triggering feature questions.
 - Confirm existing local policies, user instructions, specs, decisions, and legacy history survived. Preserve the fixed question minimums while removing contradictory defaults such as skipping required discovery, unconditional strategy stops, repeated broad tests, execution records, and rating prompts.

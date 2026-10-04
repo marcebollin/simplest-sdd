@@ -68,8 +68,7 @@ CLAUDE.md                         # imports AGENTS.md for Claude
 │   ├── business.html             # why and what
 │   ├── technical.html            # how and boundaries
 │   └── plan.html                 # tasks and verification
-├── decisions/                    # durable decisions only
-└── templates/                    # HTML output assets`;
+└── decisions/                    # durable decisions only`;
 ---
 
 <BaseLayout
@@ -241,7 +240,7 @@ CLAUDE.md                         # imports AGENTS.md for Claude
         <CopyInstruction
           label="Update"
           action="update"
-          description="Require visible questions and spec-interaction reports in the skill and AGENTS.md while preserving project context, local constraints, specs, plans, and decisions."
+          description="Update the authoring rules for interactive HTML, natural explanations, precise structured steps, and visible pending changes. Keep existing specs unchanged until their next requested edit."
         />
         <CopyInstruction
           label="Remove"
@@ -250,13 +249,17 @@ CLAUDE.md                         # imports AGENTS.md for Claude
         />
       </div>
       <p class="update-note">
-        Schema 0.17.2 puts a brief, explicit question gate and visible-reporting reminder in
-        <code>AGENTS.md</code> and <code>SKILL.md</code>, with detailed requirements in the phase references.
-        Questions must reach you as a numbered Discovery questions section in the response before the agent waits for your answers.
-        Question tools supplement the written list. When answers are pending at the end of a turn, the final response includes every unanswered question. Private reasoning, internal plans, and tool logs alone do not count. Repository facts, inferred answers, recommendations,
-        and silence do not count as your answers. The eight-question installation and five-question feature
-        discovery minimums stay fixed; missing goal or clues/examples questions are extra. Updating
-        instruction files does not rerun bootstrap discovery.
+        Schema 0.18.0 lets the agent design compact, interactive HTML for each document. It removes fixed HTML
+        templates and required color palettes. Clear typography, spacing, and visual emphasis help readers find the result and next action.
+        Explanations use natural language; structured parts such as steps and checks use ASD-STE100 guidance for precision.
+        The update changes the workflow instructions. It keeps existing specs unchanged.
+        The agent converts an old layout when you next request a change to that spec.
+      </p>
+      <p class="update-note">
+        Discovery still requires at least eight installation questions or five feature questions.
+        The agent writes a numbered <strong>Discovery questions</strong> list in its response and waits for every answer.
+        Question tools supplement this list. The final response includes each unanswered question while the agent waits.
+        Missing goal or example questions are additional. Updating the workflow instructions does not repeat installation discovery.
       </p>
       <p class="update-note">
         Spec interactions also belong in the visible answer. Discovery names consulted documents and proposed
@@ -297,22 +300,31 @@ CLAUDE.md                         # imports AGENTS.md for Claude
           <p>
             The library stays readable by people and agents. <code>AGENTS.md</code> and
             <code>.agents/skills</code> are the source of truth, with a compatibility link for Claude skills.
-            A short <code>SKILL.md</code> routes to discovery, authoring, and execution references; agents load
-            the guidance needed for the current phase and use HTML templates when creating documents.
+            A short <code>SKILL.md</code> routes to discovery, authoring, and execution references.
+            Agents load the instructions for the current phase and design each HTML document from its content.
           </p>
           <p>
-            Business intent, technical boundaries, implementation plans, and durable decisions use distinct semantic
-            colors and restrained highlights. Explicit relationship links explain which document to read next and why.
+            Business intent, technical boundaries, implementation plans, and decisions keep their separate roles.
+            Each document keeps its required content divisions, including suggestions.
+            Links explain which document to read next and why.
           </p>
           <p>
-            <strong>Readable inside each section, too.</strong> The skill guides agents to use focused paragraphs,
-            descriptive list lead-ins, meaningful bold or italic emphasis, inline code, and occasional short highlights.
-            The agent chooses what helps the actual content; there are no keyword rules or formatting quotas.
+            <strong>Clear at a glance.</strong> The result, current state, pending changes, and next action stay easy to find.
+            Consistent typography and spacing, compact groups, and expandable detail keep the reading path short.
+            Diagrams, images, and controls explain the content where they help.
+            Each standalone HTML document stays readable without scripts or color.
           </p>
           <p>
-            Each template includes illustrative paragraphs and lists to adapt and replace with real project facts.
-            Updates preserve custom styles and apply this guidance to new or intentionally revised documents,
-            without bulk-reformatting historical specs or decisions.
+            <strong>Natural explanations, precise steps.</strong> Prose explains the ideas in clear, connected language.
+            ASD-STE100 complements structured parts such as lists, one-action steps, checks, and acceptance criteria.
+            It does not impose controlled language on every paragraph or require global compliance.
+          </p>
+          <p>
+            <strong>Pending changes stay visible.</strong> Labels and highlights identify added or revised content and describe removals.
+            The agent removes these markers after approval or established authorization, completed implementation, and verification.
+            An existing spec update needs no new approval when the requested scope is already authorized.
+            Existing specs keep their current presentation until you request an edit.
+            That edit moves an old template layout to the current authoring rules while preserving its content divisions and links.
           </p>
           <a
             href="https://github.com/marcebollin/simplest-sdd/tree/main/examples"
@@ -343,6 +355,12 @@ CLAUDE.md                         # imports AGENTS.md for Claude
           </a>
           <a href="https://github.com/shadcn/improve" rel="noopener noreferrer" target="_blank">
             shadcn/improve <AnnotationIcon kind="reference" context="legend" />
+          </a>
+          <a href="https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/SKILL.md" rel="noopener noreferrer" target="_blank">
+            Taste: visual hierarchy and purposeful interactions <AnnotationIcon kind="reference" context="legend" />
+          </a>
+          <a href="https://github.com/ayghri/i-have-adhd/blob/main/skills/i-have-adhd/SKILL.md" rel="noopener noreferrer" target="_blank">
+            i-have-adhd: clear actions and reading flow <AnnotationIcon kind="reference" context="legend" />
           </a>
           <a href="https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra" rel="noopener noreferrer" target="_blank">
             OpenAI: Rethinking skills and prompts for GPT-6 Astra <AnnotationIcon kind="reference" context="legend" />

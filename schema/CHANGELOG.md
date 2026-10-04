@@ -2,6 +2,26 @@
 
 This changelog tracks the installed simplest-sdd schema. Workflow releases advance the schema version; CLI-only releases may leave it unchanged.
 
+## 0.18.0 - 2026-10-04
+
+- Lets the model design each HTML document from its content. Removes fixed format templates, layouts, baseline CSS, and artifact color mappings.
+- Adapts `design-taste-frontend` and `i-have-adhd` principles to the audience and reading task. Uses coherent visual hierarchy, a clear answer or next action, visible state, and small meaningful groups. Keeps every requirement without a fixed item limit.
+- Uses purposeful local interactions, diagrams, and images when they make the content easier to understand. Keeps accessible controls and a complete static reading path. Does not import marketing layouts, framework requirements, motion presets, or mandatory animation.
+- Keeps the existing document divisions and content contracts: business, technical, plan, decisions, suggestions, relationships, metadata, stable links and anchors, and indexes.
+- Uses natural, concise explanatory prose for new or revised documents. ASD-STE100-inspired guidance complements structured lists, actions, steps, checklists, and acceptance criteria: one action per instruction, direct verbs, explicit conditions, and consistent terms. Keeps exact identifiers and contract meaning without a document-wide dictionary gate or sentence-length cap.
+- Leaves existing specs, plans, and decisions unchanged during instruction migration. Converts a legacy spec layout only on its next intentional update.
+- Shows added, revised, and removed spec content with visible pending-change treatment and text labels. Keeps the review baseline across draft edits. Clears each change only after required approval or existing authorization and verified implementation; approval alone is insufficient.
+- Keeps automatic existing-owner maintenance without a new business-spec approval gate. Preserves new-spec and independent technical approvals. Retires generated format templates safely and keeps custom or linked resources as inactive history.
+
+### Migration from 0.17.2 and earlier
+
+1. Apply the current rules directly from every older or unversioned installation. Override historical instructions that create or refresh HTML format templates, enforce baseline CSS or artifact colors, or bulk-convert existing documents. Keep historical release entries unchanged.
+2. Update generated `SKILL.md`, `references/authoring.md`, `references/execution.md`, and relevant `AGENTS.md` guidance with audience- and task-led visual hierarchy, answer/action-first writing, visible state, small meaningful groups, purposeful interactions, accessible visuals, and a static reading path. Keep natural explanatory prose and use ASD-STE100-inspired guidance only for structured or actionable content. Preserve all document divisions and requirements. Remove blanket STE mandates, fixed item limits, and imported framework or motion requirements.
+3. Remove active template dependencies and generated format-template rules. Delete only unmodified generated templates that have no remaining references. Keep custom, linked, or ambiguously owned resources as inactive history. Do not rewrite existing specs, plans, or decisions to migrate instructions.
+4. On the next intentional spec update, replace the legacy presentation. Preserve facts, metadata, paths, anchors, relationships, approval evidence, and history. Apply the new visual and writing guidance to new or revised content, with STE-inspired structure for actionable material. A layout conversion does not change every requirement.
+5. Add pending-change labels and local highlighting for additions, revisions, and removals. Keep the last settled baseline across repeated draft edits. Keep unresolved changes visible on partial completion. Clear each change only after required approval or existing authorization and implementation with relevant verification. Rejection restores the settled contract; unshipped intent stays pending.
+6. Preserve completed discovery rounds, existing approvals, automatic existing-owner maintenance, new-spec selection and approval, independent technical approvals, and legacy execution-record cleanup choices. Validate fresh init and every upgrade path. Confirm unrelated artifacts are unchanged, then set the marker to `0.18.0`.
+
 ## 0.17.2 - 2026-09-15
 
 - Requires every discovery question in full under a `Discovery questions` heading in the assistant's response, as a numbered list with any choices and recommendation alongside the relevant question.

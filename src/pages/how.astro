@@ -49,7 +49,7 @@ const initAnnotations: Record<string, Annotation> = {
     }
   },
   "4. Create The Canonical Spec Skill": {
-    explanation: "Creates a short skill entrypoint that requires written, numbered discovery questions, unanswered questions in the final response while waiting, and visible spec reporting. It routes to discovery, authoring, and execution references so future agents load only the guidance needed for the current phase; HTML templates remain output assets.",
+    explanation: "Creates a short skill entrypoint with the discovery and reporting rules. It routes agents to the reference for the current phase. The authoring reference guides interactive HTML, natural explanations, precise structured steps, and pending change markers.",
     tone: "indigo",
     reference: {
       label: "OpenAI: Rethinking skills and prompts for GPT-6 Astra",
@@ -90,7 +90,29 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "rose"
   },
   "HTML Artifacts": {
-    explanation: "Makes the body as readable as the headings: focused paragraphs, useful list lead-ins, semantic bold and italic emphasis, inline code, and sparse highlights. The author chooses formatting from the content, without keyword matching or formatting quotas, and preserves exact requirements and meaning without color.",
+    explanation: "Lets the agent choose a coherent visual design for each document, with clear typography, spacing, and emphasis. Compact groups, useful diagrams, and progressive disclosure reduce reading effort. The outcome, current state, pending changes, and next action stay easy to find. Required content divisions remain intact, and the document works offline without scripts.",
+    tone: "teal",
+    reference: {
+      label: "Taste: design-taste-frontend",
+      url: "https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/SKILL.md",
+      explanation: "The skill informed typography, spacing, coherent visual direction, and interactions chosen for the content. Standalone specs keep their own content and accessibility requirements."
+    }
+  },
+  "Write For The Reader": {
+    explanation: "Uses natural, concise explanations that lead with the result or next action. Small groups and clear progress help readers resume without reconstructing context. ASD-STE100 complements this approach in structured parts: lists, one-action steps, checks, and acceptance criteria. It does not constrain every sentence or require global compliance.",
+    tone: "teal",
+    reference: {
+      label: "i-have-adhd",
+      url: "https://github.com/ayghri/i-have-adhd/blob/main/skills/i-have-adhd/SKILL.md",
+      explanation: "The skill informed visible state, bounded actions, and small meaningful groups. Specs retain every requirement and keep explanatory detail available."
+    }
+  },
+  "Show Pending Changes": {
+    explanation: "Makes added, revised, and removed content easy to find with visible labels and highlights. Approval alone does not clear the markers. Remove them only after approval or established authorization, completed implementation, and verification. Existing-owner maintenance needs no new approval gate.",
+    tone: "amber"
+  },
+  "Preserve Existing Documents": {
+    explanation: "Keeps existing specs unchanged during a workflow update. On the next requested spec edit, replace its old template layout with a design that follows the current authoring rules. Preserve content divisions, links, and approval history.",
     tone: "teal"
   },
   "Create One Feature Folder": {
@@ -98,7 +120,7 @@ const initAnnotations: Record<string, Annotation> = {
     tone: "teal"
   },
   "Connect Documents With Explicit Relationships": {
-    explanation: "Makes cross-document context deliberate. Every link names the target’s role and why it matters, while precise criteria prevent topic similarity from turning the library into a noisy web.",
+    explanation: "Keeps the Role, Document, and Why it matters fields in each relationship section. The agent chooses the presentation. Links require a direct dependency, shared contract, conflict, or replacement relationship; a similar topic alone is insufficient.",
     tone: "cyan"
   },
   "Record Decision Impact Without Creating Ceremony": {
@@ -129,13 +151,13 @@ const initAnnotations: Record<string, Annotation> = {
     explanation: "Provides progressive disclosure for humans and agents. The index helps a reader choose the relevant artifact without loading every spec, decision, and plan.",
     tone: "teal"
   },
-  "5. Create Concise HTML Templates": {
-    explanation: "Shows body-level hierarchy through illustrative paragraphs and lists: business commitments and acceptance criteria, technical boundaries and identifiers, ordered plan actions, and decision tradeoffs. Examples guide editorial judgment rather than impose a fixed pattern; real documents replace the sample facts and remove their illustrative labels.",
+  "5. Validate Content Without Prescribing A Layout": {
+    explanation: "Checks the required content and document relationships without imposing an HTML template or color palette. The agent chooses a compact layout and useful visuals. The checks cover readable text, accessible controls, pending changes, and the separate roles of each document.",
     tone: "indigo",
     reference: {
       label: "Theo’s spec-driven development video",
       url: "https://youtu.be/xJaMTo2YgO8?si=o9SUsf9VfLzoF1SL",
-      explanation: "Theo’s video directly informed the HTML-first artifact strategy: readable, self-contained documents instead of basic Markdown templates."
+      explanation: "Theo’s video informed the use of readable, standalone HTML documents."
     }
   },
   "6. Add Claude Compatibility": {
@@ -150,11 +172,11 @@ const initAnnotations: Record<string, Annotation> = {
 
 const updateAnnotations: Record<string, Annotation> = {
   "Start here": {
-    explanation: "Introduces the requirement to write discovery questions in the response and keep unanswered questions in the final response while waiting. The CLI supplies the current installation state and relevant migration history. Current rules take precedence over older workflow instructions, including retired tracking and ratings.",
+    explanation: "Updates the workflow to use content-specific HTML, natural explanations, precise structured steps, and visible pending changes. The CLI supplies the installation state and migration history. Existing specs stay unchanged during this update.",
     tone: "slate"
   },
   "Rules": {
-    explanation: "Requires complete numbered discovery questions in the response and every unanswered question in the final response while waiting. Question tools supplement the written list. Preserves the eight-question installation and five-question feature minimums, waiting for your answers, visible spec reporting, and project knowledge. Old execution records stay untouched unless you select deletion.",
+    explanation: "Removes fixed HTML templates and required palettes from the authoring rules. Preserves content divisions, approvals, local instructions, and existing documents. Discovery questions and visible spec reports remain required. Old execution records stay unchanged unless you select deletion.",
     tone: "rose"
   },
   "1. Inspect Current Installation": {
@@ -162,7 +184,7 @@ const updateAnnotations: Record<string, Annotation> = {
     tone: "blue"
   },
   "2. Audit The Skill And Agent Guidance": {
-    explanation: "Checks the installed skill and generated AGENTS.md for the numbered Discovery questions section and final-response requirements. Replaces generated wording that lets a question tool substitute for the written list. Preserves genuine local policies and checks routing, authoring, execution, and completion against the current contract.",
+    explanation: "Checks the installed instructions for fixed HTML formats and color rules. Adds guidance for coherent visual design, clear reader context, and pending change markers. Limits ASD-STE100 guidance to structured parts such as steps and checks. Keeps local policies and checks the discovery, approval, and reporting rules.",
     tone: "violet"
   },
   "3. Choose What To Do With Old Execution Records": {
@@ -170,11 +192,11 @@ const updateAnnotations: Record<string, Annotation> = {
     tone: "amber"
   },
   "4. Apply The Migration Conservatively": {
-    explanation: "Applies the written-question and final-response requirements to AGENTS.md, the skill entrypoint, and discovery guidance. Preserves concise routing, visible spec reporting, discovery minimums, local constraints, approvals, approved reuse decisions, and history. Migrating instruction files does not rerun bootstrap discovery.",
+    explanation: "Updates the authoring and execution instructions. Removes obsolete generated HTML templates when their ownership is clear. Preserves local requirements and existing specs. An old spec layout changes only on its next requested edit. This migration does not repeat installation discovery.",
     tone: "amber"
   },
   "5. Validate": {
-    explanation: "Checks discovery with and without a question tool and after partial answers: complete numbered questions must appear in the response, and unanswered questions must remain in the final response while waiting. Also verifies current instructions, valid links, preserved project knowledge, and the requested stopping point.",
+    explanation: "Checks the new authoring rules, pending change lifecycle, document links, and preserved history. Verifies that existing specs did not change during migration. Also checks the discovery questions and visible reports. Honors the requested stopping point.",
     tone: "lime"
   }
 };
@@ -197,7 +219,7 @@ const removeAnnotations: Record<string, Annotation> = {
     tone: "violet"
   },
   "3. Deactivate The Skill Without Losing User Data": {
-    explanation: "Removes the reusable skill and untouched templates when safe, but keeps specifications, decisions, plans, any legacy execution records, and customized material by default.",
+    explanation: "Removes the reusable skill and any untouched legacy templates when safe. Keeps specifications, decisions, plans, old execution records, and customized material by default.",
     tone: "amber"
   },
   "4. Validate": {
@@ -275,7 +297,7 @@ const promptDefinitions = [
     id: "init",
     tabLabel: "Install",
     actionLabel: "installation",
-    summary: "Shows at least eight complete questions in a numbered Discovery questions section in the response and waits for every answer before installing. Unanswered questions remain in the final response while waiting; question tools supplement the written list. The installed workflow applies the same format to its five-question feature discovery minimum.",
+    summary: "Asks at least eight numbered discovery questions and waits for every answer before installation. Installs a workflow for compact, interactive HTML with natural explanations, precise structured steps, and visible pending changes. New feature work keeps the five-question discovery minimum.",
     instruction: "Run npx simplest-sdd@latest init and follow the instructions",
     rawUrl: "/init-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/init.md",
@@ -285,7 +307,7 @@ const promptDefinitions = [
     id: "update",
     tabLabel: "Update",
     actionLabel: "migration",
-    summary: "Updates existing installations to require a numbered Discovery questions section in the response and every unanswered question in the final response while waiting. Question tools supplement the written list. Preserves discovery minimums, visible spec reporting, existing approvals, project knowledge, and old execution records unless deletion is explicitly selected.",
+    summary: "Replaces fixed HTML format rules with content-specific design and clear reading guidance. Adds ASD-STE100 guidance for structured parts and visible pending change markers. Keeps existing specs unchanged during migration. The agent converts an old layout on the next requested edit to that spec.",
     instruction: "Run npx simplest-sdd@latest update and follow the instructions",
     rawUrl: "/update-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/update.md",
@@ -337,7 +359,7 @@ const currentRelease = schemaVersions.versions.find(
           <strong>{currentRelease?.date ?? "Current"}</strong>
         </div>
         <p>
-          {currentRelease?.summary} These views import the same Markdown templates used by the CLI. At runtime,
+          {currentRelease?.summary} These views import the same source prompts used by the CLI. At runtime,
           the CLI fills version, detected installation state, and relevant migration history for the repository
           where it runs.
         </p>
