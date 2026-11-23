@@ -1,7 +1,4 @@
 ---
-import initPromptRaw from "../../prompts/init.md?raw";
-import removePromptRaw from "../../prompts/remove.md?raw";
-import updatePromptRaw from "../../prompts/update.md?raw";
 import packageInfo from "../../package.json";
 import schemaVersions from "../../schema/versions.json";
 import AnnotationIcon from "../components/AnnotationIcon.astro";
@@ -9,6 +6,8 @@ import AnimatedWordmark from "../components/AnimatedWordmark.astro";
 import CopyButton from "../components/CopyButton.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { prompts } from "../lib/prompts";
+import { skillSources } from "../lib/skill-sources";
 
 type Reference = {
   label: string;
@@ -22,34 +21,9 @@ type Annotation = {
   reference?: Reference;
 };
 
-const initAnnotations: Record<string, Annotation> = {
-  "Start here": {
-    explanation: "Names the job, pins the schema version, and tells the agent exactly which repository it is changing before any decisions are made.",
-    tone: "slate"
-  },
-  "Rules": {
-    explanation: "Sets the non-negotiable safety and compatibility boundaries. These rules stop installation work from erasing local instructions, expanding scope, or quietly starting product work.",
-    tone: "rose"
-  },
-  "1. Inspect And Discover The Testing Discipline": {
-    explanation: "Makes the framework adapt to the repository instead of imposing a universal testing ritual. Existing instructions win; new tooling is offered only when no discipline can be found.",
-    tone: "blue"
-  },
-  "2. Ask The Project Discovery Questions": {
-    explanation: "Writes at least eight complete project, product, and workflow questions under Discovery questions in its response, as a numbered list, and waits for every answer before editing files. Question tools supplement the list. If answers are pending when the turn ends, the final response includes every unanswered question. Missing goal or clues/examples questions are extra. Repository facts, inferred answers, recommendations, and silence do not count as your answers.",
-    tone: "violet"
-  },
-  "3. Make `AGENTS.md` Canonical Without Losing Content": {
-    explanation: "Keeps project facts, local constraints, and concise skill routing in one canonical file. Its question gate requires a numbered Discovery questions section in the response and unanswered questions in the final response while waiting. It also retains visible spec reporting. Detailed workflow rules belong in the skill’s references, while compatibility files point back to the same project guidance.",
-    tone: "amber",
-    reference: {
-      label: "Theo’s spec-driven development video",
-      url: "https://youtu.be/xJaMTo2YgO8?si=o9SUsf9VfLzoF1SL",
-      explanation: "Theo’s video helped shape the product and business discovery questions, including the prompt’s explicit model of the project’s intended users."
-    }
-  },
-  "4. Create The Canonical Spec Skill": {
-    explanation: "Creates a short skill entrypoint with the discovery and reporting rules. It routes agents to the reference for the current phase. The authoring reference guides interactive HTML, natural explanations, precise structured steps, and pending change markers.",
+const contractAnnotations: Record<string, Annotation> = {
+  "The Workflow Contract": {
+    explanation: "Installation and migration share one contract. It defines the local skill and the Markdown file where product decisions live.",
     tone: "indigo",
     reference: {
       label: "OpenAI: Rethinking skills and prompts for GPT-6 Astra",
@@ -57,173 +31,127 @@ const initAnnotations: Record<string, Annotation> = {
       explanation: "The article informed smaller instruction entrypoints, selective context loading, and removing workflow steps that repeat settled decisions."
     }
   },
-  "Gate": {
-    explanation: "Keeps the framework lightweight. Substantive, ambiguous, risky, or handed-off work receives discovery, while small and presentation-only changes proceed directly.",
+  "`AGENTS.md` Section": {
+    explanation: "The project instructions point to the local skill so a feature request, a bug report or a settled decision in chat can use the same guidance.",
     tone: "amber",
-    reference: {
-      label: "Augment Code: What Is Spec-Driven Development?",
-      url: "https://www.augmentcode.com/guides/what-is-spec-driven-development"
-    }
+    reference: skillSources.potetoMode
   },
-  "Resolve Context": {
-    explanation: "Starts with task-relevant repository facts and uses indexes to find owning specs and applicable decisions. Existing conversation preserves actual user answers and authorization for their scope. The visible discovery response names consulted unchanged documents and proposed creations or updates with exact links or paths. Read-only lookups report consulted specs without activating questions.",
-    tone: "blue",
-    reference: {
-      label: "shadcn/improve",
-      url: "https://github.com/shadcn/improve"
-    }
+  "Library Layout": {
+    explanation: "An empty project needs only the skill and agent configuration. The first lasting decision creates DECISIONS.md. New areas are headings in that file.",
+    tone: "teal"
   },
-  "Analyze Related Implementations And Reuse": {
-    explanation: "Checks real code, callers, and tests before proposing consequential reuse tradeoffs. Those choices receive alternatives and one reasoned recommendation; an earlier explicit choice counts. Routine compatible reuse proceeds directly, and no useful candidate means no forced options or abstraction.",
-    tone: "blue"
+  "`SKILL.md`": {
+    explanation: "The skill captures a settled rule during a conversation, finds existing decisions by ID, and checks shared consumers before changing product behavior.",
+    tone: "violet",
+    reference: skillSources.grillWithDocs
   },
-  "Refine Request: Ask The User And Wait": {
-    explanation: "For each newly activated request, explicitly presents at least five material refinement questions in one round as a numbered Discovery questions section in its response, requests your answers, and waits for every answer before documentation-branch decisions or implementation. Question tools supplement the written list; when a turn ends with answers pending, every unanswered question appears in the final response. Private reasoning, internal plans, and tool logs alone do not count as asking. This includes clear existing-spec or no-new-spec work; missing goal or clues/examples questions are extra. Resume without repeating only when the required questions were actually asked and answered by you for the same unchanged scope.",
+  "Project Practice": {
+    explanation: "This section belongs to the project. The agent puts testing commands and lasting workflow corrections here, or links an existing policy. An update preserves these refinements.",
+    tone: "yellow"
+  },
+  "Claude Compatibility": {
+    explanation: "Keeps the canonical instructions and skill usable from Claude without a second copy. The relative link makes both agent environments resolve the same workflow.",
     tone: "violet"
+  }
+};
+
+const initAnnotations: Record<string, Annotation> = {
+  ...contractAnnotations,
+  "Start here": {
+    explanation: "Names the job, pins the schema version, and tells the agent which repository it is changing before any decisions are made.",
+    tone: "slate"
   },
-  "Resolve The Spec Branch After Discovery": {
-    explanation: "Refreshes an owning spec automatically and reports the exact updated files, what changed, and why in the visible response. When none exists, ask whether to create a spec only if the user has not already chosen; a newly generated business spec still needs approval before implementation. Skipping a new spec still preserves approved reuse choices in canonical decisions and indexes without creating feature artifacts.",
-    tone: "amber"
-  },
-  "Preserve Independent Technical Approvals": {
-    explanation: "Keeps approval tied to concrete sensitive changes rather than topic keywords. Prior explicit authorization counts for its stated scope; only unresolved changes pause dependent implementation. Documentation selection alone grants no technical approval.",
+  "Rules": {
+    explanation: "Installation preserves project guidance, records confirmed business decisions and leaves feature work for a separate request.",
     tone: "rose"
   },
-  "HTML Artifacts": {
-    explanation: "Lets the agent choose a coherent visual design for each document, with clear typography, spacing, and emphasis. Compact groups, useful diagrams, and progressive disclosure reduce reading effort. The outcome, current state, pending changes, and next action stay easy to find. Required content divisions remain intact, and the document works offline without scripts.",
-    tone: "teal",
-    reference: {
-      label: "Taste: design-taste-frontend",
-      url: "https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/SKILL.md",
-      explanation: "The skill informed typography, spacing, coherent visual direction, and interactions chosen for the content. Standalone specs keep their own content and accessibility requirements."
-    }
+  "Inspect The Project And Its Testing Discipline": {
+    explanation: "Project practice carries the repository’s testing policy, testing skill and commands, including TDD when configured.",
+    tone: "blue"
   },
-  "Write For The Reader": {
-    explanation: "Uses natural, concise explanations that lead with the result or next action. Small groups and clear progress help readers resume without reconstructing context. ASD-STE100 complements this approach in structured parts: lists, one-action steps, checks, and acceptance criteria. It does not constrain every sentence or require global compliance.",
-    tone: "teal",
-    reference: {
-      label: "i-have-adhd",
-      url: "https://github.com/ayghri/i-have-adhd/blob/main/skills/i-have-adhd/SKILL.md",
-      explanation: "The skill informed visible state, bounded actions, and small meaningful groups. Specs retain every requirement and keep explanatory detail available."
-    }
+  "Ask Only What You Need": {
+    explanation: "The agent asks when an unresolved choice would change the project guidance. With nothing material open, it can install immediately.",
+    tone: "violet",
+    reference: skillSources.grillMe
   },
-  "Show Pending Changes": {
-    explanation: "Makes added, revised, and removed content easy to find with visible labels and highlights. Approval alone does not clear the markers. Remove them only after approval or established authorization, completed implementation, and verification. Existing-owner maintenance needs no new approval gate.",
+  "Make `AGENTS.md` Canonical Without Losing Content": {
+    explanation: "Keeps project facts and local constraints in one canonical file, whatever instruction files the project started with. Nothing is lost while consolidating.",
     tone: "amber"
   },
-  "Preserve Existing Documents": {
-    explanation: "Keeps existing specs unchanged during a workflow update. On the next requested spec edit, replace its old template layout with a design that follows the current authoring rules. Preserve content divisions, links, and approval history.",
-    tone: "teal"
-  },
-  "Create One Feature Folder": {
-    explanation: "Separates the product contract, technical design, and implementation handoff. Each reader can load the layer it needs without carrying the whole history.",
-    tone: "teal"
-  },
-  "Connect Documents With Explicit Relationships": {
-    explanation: "Keeps the Role, Document, and Why it matters fields in each relationship section. The agent chooses the presentation. Links require a direct dependency, shared contract, conflict, or replacement relationship; a similar topic alone is insufficient.",
-    tone: "cyan"
-  },
-  "Record Decision Impact Without Creating Ceremony": {
-    explanation: "Records every approved reuse-analysis choice, including separate implementations and work without a new spec. The decision captures alternatives, rationale, scope, approval, and implementation state; approved intent starts as pending and is reconciled with what shipped. Other decisions remain selective, and active-decision changes keep their technical approval gate.",
-    tone: "green"
-  },
-  "Choose An Execution Strategy": {
-    explanation: "Defaults to same-session execution and allows useful bounded parallel work where tools and local constraints permit it. Explicit delegation, model, cost, and stop instructions still govern. A strategy menu, capability profiles, and detailed packets are used only when they help resolve a real choice or assignment.",
-    tone: "cyan",
-    reference: {
-      label: "shadcn/improve",
-      url: "https://github.com/shadcn/improve"
-    }
-  },
-  "Implement And Verify": {
-    explanation: "Completes authorized implementation and documentation close-out under the repository’s real testing discipline. Scope checks to the change, expand verification when evidence warrants it, and honor explicit stop points. Delegation adds review responsibility without granting permission for commits, merges, or deployment.",
-    tone: "yellow",
-    reference: {
-      label: "shadcn/improve",
-      url: "https://github.com/shadcn/improve"
-    }
-  },
-  "Close Out And Self-Improve": {
-    explanation: "Reconciles specs and approved reuse decisions with the verified result. The final visible answer includes the outcome, evidence, limitations, and complete concise documentation impact with exact links or paths: consulted unchanged, created, updated, and pending. Earlier progress reports do not replace this summary, and proposed edits are not reported as completed. Improve skill guidance only from reusable observed friction, with no execution telemetry or rating question.",
-    tone: "green"
-  },
-  "Root Library Index": {
-    explanation: "Provides progressive disclosure for humans and agents. The index helps a reader choose the relevant artifact without loading every spec, decision, and plan.",
-    tone: "teal"
-  },
-  "5. Validate Content Without Prescribing A Layout": {
-    explanation: "Checks the required content and document relationships without imposing an HTML template or color palette. The agent chooses a compact layout and useful visuals. The checks cover readable text, accessible controls, pending changes, and the separate roles of each document.",
-    tone: "indigo",
-    reference: {
-      label: "Theo’s spec-driven development video",
-      url: "https://youtu.be/xJaMTo2YgO8?si=o9SUsf9VfLzoF1SL",
-      explanation: "Theo’s video informed the use of readable, standalone HTML documents."
-    }
-  },
-  "6. Add Claude Compatibility": {
-    explanation: "Keeps the canonical instructions and skill usable from Claude without maintaining a second copy. The relative link makes both agent environments resolve the same workflow.",
-    tone: "violet"
-  },
-  "7. Validate": {
-    explanation: "Checks that installation produced a coherent system: links resolve, the schema marker is current, and history survived. Verifies complete numbered questions in the response and unanswered questions in the final response, including with question tools and partial answers. The agent honors the requested stopping point.",
+  "Validate": {
+    explanation: "Checks that decisions, one-off requests and recurring feedback reach the right place, and that the workflow still uses the project’s testing policy.",
     tone: "lime"
   }
 };
 
 const updateAnnotations: Record<string, Annotation> = {
+  ...contractAnnotations,
   "Start here": {
-    explanation: "Updates the workflow to use content-specific HTML, natural explanations, precise structured steps, and visible pending changes. The CLI supplies the installation state and migration history. Existing specs stay unchanged during this update.",
+    explanation: "The CLI inspects the repository and prints the migration instructions. The coding agent applies them and verifies the converted files.",
     tone: "slate"
   },
   "Rules": {
-    explanation: "Removes fixed HTML templates and required palettes from the authoring rules. Preserves content divisions, approvals, local instructions, and existing documents. Discovery questions and visible spec reports remain required. Old execution records stay unchanged unless you select deletion.",
+    explanation: "Defines the scope of an update, including how to recognize a preserved decision file, an older HTML library or a newer schema.",
     tone: "rose"
   },
-  "1. Inspect Current Installation": {
-    explanation: "Establishes what is actually installed before changing it: schema marker, compatibility links, document formats, testing discipline, local customizations, and durable project data.",
+  "Inspect The Installation": {
+    explanation: "Inventories active sources, local refinements and recovery needs. A partial conversion reuses existing IDs. A current version marker still requires checking for leftover generated files.",
     tone: "blue"
   },
-  "2. Audit The Skill And Agent Guidance": {
-    explanation: "Checks the installed instructions for fixed HTML formats and color rules. Adds guidance for coherent visual design, clear reader context, and pending change markers. Limits ASD-STE100 guidance to structured parts such as steps and checks. Keeps local policies and checks the discovery, approval, and reporting rules.",
+  "Replace The Workflow Instructions": {
+    explanation: "Carries forward local practice and TDD while replacing generated instructions with the flat Markdown workflow.",
     tone: "violet"
   },
-  "3. Choose What To Do With Old Execution Records": {
-    explanation: "Lists the exact legacy record and ledger paths and offers preservation or deletion. Preservation leaves them byte-for-byte unchanged as inactive history; deletion requires an explicit choice covering those files. Silence preserves them while other updates continue. No records means no cleanup question, and spec folders, plans, and decisions remain intact.",
+  "Convert The Library": {
+    explanation: "The agent consolidates rules from older specs, the HTML map and area records into DECISIONS.md before retiring the original documents.",
     tone: "amber"
   },
-  "4. Apply The Migration Conservatively": {
-    explanation: "Updates the authoring and execution instructions. Removes obsolete generated HTML templates when their ownership is clear. Preserves local requirements and existing specs. An old spec layout changes only on its next requested edit. This migration does not repeat installation discovery.",
+  "Harvest The Business Decisions": {
+    explanation: "Preserves the identity, scope and history of each distinct rule. Incoming links to HTML anchors become links to Markdown ID headings.",
+    tone: "green",
+    reference: {
+      label: "OpenSpec",
+      url: "https://github.com/Fission-AI/OpenSpec/blob/main/docs/concepts.md",
+      explanation: "OpenSpec distinguishes current behavior from proposed changes. That distinction informed the statuses on decision records."
+    }
+  },
+  "Drop The Technical Layer": {
+    explanation: "The product promise survives the conversion. A partner’s CSV contract belongs in the library, while the choice of CSV writer belongs in code.",
+    tone: "rose"
+  },
+  "Retire The Legacy Files": {
+    explanation: "The agent discards obsolete generated reports, even in older framework backups. It verifies converted decisions and saves uncommitted source documents before retiring the old pages.",
     tone: "amber"
   },
-  "5. Validate": {
-    explanation: "Checks the new authoring rules, pending change lifecycle, document links, and preserved history. Verifies that existing specs did not change during migration. Also checks the discovery questions and visible reports. Honors the requested stopping point.",
+  "Validate": {
+    explanation: "Checks each legacy decision against the consolidated file and the report. It also verifies links, project policy, and recovery of uncommitted work before the marker advances.",
     tone: "lime"
   }
 };
 
 const removeAnnotations: Record<string, Annotation> = {
   "Start here": {
-    explanation: "Defines removal as deactivation, not erasure. The goal is to stop Simplest SDD from loading while treating project-specific documents as user-owned work.",
+    explanation: "Deactivation stops the workflow from loading and preserves the recorded decisions.",
     tone: "slate"
   },
   "Rules": {
-    explanation: "Creates a strict ownership boundary: clearly generated configuration can be removed, but durable or ambiguous content is preserved unless the user explicitly confirms deletion.",
+    explanation: "Separates generated configuration from project-owned documents. Deleting durable content requires confirmation of the exact files.",
     tone: "rose"
   },
-  "1. Inspect Ownership": {
-    explanation: "Classifies every relevant file before editing so the agent can distinguish framework activation from specifications, decisions, plans, and history that now belong to the project.",
+  "Inspect Ownership": {
+    explanation: "Classifies every relevant file before editing, so the agent can tell framework activation from decisions and history that belong to the project.",
     tone: "blue"
   },
-  "2. Remove Agent Activation": {
-    explanation: "Stops agents from loading the Simplest SDD workflow by removing only its activation instructions and compatibility link, while leaving unrelated agent guidance intact.",
+  "Remove Agent Activation": {
+    explanation: "Removes only the framework’s section and compatibility link. Unique testing guidance and local practices move to the project’s instructions first.",
     tone: "violet"
   },
-  "3. Deactivate The Skill Without Losing User Data": {
-    explanation: "Removes the reusable skill and any untouched legacy templates when safe. Keeps specifications, decisions, plans, old execution records, and customized material by default.",
+  "Deactivate The Skill Without Losing User Data": {
+    explanation: "Deactivates the skill while preserving DECISIONS.md, project-owned documents and historical backups.",
     tone: "amber"
   },
-  "4. Validate": {
-    explanation: "Confirms that the framework is inactive and that user-owned knowledge survived. Any remaining references are reported instead of silently deleted.",
+  "Validate": {
+    explanation: "Confirms the framework is inactive and the project’s knowledge survived. Remaining references are reported instead of silently deleted.",
     tone: "lime"
   }
 };
@@ -297,31 +225,31 @@ const promptDefinitions = [
     id: "init",
     tabLabel: "Install",
     actionLabel: "installation",
-    summary: "Asks at least eight numbered discovery questions and waits for every answer before installation. Installs a workflow for compact, interactive HTML with natural explanations, precise structured steps, and visible pending changes. New feature work keeps the five-question discovery minimum.",
+    summary: "Installs the local skill with the project’s testing and workflow guidance. A confirmed rule creates the first decision file.",
     instruction: "Run npx simplest-sdd@latest init and follow the instructions",
     rawUrl: "/init-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/init.md",
-    prompt: parsePrompt("init", initPromptRaw, initAnnotations)
+    prompt: parsePrompt("init", prompts.init, initAnnotations)
   },
   {
     id: "update",
     tabLabel: "Update",
     actionLabel: "migration",
-    summary: "Replaces fixed HTML format rules with content-specific design and clear reading guidance. Adds ASD-STE100 guidance for structured parts and visible pending change markers. Keeps existing specs unchanged during migration. The agent converts an old layout on the next requested edit to that spec.",
+    summary: "Consolidates old Markdown, HTML maps and area pages into DECISIONS.md. After checking the new links and preserving originals that need recovery, the agent removes obsolete generated files and empty folders.",
     instruction: "Run npx simplest-sdd@latest update and follow the instructions",
     rawUrl: "/update-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/update.md",
-    prompt: parsePrompt("update", updatePromptRaw, updateAnnotations)
+    prompt: parsePrompt("update", prompts.update, updateAnnotations)
   },
   {
     id: "remove",
     tabLabel: "Remove",
     actionLabel: "removal",
-    summary: "Deactivates the framework conservatively while preserving specifications, decisions, plans, and any legacy execution records owned by the project.",
+    summary: "Deactivates the workflow and preserves the decision file, project practices and older project-owned documents.",
     instruction: "Run npx simplest-sdd@latest remove and follow the instructions",
     rawUrl: "/remove-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/remove.md",
-    prompt: parsePrompt("remove", removePromptRaw, removeAnnotations)
+    prompt: parsePrompt("remove", prompts.remove, removeAnnotations)
   }
 ];
 
@@ -332,7 +260,7 @@ const currentRelease = schemaVersions.versions.find(
 
 <BaseLayout
   title="How Simplest SDD works"
-  description="A color-coded, annotated tour of the install, update, and removal prompts used by the Simplest SDD CLI."
+  description="Read the instructions that teach an agent to keep product decisions, learn project practices and migrate older Simplest SDD libraries."
   canonicalPath="/how/"
   bodyClass="how-body"
 >
@@ -341,8 +269,7 @@ const currentRelease = schemaVersions.versions.find(
   <main>
     <section class="how-hero" aria-labelledby="how-title">
       <h1 id="how-title">
-        Because we should read the <span class="title-highlight title-highlight--orange">skills</span> we install, I made this one easy to{" "}
-        <span class="title-highlight title-highlight--orange">explore</span>.
+        Inside the <span class="title-highlight title-highlight--orange">Simplest SDD</span> skill
       </h1>
 
       <div class="version-strip" aria-label="Documented Simplest SDD version">
@@ -359,9 +286,8 @@ const currentRelease = schemaVersions.versions.find(
           <strong>{currentRelease?.date ?? "Current"}</strong>
         </div>
         <p>
-          {currentRelease?.summary} These views import the same source prompts used by the CLI. At runtime,
-          the CLI fills version, detected installation state, and relevant migration history for the repository
-          where it runs.
+          Read the instructions your coding agent follows to install, update or remove the skill.
+          The CLI prints these same prompts and adds your project’s inventory for updates and removal.
         </p>
       </div>
     </section>
@@ -471,11 +397,7 @@ const currentRelease = schemaVersions.versions.find(
                 const explanationId = `${section.id}-explanation`;
                 const referenceId = `${section.id}-reference`;
                 const referenceExplanation = section.annotation.reference?.explanation
-                  ?? (section.annotation.reference?.url.includes("augmentcode.com")
-                    ? "Augment Code’s guide provides the spec-driven development model behind this approval-gated workflow."
-                    : section.annotation.reference?.url.includes("shadcn/improve")
-                      ? "shadcn/improve informed the framework’s approach to focused context, bounded execution, and verification."
-                      : "This source directly informed the design of this part of the workflow.");
+                  ?? "This source directly informed the design of this part of the workflow.";
 
                 return (
                   <article

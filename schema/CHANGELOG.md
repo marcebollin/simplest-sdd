@@ -2,6 +2,35 @@
 
 This changelog tracks the installed simplest-sdd schema. Workflow releases advance the schema version; CLI-only releases may leave it unchanged.
 
+## 0.20.1 - 2026-11-23
+
+- Updates remove obsolete generated run reports and their support files from the skill and earlier framework backups. The update keeps business decisions, local practices and unrelated project files.
+
+## 0.20.0 - 2026-11-23
+
+- The skill and its local testing and workflow guidance live in `SKILL.md`. The first lasting product decision creates a sibling `DECISIONS.md`. Product areas are headings in that file. Stable IDs link related rules.
+- Ordinary conversation can add, amend or supersede a decision and refine the local skill. Repeated guidance is consolidated, and questions, suggestions and one-off instructions keep their original scope.
+- Update converts 0.19 HTML maps and area pages, earlier feature libraries and unversioned Markdown directly. It preserves decision history, meaningful vocabulary, TDD, agent configuration and local refinements.
+- After conversion the agent removes obsolete generated HTML, references and empty folders. Clean tracked originals remain recoverable from Git. Uncommitted originals and existing framework backups are preserved outside the live library under `.agents/archive/simplest-sdd/`.
+- Remove preserves the Markdown decision file and returns unique local practices to the project's guidance before deactivation.
+
+## 0.19.0 - 2026-11-23
+
+- Replaces per-feature business specs, technical specs and plans with compact business decisions. A single HTML map indexes stable IDs, status, scope and shared capabilities. Each area document links related rules and records why a choice was made.
+- Features and fixes start by locating affected decisions and inspecting the existing capability and its callers. Record deliberate sharing boundaries and product exceptions. A fix that restores a rule can cite its existing record.
+- Removes the fixed discovery minimums. A clear request can proceed immediately. Unsettled product decisions, conflicts and consequential technical choices can trigger a question. Deeper discovery, decision-history lookup and reuse reviews are available on request.
+- Preserves TDD or the project's other testing discipline and verified commands in `references/testing.md`, alongside the existing canonical agent and Claude configuration.
+- Shares one workflow contract between fresh installs and migrations.
+
+### Migration from 0.18.0 and earlier
+
+0.19.0 is a self-contained baseline for older HTML and unversioned Markdown installations. Historical releases remain in the schema manifest and changelog. The CLI prints only applicable migrations from this baseline onward.
+
+1. Inventory the old library, including a physical Claude copy, and distinguish generated sources from project-owned documents before writing.
+2. Carry product rules, shared capabilities, IDs and evidence into area documents. Preserve actual proposals and report open questions separately. Extract any enduring product constraint from a technical decision before retiring it.
+3. Retire generated legacy documents individually. Keep recoverable Git history for clean, tracked originals and archive staged, dirty, untracked or non-Git originals before retirement or replacement. Preserve local policies, configuration and user-owned files.
+4. Verify the decision map, links, source coverage and testing discipline before advancing the marker. Repeated updates reuse converted records.
+
 ## 0.18.0 - 2026-10-04
 
 - Lets the model design each HTML document from its content. Removes fixed format templates, layouts, baseline CSS, and artifact color mappings.
@@ -20,7 +49,7 @@ This changelog tracks the installed simplest-sdd schema. Workflow releases advan
 3. Remove active template dependencies and generated format-template rules. Delete only unmodified generated templates that have no remaining references. Keep custom, linked, or ambiguously owned resources as inactive history. Do not rewrite existing specs, plans, or decisions to migrate instructions.
 4. On the next intentional spec update, replace the legacy presentation. Preserve facts, metadata, paths, anchors, relationships, approval evidence, and history. Apply the new visual and writing guidance to new or revised content, with STE-inspired structure for actionable material. A layout conversion does not change every requirement.
 5. Add pending-change labels and local highlighting for additions, revisions, and removals. Keep the last settled baseline across repeated draft edits. Keep unresolved changes visible on partial completion. Clear each change only after required approval or existing authorization and implementation with relevant verification. Rejection restores the settled contract; unshipped intent stays pending.
-6. Preserve completed discovery rounds, existing approvals, automatic existing-owner maintenance, new-spec selection and approval, independent technical approvals, and legacy execution-record cleanup choices. Validate fresh init and every upgrade path. Confirm unrelated artifacts are unchanged, then set the marker to `0.18.0`.
+6. Preserve completed discovery rounds, existing approvals, automatic existing-owner maintenance, new-spec selection and approval, and independent technical approvals. Validate fresh init and every upgrade path. Confirm unrelated artifacts are unchanged, then set the marker to `0.18.0`.
 
 ## 0.17.2 - 2026-09-15
 
@@ -90,26 +119,7 @@ This changelog tracks the installed simplest-sdd schema. Workflow releases advan
 
 ## 0.15.0 - 2026-09-11
 
-- Removes execution records, human evaluation and qualification prompts, rating-response waits, and the execution analytics ledger. Work ends after implementation, verification, and required spec and decision maintenance.
-- Removes the execution schema and template, `analytics` and `codex-usage` commands, and active telemetry instructions, examples, links, and index columns.
-- Keeps task classifications, estimates, capability recommendations, approved execution strategy, progress, and verification in `plan.html` without per-run model, token, timing, rating, or analytics records.
-- During update, lists existing legacy record paths and offers one explicit choice: `Leave old records untouched (Recommended, default)` or `Delete the identified old records`. Deletion requires an explicit selection; silence preserves every old record.
-- Leaves preserved records byte-for-byte unchanged as inactive history. Deletes only explicitly selected record and ledger files, then removes dangling links without deleting spec folders, decisions, unrelated data, or other history.
-- Overrides obsolete telemetry migrations on upgrades from every older release, without creating intermediate records, evaluations, or analytics artifacts. Historical release notes remain available as history.
-- Preserves discovery, documentation-branch choices, approved reuse decisions, independent technical approvals, and the resolved testing discipline.
-
-### Migration from 0.14.0 and earlier
-
-1. Apply the current workflow directly from any older or unversioned installation. These removal instructions override every older migration step that would create, migrate, validate, export, rebuild, or maintain execution records, human ratings, analytics, or `codex-usage` telemetry. Never recreate intermediate telemetry artifacts or run obsolete commands before removing them.
-2. Remove execution tracking, human evaluation and qualification prompts, rating-response waits, telemetry collection, analytics rebuilds, and `codex-usage` instructions from active `SKILL.md`, `AGENTS.md` workflow notes, templates, examples, and close-out instructions. Preserve implementation and verification reporting, spec and decision maintenance, discovery, approved reuse choices, and independent technical approvals.
-3. Retire generated execution templates and schema references, analytics documentation and command examples, execution-record relationship requirements, and execution or rating index columns. Remove active links to retired support files and execution records while preserving business, technical, plan, and decision content and valid relationships.
-4. Keep task classifications, estimates, capability recommendations, the approved execution strategy, progress, and verification in `plan.html`. Do not transfer old per-run records, model or token usage, duration, ratings, or analytics into plans or a replacement telemetry store.
-5. Inventory the exact legacy `specs/**/execution.json` and `data/executions.jsonl` paths in the canonical spec library without parsing their contents or following the Claude compatibility symlink as a second library. If any exist, show every affected path and ask one question offering `Leave old records untouched (Recommended, default)` or `Delete the identified old records`.
-6. Wait for an explicit deletion selection before deleting any old record. Neither the update request, the recommended default, nor silence authorizes deletion. Continue independent update work with the records preserved while the choice is pending. An existing explicit selection covering the identified files counts; do not ask again. Skip the cleanup question when no old records exist.
-7. For `Leave old records untouched`, preserve every record and ledger byte-for-byte as inactive history. Do not parse, validate, upgrade, normalize, append to, rewrite, rename, relocate, or export them, or resume recording or rating them later. No response also preserves every record and must not be reported as an explicit user choice.
-8. For `Delete the identified old records`, delete only the exact record and ledger files covered by the explicit selection, then remove dangling links from library documents and indexes. Never blanket-delete directories, spec folders, `business.html`, `technical.html`, `plan.html`, decisions, unrelated data, or other history. Resolve unclear ownership without broadening deletion.
-9. Refresh active templates and indexes without reading archived records. Verify that current instructions have no recording or rating lifecycle, telemetry-dependent links or columns, or command that parses or regenerates old records. Treat earlier release entries below as historical context wherever these removal instructions supersede them.
-10. Set the installed workflow marker to `0.15.0`. Report changed files, the user's cleanup choice or pending/no-records status, and exact legacy files preserved or deleted. There is no replacement execution schema or record-format migration.
+Simplified close-out to implementation, verification and maintaining project documentation. The release preserved the project’s testing discipline and approved reuse decisions.
 
 ## 0.14.0 - 2026-09-11
 
@@ -119,8 +129,8 @@ This changelog tracks the installed simplest-sdd schema. Workflow releases advan
 - Records analysis, alternatives, the model's recommendation and reason, approved user choice and custom conditions, approval status, and consequences in product language in the business spec. The technical spec names exact source paths, symbols, callers, abstraction boundaries, verification, and decision links; the plan includes only approved scope.
 - Stores every explicitly approved reuse-analysis choice, including keeping a separate implementation, in a canonical category decision and the decision and root indexes, regardless of ordinary decision-promotion heuristics or the no-new-spec branch.
 - Keeps unselected alternatives and unapproved ideas out of active decisions. Records approved intent with implementation pending, then reconciles the decision with what shipped, including partial or unimplemented scope, at close-out.
-- Allows approved decision and necessary index writes as a narrow no-new-spec exception alongside existing-contract maintenance. That branch still creates no new feature spec, plan, execution record, or analytics record.
-- Preserves independent technical approvals, including active-decision changes, stricter explicit local policies, historical artifacts and approvals, and execution schema `1.1.0`.
+- Allows approved decision and index writes alongside existing-contract maintenance on the no-new-spec branch.
+- Preserves independent technical approvals, stricter local policies and historical artifacts.
 
 ### Migration from 0.13.0
 
@@ -132,27 +142,14 @@ This changelog tracks the installed simplest-sdd schema. Workflow releases advan
 6. Make every explicitly approved choice from reuse analysis, including choosing isolation over reuse, a required canonical category decision with a stable ID and anchor, rationale, alternatives, approved scope and consumers, exceptions and custom conditions, approval evidence, and separate implementation state. This requirement overrides the routine inferability and cross-feature decision-promotion heuristic.
 7. Keep unselected alternatives and unapproved ideas as analysis, never active decisions. Preserve explicit technical approval before changing an existing active decision, amend compatible decisions with history, and supersede only when the approved meaning fundamentally changes.
 8. Record an approved choice promptly as approved intent with implementation pending, refresh `decisions/index.html` and the root library index, and link applicable business and technical specs to the canonical decision. Approval of an approach does not certify that it has been implemented.
-9. Permit these approved decision and necessary index writes on `Continue without a new spec` as a narrow exception to its artifact restrictions. Preserve required maintenance of existing contracts, but create no new feature spec, plan, execution record, or analytics record and add no spec-only approval or human-evaluation steps to that branch.
+9. Permit approved decision and index writes on `Continue without a new spec`. Maintain existing contracts and preserve the branch’s limits on creating specs and plans.
 10. At close-out in every branch, reconcile the decision and relevant indexes with the actual implementation and verification, including partial, changed, or unimplemented scope. Seek approval for changed implementation scope instead of silently broadening the approved abstraction or consumers.
 11. Update examples and validation checks for reuse, separate implementation, custom adaptation or extraction, missing candidates, prior explicit approval, and the no-new-spec decision exception. Preserve stricter explicit local policies and untouched historical artifacts without invented approvals or implementation facts.
-12. Advance the installed workflow marker to `0.14.0` while retaining execution schema `1.1.0` and its existing evaluation lifecycle. This release requires no execution-record or analytics-format migration.
+12. Advance the installed workflow marker to `0.14.0`.
 
 ## 0.13.0 - 2026-08-08
 
-- After implementation and verification, asks for one neutrally worded overall execution rating from 1 to 10, anchored at 1 for failed, 5 for mixed or partially successful, and 10 for excellent, plus an optional comment whenever the request has an execution record.
-- Preserves multiple human evaluations in one execution record, with each evaluation linked to the run IDs it covers and tracked through `pending`, `rated`, or `declined` status without overwriting earlier feedback.
-- Advances new execution records to execution schema `1.1.0` while keeping analytics compatible with legacy `1.0.0` records and representing missing historical feedback as unavailable rather than inventing it.
-- Persists the user's rating, optional comment, or decline before rebuilding execution analytics and refreshing the root library index so evaluation status remains inspectable with the rest of the execution facts.
-- Skips the evaluation prompt on the no-new-spec branch and never infers a rating, comment, decline, or historical evaluation on the user's behalf.
-
-### Migration from 0.12.0
-
-1. Update `SKILL.md` so a terminal spec-backed implementation with `execution.json` presents its implementation and verification result, asks the anchored 1-to-10 overall execution question with an optional comment, and waits for the user's response; keep the no-new-spec branch unchanged and skip the question there.
-2. Upgrade the execution template, newly created execution records, and legacy records touched by a new execution to schema `1.1.0` with a `humanEvaluations` array that can preserve multiple human evaluations, the run IDs each one covers, optional comments, timestamps, and `pending`, `rated`, or `declined` status. Leave untouched historical `1.0.0` records readable without rewriting or invented feedback.
-3. Create the pending evaluation entry before asking, then update that same entry from the user's reply to `rated` or `declined` without guessing a score or comment; treat the reply as close-out continuation rather than a new request.
-4. After recording the reply, rebuild the JSONL analytics ledger and refresh the root library index so the latest evaluation status and rating are visible alongside execution details, then finish that execution's close-out. If the same reply contains separate explicit work, route it as a new phase instead of absorbing it into the rated execution.
-5. Update analytics validation and exports to accept execution schema `1.1.0` evaluations while continuing to read legacy `1.0.0` records; leave absent historical evaluations unavailable and never backfill inferred feedback.
-6. Update the generated execution template, examples, validation checks, and human-facing analytics documentation to explain the anchored scale, optional comment, lifecycle, run linkage, and legacy behavior.
+Changed the close-out procedure subsequently retired in 0.15.0.
 
 ## 0.12.0 - 2026-07-30
 
@@ -177,8 +174,8 @@ This changelog tracks the installed simplest-sdd schema. Workflow releases advan
 
 - Always runs the mandatory request-refinement discovery round whenever the spec-library skill activates.
 - After discovery, asks the user to choose `Create or update a spec` or `Continue without a spec`, labels exactly one option `(Recommended)`, and waits for the selection.
-- Generates or updates specs, plans, execution records, decisions, and indexes only when the user explicitly chooses the spec path.
-- Makes the no-spec path a direct same-session implementation and verification flow without spec approval, execution-strategy selection, analytics recording, or artifact close-out.
+- Generates or updates specs, plans, decisions and indexes only when the user selects the spec path.
+- Makes the no-spec path a direct same-session implementation and verification flow.
 
 ### Migration from 0.10.0
 
@@ -193,7 +190,7 @@ This changelog tracks the installed simplest-sdd schema. Workflow releases advan
 - Gives business specs, technical specs, plans, and decision documents stable artifact-specific accent colors, with accessible light and dark variants.
 - Adds labeled status badges, restrained keyword highlights, callouts, and relationship tables so important contract language is easier to scan without relying on color alone.
 - Replaces vague `Related` sections with `Document relationships` tables whose rows identify the linked artifact's role and explain why it matters here.
-- Requires direct sibling links among each feature's business, technical, and plan documents, plus the machine-readable execution record from the plan.
+- Requires direct sibling links among each feature’s business, technical and plan documents.
 - Defines explicit-link criteria for decisions, related specs, exact anchors, indexes, and external evidence. Topic similarity alone is not enough to create a relationship.
 
 ### Migration from 0.9.0
@@ -201,7 +198,7 @@ This changelog tracks the installed simplest-sdd schema. Workflow releases advan
 1. Preserve a project-customized palette. Otherwise add semantic artifact accents, status badges, keyword highlights, callouts, and accessible light/dark colors to the generated HTML templates.
 2. Add `data-artifact` to template `body` elements so the artifact type controls a stable visual accent while a visible text label carries the same meaning.
 3. Replace each template's generic `Related` section with a `Document relationships` table containing `Role`, `Document`, and `Why it matters` columns.
-4. Link sibling `business.html`, `technical.html`, and `plan.html` files directly; link `execution.json` from the plan; link applicable decisions to their exact stable anchors.
+4. Link sibling `business.html`, `technical.html` and `plan.html` documents and link decisions to their stable anchors.
 5. Add a related spec only for a direct behavior dependency, shared contract, scope interaction, or supersession, and state that reason. Do not link documents merely because their topics are similar.
 6. Apply the new style and relationship contract to existing active generated artifacts only when ownership and targets are clear. Preserve customized or historical documents rather than rewriting them blindly.
 
@@ -245,10 +242,8 @@ This changelog tracks the installed simplest-sdd schema. Workflow releases advan
 - Keeps one integrated `plan.html` per feature while dividing it into detailed tasks classified by category, effort, risk, plan confidence, delegation confidence, dependencies, scope, verification, and STOP conditions.
 - Makes the planner evaluate same-session, delegated, and hybrid execution. Same-session is always offered; delegated/hybrid modes appear only when recommended with rationale; a custom assignment example is always shown.
 - Requires explicit user approval of the execution topology and per-task assignments before any subagent starts. The recommendation and user override are both retained.
-- Uses model-agnostic capability profiles and low/medium/high effort for durable routing recommendations, while recording actual planner, executor, verifier, and reviewer model names after execution.
+- Uses model-agnostic capability profiles and reasoning effort for routing recommendations.
 - Adds `design` to the feature classification taxonomy alongside feature, bug, security, performance, tests, tech-debt, migration, DX, docs, and research.
-- Adds per-feature `execution.json` records and a committed `data/executions.jsonl` ledger covering actual models, token usage and provenance, duration, outcomes, revisions, verification, commits, and execution strategy.
-- Adds read-only `analytics` output in summary, JSON, JSONL, and CSV formats plus `codex-usage` inspection for local session model, effort, duration, and token totals without conversation content.
 - Uses isolated worktrees for delegated writers, requires diff review before running changed code, stops before merge, and keeps delivery follow-ons outside the active phase unless explicitly requested.
 - Reduces update-prompt context by including only schema history newer than the detected installed version; unversioned installations still receive the full migration history.
 
@@ -256,12 +251,9 @@ This changelog tracks the installed simplest-sdd schema. Workflow releases advan
 
 1. Preserve any explicit repository delegation policy. Otherwise allow the planner to recommend delegation while requiring explicit user strategy approval before spawning subagents.
 2. Keep one integrated `plan.html`; add detailed task classification, dependencies, scope, verification, STOP conditions, capability recommendations, and selected assignments.
-3. Add `templates/execution-template.json`, a per-feature `execution.json`, and `data/executions.jsonl` using execution schema `1.0.0`. Do not invent telemetry for old executions.
-4. Always offer same-session execution. Offer delegated and hybrid modes only with a rationale, and show a concrete custom assignment example.
-5. Record capability profiles in recommendations and actual model names, effort, tokens, duration, outcome, revisions, and verification after execution.
-6. Run `npx simplest-sdd@latest analytics`, then rebuild the committed JSONL ledger. Generate CSV only when needed.
-7. Use isolated worktrees for delegated writers, inspect their diffs before running changed code, and stop before merge.
-8. Preserve the existing business-spec and technical-approval gates plus stricter local rules. Keep delivery follow-ons out of scope unless explicitly requested.
+3. Always offer same-session execution. Offer delegated and hybrid modes with a rationale and a concrete assignment example.
+4. Use isolated worktrees for delegated writers, inspect their diffs before running changed code, and stop before merge.
+5. Preserve the existing business-spec and technical-approval gates plus stricter local rules. Keep delivery follow-ons out of scope unless explicitly requested.
 
 ## 0.5.0 - 2026-07-09
 

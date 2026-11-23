@@ -10,7 +10,7 @@ const initialInstruction = "Run npx simplest-sdd@latest init and follow the inst
 
 <BaseLayout
   title="simplest — (sd)²"
-  description="A lightweight spec-driven workflow for AI coding agents."
+  description="Keep the product decisions you make with your coding agent in one Markdown file. Find the reason for a rule and see who relies on it."
   bodyClass="landing-body"
 >
   <main class="landing" data-landing>
@@ -27,6 +27,7 @@ const initialInstruction = "Run npx simplest-sdd@latest init and follow the inst
     </section>
 
     <section class="usage" aria-label="Usage">
+      <p class="usage-purpose">Keep the product decisions you make with your agent in one Markdown file.</p>
       <div class="usage-options" aria-label="Choose an action">
         <button aria-pressed="true" class="usage-option" data-action="init" type="button">install</button>
         <button aria-pressed="false" class="usage-option" data-action="update" type="button">update</button>
@@ -34,7 +35,7 @@ const initialInstruction = "Run npx simplest-sdd@latest init and follow the inst
       </div>
 
       <div class="usage-message">
-        <p class="usage-lead">Tell this to your agent:</p>
+        <p class="usage-lead">Give your coding agent this instruction.</p>
         <p class="usage-instruction">
           Run npx simplest-sdd@latest <span class="command-action command-action--changing" data-command-action
             >init</span
@@ -95,6 +96,12 @@ const initialInstruction = "Run npx simplest-sdd@latest init and follow the inst
     left: clamp(1rem, 3vw, 2.25rem);
     width: min(calc(100% - clamp(2rem, 6vw, 4.5rem)), 58rem);
     text-align: left;
+  }
+
+  .usage-purpose {
+    margin: 0 0 .8rem;
+    color: var(--ink-soft);
+    font-size: clamp(1rem, 2vw, 1.25rem);
   }
 
   .usage-options {

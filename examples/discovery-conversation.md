@@ -1,5 +1,7 @@
 # Read-later project: request-refinement conversation
 
+Historical example from the spec-based workflow. [Current decision-based example](README.md).
+
 This example abstracts a real read-later application without exposing its codebase or private implementation details.
 
 Code paths and observations below are illustrative stand-ins, not files in this repository. In a real discovery, the agent inspects the actual implementation, callers, and tests before offering a reuse recommendation.

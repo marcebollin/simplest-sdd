@@ -1,6 +1,66 @@
 {
-  "currentSchemaVersion": "0.18.0",
+  "currentSchemaVersion": "0.20.1",
+  "migrationBaseline": "0.20.1",
   "versions": [
+    {
+      "version": "0.20.1",
+      "date": "2026-11-23",
+      "summary": "Updates remove obsolete generated run reports and their support files from the skill and earlier framework backups.",
+      "changes": [
+        "Strip retired reporting instructions and links while preserving decisions, project practices and verification commands."
+      ],
+      "migrations": [
+        {
+          "from": "0.20.0 and all earlier or unversioned installations",
+          "steps": [
+            "Apply this self-contained baseline directly. Consolidate older business rules in DECISIONS.md and preserve their IDs, links and history.",
+            "Discard obsolete framework reports before archiving other originals. Check both installed copies and framework recovery paths, including on repeated updates.",
+            "Preserve project-owned documents, TDD, Claude configuration and uncommitted source material. Verify the cleanup before advancing the marker."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.20.0",
+      "date": "2026-11-23",
+      "summary": "Keeps business decisions in one Markdown file and lets everyday conversations refine the project's skill.",
+      "changes": [
+        "Use a single DECISIONS.md with stable ID headings. Create it with the first real decision.",
+        "Keep testing and recurring workflow corrections under Project practice in the local SKILL.md, or link their existing canonical policy.",
+        "Save a settled product rule or project practice in the same conversation and cite its home. Keep one-off requests and open questions in the conversation."
+      ],
+      "migrations": [
+        {
+          "from": "0.19 HTML maps and area pages, earlier feature libraries, or unversioned Markdown",
+          "steps": [
+            "Apply this self-contained baseline directly. Harvest the enduring business rules, IDs, dependencies and evidence into DECISIONS.md and rewrite active links.",
+            "Preserve TDD, local refinements, and configuration before retiring the generated map, area pages, technical documents and old references. Prune empty generated directories.",
+            "Use Git history for clean tracked originals and keep other recovery copies outside the live skill. Verify that a second update creates no changes."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.19.0",
+      "date": "2026-11-23",
+      "summary": "Turns the spec library into a compact library of business decisions, with reuse before building and questions asked only when needed.",
+      "changes": [
+        "Group compact business rules by product area. Give each a stable ID, scope, rationale, status, and links to related decisions. Index them in one decision map.",
+        "For features and fixes, use the map and actual callers to find affected rules. Reuse or extend an existing capability where the same rule applies across surfaces. Record a lasting sharing boundary or a deliberate exception.",
+        "Ask only about unresolved choices that change the outcome. Clear requests can proceed immediately. Deeper discovery, answers from the decision history, and reuse reviews are available on request.",
+        "Keep the project's testing discipline, including TDD where configured, and preserve its agent instructions and Claude compatibility."
+      ],
+      "migrations": [
+        {
+          "from": "any earlier or unversioned schema",
+          "steps": [
+            "Apply this self-contained baseline directly to earlier HTML and unversioned Markdown installations.",
+            "Harvest business rules and shared capabilities with their IDs, status and evidence. Preserve project-specific testing guidance and configuration.",
+            "Retire generated implementation specs, plans and technical decisions after extracting any lasting product constraints. Archive uncommitted originals before replacing or retiring them. Report the disposition of each old decision."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.18.0",
       "date": "2026-10-04",
@@ -23,7 +83,7 @@
             "Remove active template dependencies and generated format-template rules. Delete only unmodified generated templates that have no remaining references; preserve custom, linked, or ambiguously owned resources as inactive history. Do not change existing specs, plans, decisions, or their content merely to migrate the workflow.",
             "On the next intentional spec update, replace its legacy presentation and retain its factual contract, metadata, stable paths, anchors, relationships, approval evidence, and history. Apply the new visual and writing guidance only to new or revised content, with STE-inspired structure for actionable material. Do not treat a layout conversion as a change to every requirement.",
             "Add pending-change labels and local highlighting for additions, revisions, and removals. Keep the last settled baseline across repeated draft edits and maintain unresolved changes on partial completion. Clear each change only after required approval or existing authorization and implementation with relevant verification. Rejection restores the settled contract; never mark unshipped intent as applied.",
-            "Preserve completed discovery rounds, existing approvals, automatic existing-owner maintenance, new-spec selection and approval, independent technical approvals, and legacy execution-record cleanup choices. Validate fresh init and every upgrade path, verify that unrelated artifacts remain unchanged, then set the marker to 0.18.0."
+            "Preserve completed discovery rounds, existing approvals, automatic existing-owner maintenance, new-spec selection and approval, and independent technical approvals. Validate fresh init and every upgrade path, verify that unrelated artifacts remain unchanged, then set the marker to 0.18.0."
           ]
         }
       ]
@@ -90,7 +150,7 @@
         {
           "from": "0.16.0",
           "steps": [
-            "Apply the current rules directly from every older or unversioned installation. They preserve the eight-question init and five-question request-refinement minimums while overriding repeated approval gates, compulsory execution-strategy menus, rigid context/testing requirements, and retired execution tracking; do not recreate superseded intermediate workflows or rewrite historical release notes.",
+            "Apply the current rules directly from every older or unversioned installation. They preserve the eight-question init and five-question request-refinement minimums while overriding repeated approval gates, compulsory execution-strategy menus, and rigid context/testing requirements; do not recreate superseded intermediate workflows or rewrite historical release notes.",
             "Audit the installed SKILL.md and generated AGENTS.md guidance for duplicated instructions and obsolete simplest-sdd constraints. Preserve genuine user-authored policies and customizations; distinguish them from inherited framework defaults before retaining a conflicting rule.",
             "Rewrite spec-library frontmatter with a concise description of when it should and should not activate. Reduce AGENTS.md to stable project context, essential commands and boundaries, and a precise router for workflow work versus read-only documentation questions and direct low-risk changes.",
             "Keep activation, branch decisions, authorization boundaries, and close-out in the SKILL.md entry point. Create directly linked references/discovery.md, references/authoring.md, and references/execution.md for conditional detail; preserve HTML contracts and existing customized content while moving instructions, and load each reference only when relevant.",
@@ -128,32 +188,9 @@
     {
       "version": "0.15.0",
       "date": "2026-09-11",
-      "summary": "Removes execution records, human rating prompts, and execution telemetry; updating offers a choice to leave existing records untouched or delete only explicitly selected legacy files.",
+      "summary": "Simplified close-out to implementation, verification and maintaining project documentation.",
       "changes": [
-        "Stop creating or maintaining execution.json records, human evaluations, and data/executions.jsonl; finish work after implementation, verification, and required spec and decision maintenance without asking for an execution rating or qualification.",
-        "Remove the execution schema, execution template, analytics and codex-usage commands, and active instructions, examples, links, and index columns that depend on execution records, ratings, or telemetry.",
-        "Keep task classification, estimates, capability recommendations, approved execution strategy, implementation progress, and verification in the human-readable plan without per-run model, token, timing, rating, or analytics records.",
-        "When an update finds legacy execution.json files or data/executions.jsonl, present the exact paths and one explicit choice: Leave old records untouched (Recommended, default) or Delete the identified old records; never infer deletion from the update request or a missing response.",
-        "Preserve selected legacy records byte-for-byte without parsing, validating, migrating, rewriting, or exporting them; delete only the identified files after an explicit deletion selection and remove links to deleted files without deleting spec folders, decisions, unrelated data, or other history.",
-        "Apply the current workflow directly on upgrades from every older version, overriding historical migration steps that would create, migrate, validate, export, or maintain execution records, human ratings, analytics, or codex-usage telemetry; never recreate intermediate telemetry artifacts.",
-        "Preserve discovery, documentation-branch choices, approved reuse decisions, independent technical approvals, resolved testing discipline, and historical release notes."
-      ],
-      "migrations": [
-        {
-          "from": "0.14.0",
-          "steps": [
-            "For an update from any older or unversioned installation, apply the current workflow directly. These removal instructions override every older migration step that would create, migrate, validate, export, rebuild, or maintain execution records, human ratings, analytics, or codex-usage telemetry; do not recreate intermediate artifacts or execute obsolete telemetry commands before removing them.",
-            "Remove execution tracking, human-evaluation or qualification prompts, rating-response waits, telemetry collection, analytics rebuilds, and codex-usage instructions from the active SKILL.md, AGENTS.md workflow note, templates, examples, and close-out contract. Preserve implementation and verification reporting, spec and decision maintenance, discovery, approved reuse choices, and all independent technical approvals.",
-            "Retire generated execution templates and schema references, analytics documentation and command examples, execution-record relationship requirements, and execution or rating index columns. Remove active links to retired support files and execution records while preserving business, technical, plan, and decision content and their valid relationships.",
-            "Keep task classifications, estimates, capability recommendations, the user's approved execution strategy, progress, and verification in plan.html. Do not transfer old per-run records, model or token usage, duration, ratings, or analytics data into plans or another replacement telemetry store.",
-            "Inventory the exact legacy specs/**/execution.json and data/executions.jsonl file paths within the canonical spec library without parsing their contents or following the Claude compatibility symlink as a second library. If any exist, ask one question offering Leave old records untouched (Recommended, default) or Delete the identified old records, and display every file covered by the choice.",
-            "Do not infer deletion from the update request, the recommended default, or silence. Wait for an explicit deletion selection before deleting any old record; other update work may continue while the choice is pending, with all old records preserved. An already explicit selection covering the identified files counts and does not require a repeat question. If no old records exist, skip the cleanup question.",
-            "On Leave old records untouched, leave every legacy record and ledger byte-for-byte unchanged as inactive history. Do not parse, validate, upgrade, normalize, append to, rewrite, rename, relocate, or export them, and do not resume recording or rating them in future work. No response also leaves all old records untouched and must not be reported as an explicit user choice.",
-            "On an explicit Delete the identified old records selection, delete only the exact record and ledger files covered by that selection and remove dangling links to them from the library's documents and indexes. Never blanket-delete directories, spec folders, business.html, technical.html, plan.html, decisions, unrelated data, or other historical artifacts; resolve unclear ownership without broadening deletion.",
-            "Refresh active templates and indexes without reading archived record contents. Verify that current instructions contain no recording or rating lifecycle, no telemetry-dependent links or columns, and no command that parses or regenerates old records; preserve historical release entries as history rather than operative migration instructions.",
-            "Advance the installed workflow marker to 0.15.0 and report the files updated, the user's cleanup choice or pending/no-records status, and the exact legacy files preserved or deleted. There is no replacement execution schema or execution-record format migration."
-          ]
-        }
+        "Preserved the project's testing discipline, approved reuse decisions and technical approvals."
       ]
     },
     {
@@ -167,8 +204,8 @@
         "Record the analysis, alternatives, recommendation and reason, approved user choice and custom conditions, approval status, and consequences in product language in the business spec; put exact source paths, symbols, callers, abstraction boundaries, verification, and decision links in the technical spec, with plan tasks limited to approved scope.",
         "Persist every explicitly approved reuse-analysis choice, including keeping a separate implementation, in a canonical category decision and the decision and root indexes, even when ordinary decision-promotion heuristics would omit it or the user continues without a new spec.",
         "Keep alternatives and unapproved ideas out of active decisions; record approved intent as pending implementation, then reconcile the decision with what shipped, including partial or unimplemented scope, at close-out.",
-        "Allow only the approved decision and necessary index writes as a narrow no-new-spec exception, alongside existing-contract maintenance; create no new feature spec, plan, execution record, or analytics record in that branch.",
-        "Preserve independent technical approval for active-decision changes and other risk gates, stricter explicit local policies, historical artifacts and approvals, and execution schema 1.1.0."
+        "Allow approved decision and index writes alongside existing-contract maintenance on the no-new-spec branch.",
+        "Preserve independent technical approvals, stricter local policies and historical artifacts."
       ],
       "migrations": [
         {
@@ -182,10 +219,10 @@
             "Make every explicitly approved choice from reuse analysis, including choosing isolation over reuse, a required canonical category decision with a stable ID and anchor, rationale, alternatives, approved scope and consumers, exceptions and custom conditions, approval evidence, and separate implementation state; this requirement overrides the routine inferability and cross-feature decision-promotion heuristic.",
             "Keep unselected alternatives and unapproved ideas as analysis, never active decisions. Preserve explicit technical approval before changing an existing active decision, amend compatible decisions with history, and supersede only when the approved meaning fundamentally changes.",
             "Record an approved choice promptly as approved intent with implementation pending, refresh decisions/index.html and the root library index, and link applicable business and technical specs to the canonical decision; approval of an approach does not certify that it has been implemented.",
-            "Permit these approved decision and necessary index writes on Continue without a new spec as a narrow exception to its artifact restrictions. Preserve required maintenance of existing contracts, but do not create a new feature spec, plan, execution record, or analytics record and do not add spec-only approval or human-evaluation steps to that branch.",
+            "Permit approved decision and index writes on Continue without a new spec. Maintain existing contracts and preserve the branch's limits on creating specs and plans.",
             "At close-out in every branch, reconcile the decision and relevant indexes with the actual implementation and verification, including partial, changed, or unimplemented scope; seek approval for changed implementation scope rather than silently broadening the approved abstraction or consumers.",
             "Update examples and validation checks for reuse, separate implementation, custom adaptation or extraction, missing candidates, prior explicit approval, and the no-new-spec decision exception; preserve stricter explicit local policies and untouched historical artifacts without invented approvals or implementation facts.",
-            "Advance the installed workflow marker to 0.14.0 while retaining execution schema 1.1.0 and its existing evaluation lifecycle; this release requires no execution-record or analytics-format migration."
+            "Advance the installed workflow marker to 0.14.0."
           ]
         }
       ]
@@ -193,27 +230,8 @@
     {
       "version": "0.13.0",
       "date": "2026-08-08",
-      "summary": "Adds analysis-ready human evaluation to spec-backed executions while preserving legacy execution records and the no-spec branch's lightweight close-out.",
-      "changes": [
-        "After implementation and verification, ask for one neutrally worded overall execution rating from 1 to 10, anchored at 1 for failed, 5 for mixed or partially successful, and 10 for excellent, plus an optional comment whenever the request has an execution record.",
-        "Preserve multiple human evaluations in one execution record, with each evaluation linked to the run IDs it covers and tracked through pending, rated, or declined status without overwriting earlier feedback.",
-        "Advance new execution records to execution schema 1.1.0 while keeping analytics compatible with legacy 1.0.0 records and representing missing historical feedback as unavailable rather than inventing it.",
-        "Persist the user's rating, optional comment, or decline before rebuilding execution analytics and refreshing the root library index so evaluation status remains inspectable with the rest of the execution facts.",
-        "Skip the evaluation prompt on the no-new-spec branch, and never infer a rating, comment, decline, or historical evaluation on the user's behalf."
-      ],
-      "migrations": [
-        {
-          "from": "0.12.0",
-          "steps": [
-            "Update SKILL.md so a terminal spec-backed implementation with execution.json presents its implementation and verification result, asks the anchored 1-to-10 overall execution question with an optional comment, and waits for the user's response; keep the no-new-spec branch unchanged and skip the question there.",
-            "Upgrade the execution template, newly created execution records, and legacy records touched by a new execution to schema 1.1.0 with a humanEvaluations array that can preserve multiple human evaluations, the run IDs each one covers, optional comments, timestamps, and pending, rated, or declined status; leave untouched historical 1.0.0 records readable without rewriting or invented feedback.",
-            "Create the pending evaluation entry before asking, then update that same entry from the user's reply to rated or declined without guessing a score or comment; treat the reply as close-out continuation rather than a new request.",
-            "After recording the reply, rebuild the JSONL analytics ledger and refresh the root library index so the latest evaluation status and rating are visible alongside execution details, then finish that execution's close-out; route separate explicit work in the same reply as a new phase.",
-            "Update analytics validation and exports to accept execution schema 1.1.0 evaluations while continuing to read legacy 1.0.0 records; leave absent historical evaluations unavailable and never backfill inferred feedback.",
-            "Update the generated execution template, examples, validation checks, and human-facing analytics documentation to explain the anchored scale, optional comment, lifecycle, run linkage, and legacy behavior."
-          ]
-        }
-      ]
+      "summary": "Changed the close-out procedure subsequently retired in 0.15.0.",
+      "changes": []
     },
     {
       "version": "0.12.0",
@@ -249,8 +267,8 @@
       "changes": [
         "Always run the request-refinement discovery round when the spec-library skill activates, including when the agent expects to recommend continuing without a spec.",
         "After discovery, present Create or update a spec and Continue without a spec, label exactly one option Recommended, and wait for the user's selection.",
-        "Generate or update spec, plan, execution, decision, and index artifacts only when the user explicitly selects the spec path.",
-        "When the user continues without a spec, implement and verify the refined request directly in the current session without spec approval, execution-strategy selection, analytics recording, or artifact close-out."
+        "Generate or update spec, plan, decision, and index artifacts only when the user explicitly selects the spec path.",
+        "When the user continues without a spec, implement and verify the refined request directly in the current session without spec approval, execution-strategy selection, or artifact close-out."
       ],
       "migrations": [
         {
@@ -259,7 +277,7 @@
             "Update the AGENTS.md workflow note so every activated request runs mandatory discovery before any spec decision.",
             "Update SKILL.md so it asks Create or update a spec versus Continue without a spec after discovery, labels exactly one option (Recommended), and waits for the user's selection.",
             "Move all spec generation and updates behind the explicit spec choice; discovery answers alone must never authorize artifact creation.",
-            "Define the no-spec path as direct same-session implementation and verification with no new or changed spec-library artifacts, spec approval, execution-strategy selection, analytics record, or artifact close-out.",
+            "Define the no-spec path as direct same-session implementation and verification with no new or changed spec-library artifacts or spec-only approval and close-out steps.",
             "Preserve the existing five-minute and presentation-only activation rules, independent risk and handoff triggers, resolved testing discipline, and any stricter local gates."
           ]
         }
@@ -273,7 +291,7 @@
         "Give business specs, technical specs, plans, and decision documents stable artifact-specific accent colors while preserving high contrast in light and dark modes.",
         "Add reusable status badge, keyword highlight, callout, and relationship-table styles so important contract language is easier to scan without relying on color alone.",
         "Replace vague Related sections with Document relationships tables that identify each linked artifact's role and explain why the current document needs it.",
-        "Require direct sibling links among each feature's business, technical, and plan documents, plus the execution record from the plan.",
+        "Require direct sibling links among each feature's business, technical and plan documents.",
         "Define when decisions, related specs, exact anchors, indexes, and external sources deserve explicit links, and prohibit links based only on topic similarity."
       ],
       "migrations": [
@@ -283,7 +301,7 @@
             "Preserve project-customized palettes; otherwise update generated HTML templates with the semantic artifact accents, badges, restrained keyword highlights, callouts, and accessible light/dark colors.",
             "Add data-artifact to template body elements so business, technical, plan, decision, and index documents receive a stable labeled visual identity.",
             "Replace each template's vague Related section with a Document relationships table containing Role, Document, and Why it matters columns.",
-            "Add direct relative links among sibling business.html, technical.html, and plan.html documents; add execution.json to the plan; link decisions to exact stable anchors.",
+            "Link sibling business.html, technical.html and plan.html documents and link decisions to their stable anchors.",
             "Add related specs only for a direct behavior dependency, shared contract, scope interaction, or supersession, and state the reason; do not link documents merely because their topics are similar.",
             "Apply the new styling and relationship contract to existing active generated artifacts when ownership and link targets are clear; preserve customized or historical artifacts rather than rewriting them blindly."
           ]
@@ -343,14 +361,12 @@
     {
       "version": "0.6.0",
       "date": "2026-07-12",
-      "summary": "Adds approval-gated execution strategy recommendations, integrated task classification, model-agnostic routing, and analysis-ready execution telemetry without fragmenting each feature's single plan.",
+      "summary": "Adds execution strategy recommendations, task classification and model-agnostic routing within a single feature plan.",
       "changes": [
         "Keep one integrated plan per feature and divide it into detailed tasks classified by category, effort, risk, plan confidence, delegation confidence, dependencies, scope, verification, and STOP conditions.",
         "Have the planner recommend same-session, delegated, or hybrid execution, always offer same-session, show a custom assignment example, and require explicit user strategy approval before spawning subagents.",
-        "Use model-agnostic capability profiles and reasoning effort for recommendations while recording the actual planner, executor, verifier, and reviewer models after execution.",
+        "Use model-agnostic capability profiles and reasoning effort for recommendations.",
         "Add the design category alongside feature, bug, security, performance, tests, tech-debt, migration, DX, docs, and research.",
-        "Add per-feature execution.json records plus a committed executions.jsonl ledger with actual models, tokens, duration, outcomes, revisions, verification, and user overrides.",
-        "Add read-only analytics validation/export in summary, JSON, JSONL, and CSV formats plus local Codex session usage inspection.",
         "Require delegated writers to use isolated worktrees, review their diffs before executing changed code, and stop before merge.",
         "Keep commits, pull requests, deployment, monitoring, and review handling outside the active phase unless explicitly requested.",
         "Limit update prompt history to schema versions newer than the detected installation."
@@ -361,10 +377,7 @@
           "steps": [
             "Preserve any explicit delegation policy; otherwise update AGENTS.md so planners may recommend delegation but cannot spawn subagents before the user approves the execution strategy.",
             "Keep each feature's single plan.html and expand it with classified task rows, dependencies, exact scope, verification, STOP conditions, capability recommendations, and user-selected assignments.",
-            "Add execution-template.json, per-feature execution.json records, and data/executions.jsonl using execution schema 1.0.0.",
             "Add same-session as an always-available option; offer delegated and hybrid options only with planner rationale, plus a concrete custom assignment example.",
-            "Use capability profiles and effort in durable recommendations; record actual model names, tokens, duration, outcomes, verification, and overrides after execution.",
-            "Run analytics validation, rebuild executions.jsonl, and preserve old specs without inventing historical telemetry.",
             "Use isolated worktrees for delegated writers, inspect diffs before running changed code, and never merge automatically.",
             "Keep commits in same-session mode, merges, pull requests, deployment, monitoring, and review handling out of scope unless explicitly requested.",
             "Use only migration history newer than the installed schema when generating update instructions.",

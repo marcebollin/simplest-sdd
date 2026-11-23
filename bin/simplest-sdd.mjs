@@ -3,12 +3,18 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { renderPrompt } from "../prompts/render.mjs";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageJson = readJson(path.join(packageRoot, "package.json"));
 const versions = readJson(path.join(packageRoot, "schema", "versions.json"));
 
 const commands = new Set(["init", "update", "remove"]);
+const retiredReportPaths = [
+  "specs/**/execution.json", "data/executions.jsonl", "templates/execution-template.json",
+  "schema/execution.schema.json", "examples/execution-record.json", "lib/execution-data.mjs", "lib/codex-usage.mjs"
+];
+const retiredReportNames = new Set(retiredReportPaths.map(file => path.posix.basename(file)));
 
 main();
 
@@ -36,16 +42,19 @@ function main() {
 
   const cwd = path.resolve(parsed.cwd || process.cwd());
 
-  const detectedState = detectState(cwd, parsed.command !== "init");
   const template = readText(path.join(packageRoot, "prompts", `${parsed.command}.md`));
-  const output = render(template, {
+  const contract = parsed.command === "remove" ? "" : readText(path.join(packageRoot, "prompts", "contract.md"));
+  const values = {
     packageVersion: packageJson.version,
-    schemaVersion: versions.currentSchemaVersion,
-    detectedState: formatDetectedState(detectedState),
-    versionHistory: formatVersionHistory(versions, detectedState.skillVersion)
-  });
+    schemaVersion: versions.currentSchemaVersion
+  };
+  if (parsed.command !== "init") {
+    const state = detectState(cwd, parsed.command);
+    values.detectedState = formatDetectedState(state);
+    if (parsed.command === "update") values.versionHistory = formatVersionHistory(versions, state.skillVersion);
+  }
 
-  print(output.trimEnd());
+  print(renderPrompt(template, contract, values).trimEnd());
 }
 
 function parseArgs(args) {
@@ -98,37 +107,42 @@ function parseArgs(args) {
   return parsed;
 }
 
-function detectState(cwd, includeLegacyRecords) {
-  const agentsPath = path.join(cwd, "AGENTS.md");
-  const claudePath = path.join(cwd, "CLAUDE.md");
-  const skillPath = path.join(cwd, ".agents", "skills", "spec-library", "SKILL.md");
-  const claudeSkillPath = path.join(cwd, ".claude", "skills", "spec-library");
-  const libraryHtmlIndex = path.join(cwd, ".agents", "skills", "spec-library", "index.html");
-  const specsHtmlIndex = path.join(cwd, ".agents", "skills", "spec-library", "specs", "index.html");
-  const specsMarkdownIndex = path.join(cwd, ".agents", "skills", "spec-library", "specs", "INDEX.md");
-  const decisionsHtmlIndex = path.join(cwd, ".agents", "skills", "spec-library", "decisions", "index.html");
-  const decisionsMarkdownIndex = path.join(cwd, ".agents", "skills", "spec-library", "decisions", "INDEX.md");
-  const executionLedger = path.join(cwd, ".agents", "skills", "spec-library", "data", "executions.jsonl");
-
-  const skillText = safeRead(skillPath);
+function detectState(cwd, command) {
+  const canonical = ".agents/skills/spec-library";
+  const claudeSkill = ".claude/skills/spec-library";
+  const claudeOnly = !safeLstat(path.join(cwd, canonical)) && safeLstat(path.join(cwd, claudeSkill))?.isDirectory();
+  const source = claudeOnly ? claudeSkill : canonical;
+  const library = path.join(cwd, source);
+  const skillText = safeRead(path.join(library, "SKILL.md"));
   const skillVersion = skillText
     ? skillText.match(/simplest-sdd-schema-version:\s*([0-9]+\.[0-9]+\.[0-9]+)/)?.[1] || "unversioned"
     : null;
-
   return {
     cwd,
-    agents: describePath(agentsPath),
-    claude: describeClaude(claudePath),
-    skill: skillText ? `found (${skillVersion})` : describePath(skillPath),
+    agents: describePath(path.join(cwd, "AGENTS.md")),
+    claude: describeClaude(path.join(cwd, "CLAUDE.md")),
+    source,
+    hasRetiredReports: command === "update" && (
+      /codex-usage|simplest-sdd(?:@[\w.-]+)? analytics|humanEvaluations|executions?\.jsonl?\b/i.test(skillText ?? "") ||
+      [canonical, claudeSkill, ".agents/archive/simplest-sdd"].some(relative => containsRetiredReport(path.join(cwd, relative)))
+    ),
+    skill: skillText ? `found (${skillVersion})` : describePath(path.join(library, "SKILL.md")),
     skillVersion,
-    claudeSkill: describePath(claudeSkillPath),
-    libraryIndex: describeArtifactIndex(libraryHtmlIndex, null),
-    specsIndex: describeArtifactIndex(specsHtmlIndex, specsMarkdownIndex),
-    decisionsIndex: describeArtifactIndex(decisionsHtmlIndex, decisionsMarkdownIndex),
-    legacyRecords: includeLegacyRecords ? {
-      ledger: describePath(executionLedger),
-      count: countNamedFiles(path.join(cwd, ".agents", "skills", "spec-library", "specs"), "execution.json")
-    } : null
+    claudeSkill: describePath(path.join(cwd, claudeSkill)),
+    library: {
+      decisions: describePath(path.join(library, "DECISIONS.md")),
+      legacy: {
+        map: describePath(path.join(library, "index.html")),
+        decisionDocuments: countDecisionDocuments(path.join(library, "decisions")),
+        ...countFeatureDocuments(path.join(library, "specs")),
+        indexes: existing(library, ["specs/index.html", "specs/INDEX.md", "decisions/index.html", "decisions/INDEX.md"]),
+        references: existing(library, [
+          "references/decisions.md", "references/testing.md",
+          "references/discovery.md", "references/authoring.md", "references/execution.md"
+        ]),
+        templates: describePath(path.join(library, "templates"))
+      }
+    }
   };
 }
 
@@ -173,48 +187,74 @@ function describePath(filePath) {
   return "exists";
 }
 
-function describeArtifactIndex(htmlPath, markdownPath) {
-  const hasHtml = Boolean(safeLstat(htmlPath));
-  const hasMarkdown = markdownPath ? Boolean(safeLstat(markdownPath)) : false;
-
-  if (hasHtml && hasMarkdown) {
-    return "HTML index found; older Markdown index also present";
-  }
-
-  if (hasHtml) {
-    return "HTML index found";
-  }
-
-  if (hasMarkdown) {
-    return "older Markdown index found";
-  }
-
-  return "missing";
-}
-
 function formatDetectedState(state) {
-  return [
+  const { legacy } = state.library;
+  const lines = [
     "## Detected Local State",
     "",
-    "The CLI only inspected paths and did not modify files.",
+    "The CLI inspected this installation without changing files.",
     "",
     `- Working directory: \`${state.cwd}\``,
     `- \`AGENTS.md\`: ${state.agents}`,
     `- \`CLAUDE.md\`: ${state.claude}`,
-    `- \`.agents/skills/spec-library/SKILL.md\`: ${state.skill}`,
+    `- \`${state.source}/SKILL.md\`: ${state.skill}`,
     `- \`.claude/skills/spec-library\`: ${state.claudeSkill}`,
-    `- library index: ${state.libraryIndex}`,
-    `- spec index: ${state.specsIndex}`,
-    `- decision index: ${state.decisionsIndex}`,
-    ...(state.legacyRecords ? [
-      `- legacy execution ledger: ${state.legacyRecords.ledger}`,
-      `- legacy feature execution records: ${state.legacyRecords.count}`
-    ] : [])
-  ].join("\n");
+    `- decision file \`DECISIONS.md\`: ${state.library.decisions}`,
+    `- legacy decision map (\`index.html\`): ${legacy.map}`,
+    `- legacy documents in \`decisions/\`: ${legacy.decisionDocuments}`,
+    `- legacy feature documents in \`specs/\`: ${legacy.business} business, ${legacy.technical} technical, ${legacy.plan} plan`,
+    `- legacy indexes: ${listOrNone(legacy.indexes)}`,
+    `- legacy references: ${listOrNone(legacy.references)}`,
+    `- legacy templates: ${legacy.templates}`
+  ];
+  if (state.hasRetiredReports) {
+    lines.push(
+      "",
+      `Old Simplest SDD reporting files used these library-relative paths: ${listOrNone(retiredReportPaths)}. Use the original paths to recognize framework recovery copies as well.`,
+      "Remove framework rating requests, model or token usage collection and references to the retired `analytics` and `codex-usage` commands. Check generated guides, exports, index columns and links. Keep any project-owned product reporting and verification instructions."
+    );
+  }
+  return lines.join("\n");
+}
+
+function containsRetiredReport(directory) {
+  for (const name of fileNamesUnder(directory)) {
+    // Recovery copies may have a numeric suffix before or after the extension.
+    if (retiredReportNames.has(name.replace(/\.\d+(?=\.jsonl?$|$)/, ""))) return true;
+  }
+  return false;
+}
+
+function existing(root, relativePaths) {
+  return relativePaths.filter((relative) => safeLstat(path.join(root, relative)));
+}
+
+function listOrNone(items) {
+  return items.length ? items.map((item) => `\`${item}\``).join(", ") : "none";
+}
+
+function countDecisionDocuments(directory) {
+  let count = 0;
+  for (const name of fileNamesUnder(directory)) {
+    if (/\.(html|md)$/i.test(name) && !/^index\.(html|md)$/i.test(name)) count += 1;
+  }
+  return count;
+}
+
+function countFeatureDocuments(directory) {
+  const counts = { business: 0, technical: 0, plan: 0 };
+  for (const name of fileNamesUnder(directory)) {
+    const featureDocument = /^(business|technical|plan)\.(?:html|md)$/.exec(name);
+    if (featureDocument) counts[featureDocument[1]] += 1;
+  }
+  return counts;
 }
 
 function formatVersionHistory(data, installedVersion) {
-  const relevantVersions = relevantVersionHistory(data.versions, installedVersion);
+  const relevantVersions = data.versions.filter(({ version }) =>
+    compareVersions(version, data.migrationBaseline) >= 0 &&
+    (!installedVersion || installedVersion === "unversioned" || compareVersions(version, installedVersion) > 0)
+  );
   const lines = [
     "## Simplest SDD Schema Versions",
     "",
@@ -250,14 +290,6 @@ function formatVersionHistory(data, installedVersion) {
   return lines.join("\n");
 }
 
-function relevantVersionHistory(history, installedVersion) {
-  if (!installedVersion || installedVersion === "unversioned") {
-    return history;
-  }
-
-  return history.filter((entry) => compareVersions(entry.version, installedVersion) > 0);
-}
-
 function compareVersions(left, right) {
   const leftParts = parseVersion(left);
   const rightParts = parseVersion(right);
@@ -280,19 +312,19 @@ function parseVersion(version) {
   return match ? match.slice(1).map(Number) : null;
 }
 
-function countNamedFiles(root, name) {
-  if (!safeLstat(root)?.isDirectory()) return 0;
-  let count = 0;
-  for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
-    const entryPath = path.join(root, entry.name);
-    if (entry.isDirectory()) count += countNamedFiles(entryPath, name);
-    else if (entry.isFile() && entry.name === name) count += 1;
+function* fileNamesUnder(root) {
+  if (!safeLstat(root)?.isDirectory()) return;
+  let entries;
+  try {
+    entries = fs.readdirSync(root, { withFileTypes: true });
+  } catch (error) {
+    if (["ENOENT", "ENOTDIR", "EACCES", "EPERM"].includes(error.code)) return;
+    throw error;
   }
-  return count;
-}
-
-function render(template, values) {
-  return template.replace(/\{\{(\w+)\}\}/g, (_match, key) => values[key] ?? "");
+  for (const entry of entries) {
+    if (entry.isDirectory()) yield* fileNamesUnder(path.join(root, entry.name));
+    else if (entry.isFile()) yield entry.name;
+  }
 }
 
 function helpText() {
@@ -304,7 +336,7 @@ Usage:
   npx simplest-sdd@latest remove [--cwd <path>]
 
 Commands:
-  init     Print agent instructions for installing simplest-sdd.
+  init     Print agent instructions for installing the simplest-sdd decision library.
   update   Print agent instructions for migrating an existing simplest-sdd setup.
   remove   Print agent instructions for conservatively removing simplest-sdd configuration.
 

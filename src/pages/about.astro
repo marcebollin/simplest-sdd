@@ -5,75 +5,50 @@ import AnnotationIcon from "../components/AnnotationIcon.astro";
 import AnimatedWordmark from "../components/AnimatedWordmark.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import schema from "../../schema/versions.json";
+import decisionExample from "../../examples/DECISIONS.md?raw";
+import { skillSources } from "../lib/skill-sources";
 
 const steps = [
   {
-    title: "Understands the project",
-    description: "The agent uses relevant repository context, existing instructions, intended users, product goals, and the testing approach to understand the change."
+    title: "Find the rule and its consumers",
+    description: "For a feature or fix, the agent searches DECISIONS.md by product name, surface or ID. Related decisions and actual callers show which other lists, sites or customers could be affected."
   },
   {
-    title: "Refines the request visibly",
-    description: "Its visible discovery response names consulted specs and decisions and proposed changes with exact paths. It presents at least five material questions in one round as a numbered Discovery questions section in the response and requests your answers. It waits for your answer to every question before documentation-branch decisions or implementation."
+    title: "Reuse what fits",
+    description: "A partner site that needs a compact card can use the existing card’s size option. The agent asks only if the choice changes a product promise or another consumer’s behavior."
   },
   {
-    title: "Reuses an existing contract",
-    description: "If a spec owns the behavior, it updates that contract automatically and visibly reports the exact files changed, what changed, and why."
-  },
-  {
-    title: "Asks before a new spec",
-    description: "When no spec owns the behavior and you have not already chosen, it recommends creating a new one or continuing without one. A newly generated business spec needs your approval before implementation."
-  },
-  {
-    title: "Preserves sensitive approvals",
-    description: "Concrete sensitive changes retain explicit approval, including authorization you already gave for that scope. Mentioning data, auth, billing, or another sensitive topic does not itself require a pause."
-  },
-  {
-    title: "Implements and verifies",
-    description: "It completes authorized work using the repository’s testing discipline and checks proportional to the change. Useful bounded work can run in parallel when your local constraints permit it."
-  },
-  {
-    title: "Closes out clearly",
-    description: "Its final visible answer reports the outcome, verification, limitations, and complete spec and decision summary with exact paths: consulted unchanged, created, updated, and pending. Earlier progress reports do not replace this summary."
+    title: "Verify the change and record the decision",
+    description: "The agent follows the project’s testing discipline, including TDD where configured, and checks affected consumers. A new promise updates the owning record. A fix that restores an existing rule can cite its ID."
   }
 ];
 
-const benefits = [
-  ["Fewer expensive misunderstandings", "Review the intended outcome before reviewing a large code change."],
-  ["Better continuity", "Future agents can find intent, boundaries, and decisions without replaying old conversations."],
-  ["Human control at the right moments", "Reuse existing contracts automatically, ask before new ones, and keep sensitive technical approvals explicit."],
-  ["Useful delegation", "Bounded independent work can run in parallel without a mandatory strategy menu, within your delegation, model, cost, and stop constraints."],
-  ["Provider independence", "Recommend capabilities and reasoning effort instead of hard-coded model names."],
-  ["Clear close-out", "See the result, verification, and durable documentation changes when the work is complete."]
+const conversationExamples = [
+  ["“Partner lists use the same item card.”", "The agent adds the partner list to the existing card decision in DECISIONS.md. The record keeps its ID, its reason and the sizes each list can use."],
+  ["“When a card changes, check both sizes.”", "This is a recurring instruction for the team. The agent adds it once to Project practice in SKILL.md and uses it the next time a card changes."],
+  ["“Could we try an extra-small card?”", "The agent can explore the idea. The suggestion stays in the conversation until someone settles the product rule."]
 ];
 
 const activationTriggers = [
-  "A business requirement or product behavior is changing and reviewing the expected result would take more than about five minutes",
-  "Product behavior is meaningfully ambiguous",
-  "A misunderstanding would be expensive",
-  "The change carries architectural, data, authentication, billing, security, or public-contract risk",
-  "Work needs a handoff across sessions",
-  "The behavior is already covered by an existing spec"
+  "A feature or fix that affects product behavior",
+  "A request that may conflict with a recorded rule, or extend one",
+  "Anything new that an existing component, flow, or rule might already cover",
+  "A question about why the product works the way it does",
+  "A discussion that settles a product promise or corrects a recurring way of working"
 ];
 
-const projectTree = `AGENTS.md                         # project facts, constraints, and routing
-CLAUDE.md                         # imports AGENTS.md for Claude
+const projectTree = `AGENTS.md                         # routes project work to the skill
+CLAUDE.md                         # imports AGENTS.md
 .agents/skills/spec-library/
-├── SKILL.md                      # short workflow entrypoint
-├── references/
-│   ├── discovery.md              # context, reuse, and spec choice
-│   ├── authoring.md              # contracts, decisions, and HTML
-│   └── execution.md              # implementation and close-out
-├── index.html                    # browsable specification library
-├── specs/<feature>/
-│   ├── business.html             # why and what
-│   ├── technical.html            # how and boundaries
-│   └── plan.html                 # tasks and verification
-└── decisions/                    # durable decisions only`;
+  SKILL.md                        # workflow, TDD and project practice
+  DECISIONS.md                    # created with the first decision
+.claude/skills/spec-library       # links to the same skill`;
 ---
 
 <BaseLayout
   title="What is Simplest SDD?"
-  description="Why Simplest SDD exists, how its lightweight spec-driven workflow works, and when it helps."
+  description="Why Simplest SDD exists, how its library of business decisions works, and when it helps."
   canonicalPath="/about/"
   bodyClass="about-body"
 >
@@ -81,13 +56,11 @@ CLAUDE.md                         # imports AGENTS.md for Claude
 
   <main>
     <section class="about-hero" aria-labelledby="about-title">
-      <h1 id="about-title"><span class="title-highlight title-highlight--orange">Structure</span> when it helps.</h1>
+      <h1 id="about-title">Why record <span class="title-highlight title-highlight--orange">product decisions</span>?</h1>
       <div class="about-hero__copy">
-        <p class="hero-tagline"><span class="title-highlight title-highlight--orange">Nothing</span> when it doesn’t.</p>
         <p class="hero-summary">
-          Simplest SDD is a small spec-driven development framework for building software with AI coding agents.
-          It refines a feature request with you, refreshes an existing durable agreement when one owns the behavior,
-          and asks before creating a new one.
+          Code shows how a feature works today. A short decision tells the next person or agent who relies on it
+          and why. Simplest SDD saves those agreements in one Markdown file as you work.
         </p>
       </div>
     </section>
@@ -97,7 +70,7 @@ CLAUDE.md                         # imports AGENTS.md for Claude
         <ol>
           <li><a href="#why"><span>01</span>Why Simplest SDD?</a></li>
           <li><a href="#what-it-does"><span>02</span>What it does</a></li>
-          <li><a href="#why-useful"><span>03</span>Why it is useful</a></li>
+          <li><a href="#why-useful"><span>03</span>Learning from conversation</a></li>
           <li><a href="#when-it-activates"><span>04</span>When it activates</a></li>
           <li><a href="#use-it"><span>05</span>How to use it</a></li>
           <li><a href="#project-output"><span>06</span>What it adds</a></li>
@@ -117,17 +90,17 @@ CLAUDE.md                         # imports AGENTS.md for Claude
       <div class="why-grid">
         <div class="prose prose--large">
           <p>
-            AI agents can write code quickly. The harder problem is confidence: did the agent understand the
-            request, respect the project, make the right tradeoffs, and verify the result?
+            A technical spec written last month may still describe a component that has since moved or been replaced.
+            An agent can inspect the current implementation and its callers directly.
           </p>
           <p>
-            Long prompts disappear into conversation history and mix product intent with implementation details.
-            Heavy specification systems can solve part of that problem, but often turn every change into ceremony.
+            The reason for a rule is harder to recover. A CSV writer tells an agent which columns it exports.
+            A decision tells it that partner spreadsheets depend on those columns appearing in that order.
           </p>
         </div>
         <aside class="principle-card">
-          <p>The point is not more documentation.</p>
-          <strong>It is less guessing, clearer control, and project knowledge that survives the session.</strong>
+          <p>What would a maintainer need to know before changing the export?</p>
+          <strong>Who relies on the column order, and what breaks if it changes.</strong>
         </aside>
       </div>
     </section>
@@ -139,7 +112,7 @@ CLAUDE.md                         # imports AGENTS.md for Claude
           <h2 id="how-title">What it does</h2>
           <CopyButton sectionId="what-it-does" label="Copy link to What it does" className="section-copy-button" />
         </div>
-        <span>Seven steps from visible discovery to durable, current contracts.</span>
+        <span>From a feature request to a verified change.</span>
       </div>
       <ol class="step-grid">
         {steps.map((step, index) => (
@@ -154,21 +127,8 @@ CLAUDE.md                         # imports AGENTS.md for Claude
       </ol>
       <div class="workflow-notes prose">
         <p>
-          <strong>Resolve consequential reuse tradeoffs.</strong> When a choice changes contracts, shared boundaries,
-          or other meaningful tradeoffs, the agent compares
-          reusing it as-is, creating a separate implementation, and a custom adaptation or shared abstraction.
-          It recommends one option from inspected code and actual consumers. Routine compatible reuse proceeds
-          directly. If nothing fits, it explains why.
-        </p>
-        <p>
-          For example, two payment reports might share calculations while keeping their queries and workflows
-          separate. The business spec explains the product consequences; the technical spec records the approved
-          code boundaries and verification. <strong>Refreshing a spec does not approve the reuse proposal.</strong>
-        </p>
-        <p>
-          Your approved choice—including keeping implementations separate—stays in the decision registry
-          even when you continue without a new spec. The record distinguishes approved intent from what has
-          actually shipped and been verified.
+          A decision starts with a stable ID, status and rule. Add the reason, affected surfaces and any sharing
+          boundary another maintainer should know. A related ID links directly to another heading in the same file.
         </p>
       </div>
     </section>
@@ -177,17 +137,24 @@ CLAUDE.md                         # imports AGENTS.md for Claude
       <div class="section-heading">
         <p class="section-number">03</p>
         <div>
-          <h2 id="useful-title">Why it is useful</h2>
-          <CopyButton sectionId="why-useful" label="Copy link to Why it is useful" className="section-copy-button" />
+          <h2 id="useful-title">What an ordinary conversation saves</h2>
+          <CopyButton sectionId="why-useful" label="Copy link to Learning from conversation" className="section-copy-button" />
         </div>
       </div>
       <div class="benefit-grid">
-        {benefits.map(([title, description]) => (
+        {conversationExamples.map(([title, description]) => (
           <article>
             <h3>{title}</h3>
             <p>{description}</p>
           </article>
         ))}
+      </div>
+      <div class="workflow-notes prose">
+        <p>
+          You can settle a rule while discussing a feature, even if implementation is weeks away. The agent tells
+          you where it saved the agreement and distinguishes approved work from shipped behavior. Later corrections
+          amend that record or the project’s local practice. Framework updates preserve both.
+        </p>
       </div>
     </section>
 
@@ -201,22 +168,20 @@ CLAUDE.md                         # imports AGENTS.md for Claude
       </div>
       <div class="activation-grid">
         <div>
-          <p class="activation-intro">Discovery analyzes the relevant context when:</p>
+          <p class="activation-intro">The agent opens the library when one of these comes up.</p>
           <ul>
             {activationTriggers.map((trigger) => <li>{trigger}</li>)}
           </ul>
         </div>
         <aside>
-          <p>No business behavior change?</p>
+          <p>A clear, low-risk edit?</p>
           <strong>Just build it.</strong>
           <span>
-            Purely presentational design, styling, spacing, or layout changes should be implemented directly even
-            when visual review takes more than five minutes, unless another trigger applies. After discovery, an
-            owning spec updates automatically; you choose whether to create a spec when none owns the behavior
-            and you have not already chosen. Every newly activated request receives the five-question discovery
-            round, including clear existing-spec and no-new-spec work. It explicitly asks you and waits for your
-            answers. Resume without replaying only when the required questions were actually asked and
-            answered by you for the same unchanged scope; existing approvals remain valid.
+            A fix that restores a recorded rule can proceed under that decision. Before adding a component,
+            the agent checks whether an existing one already covers the change.
+            You can also ask for more at any time. Say <em>grill me</em> for a full interview through every open
+            decision, <em>why does it work this way?</em> for an answer from the record, or <em>review reuse</em>
+            for a sweep of duplicated business rules.
           </span>
         </aside>
       </div>
@@ -235,48 +200,28 @@ CLAUDE.md                         # imports AGENTS.md for Claude
         <CopyInstruction
           label="Install"
           action="init"
-          description="Present at least eight material project, product, and workflow questions as a numbered Discovery questions section in the response, request your answers, and wait for every answer before editing files."
+          description="Install the local skill with the project’s testing discipline. The first lasting product decision creates the decision file."
         />
         <CopyInstruction
           label="Update"
           action="update"
-          description="Update the authoring rules for interactive HTML, natural explanations, precise structured steps, and visible pending changes. Keep existing specs unchanged until their next requested edit."
+          description="Consolidate older libraries into one decision file, repair links and remove generated HTML and empty folders."
         />
         <CopyInstruction
           label="Remove"
           action="remove"
-          description="Deactivate the framework while preserving project-owned specs and decisions."
+          description="Deactivate the framework while preserving your recorded decisions."
         />
       </div>
       <p class="update-note">
-        Schema 0.18.0 lets the agent design compact, interactive HTML for each document. It removes fixed HTML
-        templates and required color palettes. Clear typography, spacing, and visual emphasis help readers find the result and next action.
-        Explanations use natural language; structured parts such as steps and checks use ASD-STE100 guidance for precision.
-        The update changes the workflow instructions. It keeps existing specs unchanged.
-        The agent converts an old layout when you next request a change to that spec.
+        The CLI prints instructions for your coding agent to apply. Schema {schema.currentSchemaVersion} reads old Markdown specs,
+        HTML feature folders and the 0.19 decision map and area pages. It keeps business rules, stable IDs, links, history,
+        testing commands and local practices, then removes the obsolete generated pages, references and empty directories.
       </p>
       <p class="update-note">
-        Discovery still requires at least eight installation questions or five feature questions.
-        The agent writes a numbered <strong>Discovery questions</strong> list in its response and waits for every answer.
-        Question tools supplement this list. The final response includes each unanswered question while the agent waits.
-        Missing goal or example questions are additional. Updating the workflow instructions does not repeat installation discovery.
-      </p>
-      <p class="update-note">
-        Spec interactions also belong in the visible answer. Discovery names consulted documents and proposed
-        changes; after writes, the agent reports exact created or updated files and what changed and why.
-        Its final answer includes the complete concise summary of consulted unchanged, created, updated, and
-        pending documents, even when earlier progress reported them. Read-only lookups name consulted specs
-        without activating discovery questions.
-      </p>
-      <p class="update-note">
-        <strong>Old execution data stays yours.</strong> If old records exist, the update instruction lists their
-        exact paths and asks whether to leave them untouched or delete them. Keeping them is the default;
-        deletion requires your explicit choice. Specs, plans, and decisions are preserved.
-      </p>
-      <p class="update-note">
-        Task assignments, progress, and verification remain in <code>plan.html</code>. New work creates no
-        execution records, collects no model/token/duration telemetry, and asks for no rating. The
-        <code>analytics</code> and <code>codex-usage</code> CLI commands have been removed.
+        The update also clears obsolete generated reports from earlier framework backups. Git retains clean, tracked
+        originals. Uncommitted source documents and project guidance that need a recovery copy go under
+        <code>.agents/archive/simplest-sdd/</code>. The agent reports what it removed.
       </p>
     </section>
 
@@ -291,48 +236,25 @@ CLAUDE.md                         # imports AGENTS.md for Claude
       <div class="artifact-grid">
         <div class="tree-panel">
           <div class="panel-bar">
-            <span>spec library</span>
-            <span>plain static files</span>
+            <span>decision library</span>
+            <span>Markdown</span>
           </div>
           <pre><code>{projectTree}</code></pre>
         </div>
         <div class="artifact-copy prose">
           <p>
-            The library stays readable by people and agents. <code>AGENTS.md</code> and
-            <code>.agents/skills</code> are the source of truth, with a compatibility link for Claude skills.
-            A short <code>SKILL.md</code> routes to discovery, authoring, and execution references.
-            Agents load the instructions for the current phase and design each HTML document from its content.
+            <strong>SKILL.md</strong> holds the workflow and the team’s testing and project practices.
+            <code>AGENTS.md</code> routes the agent to it. Claude uses the same instructions through its compatibility link.
           </p>
           <p>
-            Business intent, technical boundaries, implementation plans, and decisions keep their separate roles.
-            Each document keeps its required content divisions, including suggestions.
-            Links explain which document to read next and why.
+            <strong>DECISIONS.md</strong> appears with the first decision. New product areas get headings in the same
+            file. Search by rule, surface or shared capability and follow the links between IDs. You can read and edit
+            the original Markdown in a repository viewer or text editor.
           </p>
-          <p>
-            <strong>Clear at a glance.</strong> The result, current state, pending changes, and next action stay easy to find.
-            Consistent typography and spacing, compact groups, and expandable detail keep the reading path short.
-            Diagrams, images, and controls explain the content where they help.
-            Each standalone HTML document stays readable without scripts or color.
-          </p>
-          <p>
-            <strong>Natural explanations, precise steps.</strong> Prose explains the ideas in clear, connected language.
-            ASD-STE100 complements structured parts such as lists, one-action steps, checks, and acceptance criteria.
-            It does not impose controlled language on every paragraph or require global compliance.
-          </p>
-          <p>
-            <strong>Pending changes stay visible.</strong> Labels and highlights identify added or revised content and describe removals.
-            The agent removes these markers after approval or established authorization, completed implementation, and verification.
-            An existing spec update needs no new approval when the requested scope is already authorized.
-            Existing specs keep their current presentation until you request an edit.
-            That edit moves an old template layout to the current authoring rules while preserving its content divisions and links.
-          </p>
-          <a
-            href="https://github.com/marcebollin/simplest-sdd/tree/main/examples"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Explore the generated examples <span aria-hidden="true">↗</span>
-          </a>
+          <details class="decision-example">
+            <summary>Read the decision file for the shared card example</summary>
+            <pre><code>{decisionExample.trim()}</code></pre>
+          </details>
         </div>
       </div>
     </section>
@@ -347,35 +269,41 @@ CLAUDE.md                         # imports AGENTS.md for Claude
       </div>
       <div class="inspiration-grid">
         <div>
-          <a href="https://www.augmentcode.com/blog" rel="noopener noreferrer" target="_blank">
-            Augment Code <AnnotationIcon kind="reference" context="legend" />
-          </a>
-          <a href="https://www.youtube.com/@t3dotgg" rel="noopener noreferrer" target="_blank">
-            Theo’s videos <AnnotationIcon kind="reference" context="legend" />
-          </a>
-          <a href="https://github.com/shadcn/improve" rel="noopener noreferrer" target="_blank">
-            shadcn/improve <AnnotationIcon kind="reference" context="legend" />
-          </a>
-          <a href="https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/SKILL.md" rel="noopener noreferrer" target="_blank">
-            Taste: visual hierarchy and purposeful interactions <AnnotationIcon kind="reference" context="legend" />
-          </a>
-          <a href="https://github.com/ayghri/i-have-adhd/blob/main/skills/i-have-adhd/SKILL.md" rel="noopener noreferrer" target="_blank">
-            i-have-adhd: clear actions and reading flow <AnnotationIcon kind="reference" context="legend" />
-          </a>
-          <a href="https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra" rel="noopener noreferrer" target="_blank">
-            OpenAI: Rethinking skills and prompts for GPT-6 Astra <AnnotationIcon kind="reference" context="legend" />
-          </a>
+          {Object.values(skillSources).map((source) => (
+            <article>
+              <h3><a href={source.url} rel="noopener noreferrer" target="_blank">
+                {source.label} <AnnotationIcon kind="reference" context="legend" />
+              </a></h3>
+              <p>{source.explanation}</p>
+            </article>
+          ))}
+          <details class="other-sources">
+            <summary>Other influences</summary>
+            <a href="https://github.com/obra/superpowers/blob/main/skills/brainstorming/SKILL.md" rel="noopener noreferrer" target="_blank">
+              Superpowers brainstorming · questions that affect the outcome <AnnotationIcon kind="reference" context="legend" />
+            </a>
+            <a href="https://github.com/Fission-AI/OpenSpec/blob/main/docs/concepts.md" rel="noopener noreferrer" target="_blank">
+              OpenSpec · tracking changes to agreed behavior <AnnotationIcon kind="reference" context="legend" />
+            </a>
+            <a href="https://www.augmentcode.com/blog" rel="noopener noreferrer" target="_blank">
+              Augment Code <AnnotationIcon kind="reference" context="legend" />
+            </a>
+            <a href="https://www.youtube.com/@t3dotgg" rel="noopener noreferrer" target="_blank">
+              Theo’s videos <AnnotationIcon kind="reference" context="legend" />
+            </a>
+            <a href="https://github.com/shadcn/improve" rel="noopener noreferrer" target="_blank">
+              shadcn/improve <AnnotationIcon kind="reference" context="legend" />
+            </a>
+            <a href="https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra" rel="noopener noreferrer" target="_blank">
+              OpenAI: Rethinking skills and prompts for GPT-6 Astra <AnnotationIcon kind="reference" context="legend" />
+            </a>
+          </details>
         </div>
       </div>
     </section>
       </div>
     </div>
 
-    <section class="closing-section" aria-labelledby="closing-title">
-      <h2 id="closing-title">
-        <span class="title-highlight title-highlight--orange">Understand</span> before building.<br /><span class="title-highlight title-highlight--orange">Resolve</span> consequential choices.<br /><span class="title-highlight title-highlight--orange">Verify</span> the result.
-      </h2>
-    </section>
   </main>
 
   <footer>
@@ -540,8 +468,7 @@ CLAUDE.md                         # imports AGENTS.md for Claude
     text-align: right;
   }
 
-  .section-heading h2,
-  .closing-section h2 {
+  .section-heading h2 {
     margin: 0;
     font-size: clamp(2.4rem, 5vw, 5.5rem);
     font-weight: 400;
@@ -849,6 +776,19 @@ CLAUDE.md                         # imports AGENTS.md for Claude
     text-underline-offset: .35rem;
   }
 
+  .decision-example summary,
+  .other-sources summary {
+    color: var(--ink);
+    cursor: pointer;
+    padding-block: .8rem;
+  }
+
+  .decision-example pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    border: 1px solid var(--line);
+  }
+
   .update-note {
     margin: 1rem 0 0;
     color: var(--muted);
@@ -879,39 +819,6 @@ CLAUDE.md                         # imports AGENTS.md for Claude
 
   .inspiration-grid a:last-of-type {
     border-bottom: 0;
-  }
-
-  .disclaimer {
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
-    padding: 1.5rem;
-    border: 1px dashed #555957;
-  }
-
-  .disclaimer span {
-    color: var(--muted);
-    font: 700 .7rem/1 var(--font-sans);
-    letter-spacing: .12em;
-    text-transform: uppercase;
-  }
-
-  .disclaimer p {
-    margin: 0;
-    font-size: clamp(1.25rem, 2.5vw, 2rem);
-    line-height: 1.3;
-  }
-
-  .closing-section {
-    min-height: min(48rem, 80svh);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: clamp(5rem, 12vw, 11rem) 0;
-  }
-
-  .closing-section h2 {
-    max-width: 16ch;
   }
 
   footer {
@@ -1421,18 +1328,6 @@ CLAUDE.md                         # imports AGENTS.md for Claude
 
   .inspiration-grid > div {
     border-top: 0;
-  }
-
-  .closing-section {
-    min-height: 0;
-    padding: clamp(3rem, 6vw, 5rem) 0;
-  }
-
-  .closing-section h2 {
-    max-width: none;
-    font-size: clamp(2.8rem, 5vw, 5.5rem);
-    line-height: .94;
-    text-align: center;
   }
 
   footer {

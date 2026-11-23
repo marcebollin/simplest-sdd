@@ -1,11 +1,7 @@
-import updatePrompt from "../../prompts/update.md?raw";
+import { promptResponse, prompts } from "../lib/prompts";
 
 export const prerender = true;
 
 export function GET() {
-  return new Response(updatePrompt, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8"
-    }
-  });
+  return promptResponse(prompts.update);
 }

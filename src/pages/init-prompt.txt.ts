@@ -1,11 +1,7 @@
-import initPrompt from "../../prompts/init.md?raw";
+import { promptResponse, prompts } from "../lib/prompts";
 
 export const prerender = true;
 
 export function GET() {
-  return new Response(initPrompt, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8"
-    }
-  });
+  return promptResponse(prompts.init);
 }

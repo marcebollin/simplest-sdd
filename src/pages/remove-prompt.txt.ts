@@ -1,11 +1,7 @@
-import removePrompt from "../../prompts/remove.md?raw";
+import { promptResponse, prompts } from "../lib/prompts";
 
 export const prerender = true;
 
 export function GET() {
-  return new Response(removePrompt, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8"
-    }
-  });
+  return promptResponse(prompts.remove);
 }

@@ -1,5 +1,7 @@
 # Read-later project: generated result
 
+Historical example from the spec-based workflow. [Current decision file](DECISIONS.md).
+
 This is an abbreviated example of the system generated for a mature read-later application.
 
 The code paths and inspection findings in this example are illustrative stand-ins. A real generated spec must reference actual inspected implementation, callers, and tests from the target repository.

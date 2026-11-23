@@ -1,145 +1,60 @@
 # Simplest SDD
 
-**A small spec-driven development framework for building software with AI coding agents.**
+Simplest SDD keeps a project's **business decisions in one Markdown file**. Code shows how an export works today. A decision tells the next maintainer that partner spreadsheets rely on the column order. That knowledge gives a coding agent a reason to preserve a behavior, reuse a shared component or ask before changing a promise.
 
-Simplest SDD refines a feature request with you, keeps an existing durable agreement current when one already owns the behavior, and asks before creating a new one.
+## How it works
 
-It adds structure when a change is large, ambiguous, or risky—and stays out of the way when a change is small and obvious.
+Before a feature or fix, the agent searches `DECISIONS.md` by product term, affected surface or stable ID. It follows related rules and checks the actual consumers in code. A second site that needs a compact item card can extend the existing card when both sites share the same rule.
 
-## Why Simplest SDD?
+The agent follows the project's testing discipline. In a TDD project, it starts with a failing behavioral test and checks the existing consumers as well as the new use. A fix that restores a rule can cite the existing ID. A lasting change to product intent updates its record.
 
-AI agents can write code quickly. The harder problem is confidence: did the agent understand the request, respect the project, make the right tradeoffs, and verify the result?
+## Decisions and improvements through conversation
 
-Long prompts do not solve that problem. They disappear into conversation history, mix product intent with implementation details, and are difficult for the next session to reuse. Heavy specification systems solve part of the problem, but can turn every change into a ceremony.
+| What you say | What the agent carries forward |
+| --- | --- |
+| “The partner list will use our compact card next quarter.” | Records the approved extension under the existing card decision. The entry still shows which lists use the card today. |
+| “Going forward, check both sizes whenever you change an item card.” | Updates **Project practice** in the local skill, or the existing project policy that owns that instruction. The next card change uses it. |
+| “Could we try an extra-small card?” | Explores the idea. A suggestion or a one-off request stays in the conversation. |
+| “Why do both sites share a card?” | Returns the recorded reason and its ID. |
 
-Simplest SDD keeps the smallest useful loop:
+The agent records a settled choice in the same turn and tells you where it went. It amends existing guidance first. If an answer would materially change the outcome, it asks. There is no fixed number of questions. You can request a deeper interview with **“Grill me”** or ask **“Review reuse”** to examine consumers that appear to implement the same rule.
 
-> Understand → reuse or choose a spec → execute → verify → learn
-
-The result is less guessing, clearer human control, and project knowledge that improves instead of resetting with every agent session.
-
-## What It Does
-
-For work that activates its discovery workflow, Simplest SDD:
-
-1. **Understands the project.** The agent inspects the repository, existing instructions, intended users, product goals, and testing approach before proposing changes.
-2. **Refines the request visibly.** It inspects relevant implementations and includes a visible `Documentation impact` summary with exact links or paths for consulted specs and decisions and proposed creations or updates. For each newly activated request, the agent explicitly presents at least five material questions in one round as a numbered Discovery questions section in its response, requests your answers, and waits for your answer to every question before documentation-branch decisions or implementation. Repository facts, inferred answers, its own recommendations, and silence do not count as your answers. Consequential reuse tradeoffs receive alternatives and a recommendation for your choice; routine compatible reuse needs no separate choice.
-3. **Reuses an existing contract automatically.** If an existing spec owns the behavior, it updates that spec after discovery, preserves its history, and reports the exact files changed.
-4. **Resolves new-spec creation.** When no existing spec owns the behavior and you have not already chosen, it recommends creating a new spec or continuing without one and waits. A newly generated business spec still needs your approval before implementation.
-5. **Preserves sensitive approvals.** Concrete changes to migrations, data, auth, billing, security, public contracts, infrastructure boundaries, and active decisions require explicit approval. Authorization you already gave counts; mentioning one of these topics alone does not add an approval step.
-6. **Implements and verifies.** It completes the authorized work using the repository's testing discipline and checks proportional to the change. Same-session work is the default; useful bounded work may run in parallel when local instructions and your constraints permit it.
-7. **Closes out clearly.** Its final answer reports the outcome, verification, limitations, and complete spec and decision interaction summary, even when progress updates already covered it. Exact links or paths distinguish consulted unchanged, created, updated, and pending documents, explaining what changed and why.
-
-The model designs each HTML document around its audience, content, and what the reader needs to understand or decide. It chooses coherent typography, spacing, and colors without a fixed page template or palette. A compact opening makes the purpose, current state, and any pending next action easy to find. Small, meaningful groups and optional detail keep the page easy to scan while preserving the complete contract. Diagrams, images, and calm interactions clarify rules, flows, and choices.
-
-Explanations and rationale use natural, concise prose. ASD-STE100 complements structured content such as action lists, acceptance criteria, and checklists: use consistent terms, short steps with one action each, and explicit checks. It does not impose sentence limits or dictionary compliance across the document. Keep the content divisions, including suggestions, requirements, and decisions, with links to the applicable specs and decisions.
-
-Mark proposed additions, changes, and removals with visible labels and emphasis. Keep these marks until the change has approval and its implementation is complete and verified. Existing authorization for a change to an owning spec counts. The marks do not add an approval gate. Then remove the marks and keep the accepted content as normal spec text.
-
-For example, a payment report request may reveal reporting logic in another section. The agent checks whether the rules actually match and whether extracting a shared calculation would help both sections. The business spec records the alternatives, recommendation, your approved choice, and its product consequences; the technical spec records the code boundaries and verification. Approved reuse, adaptation, abstraction, or isolation choices are also stored in the decision registry, even when you continue without a new spec. Automatic spec updates do not approve a reuse proposal.
-
-## Why It Is Useful
-
-- **Fewer expensive misunderstandings.** You review the intended outcome before reviewing a large code change.
-- **Better continuity.** Future agents can find the product intent, technical boundaries, and important decisions without replaying old conversations.
-- **Human control at the right moments.** Existing contracts stay current automatically, new contracts require your choice, and sensitive technical changes keep their explicit approval gate.
-- **Focused context.** Agents load the relevant spec and decisions instead of carrying the entire project history into every task.
-- **Useful delegation.** Bounded, independent work can run in parallel without a mandatory strategy menu, while respecting your delegation, model, cost, and stop constraints.
-- **Provider independence.** The framework recommends capabilities and reasoning effort, not hard-coded model names.
-- **Clear close-out.** The result, verification, and durable documentation changes are visible when the work is complete.
-
-## When It Activates
-
-Run discovery when:
-
-- a business requirement or product behavior is changing and reviewing the expected result would take more than about five minutes;
-- product behavior is meaningfully ambiguous;
-- a misunderstanding would be expensive;
-- the change carries architectural, data, authentication, billing, security, or public-contract risk;
-- work needs a handoff across sessions; or
-- the behavior is already covered by an existing spec.
-
-Purely presentational design, styling, spacing, or layout changes with no business requirement or behavior change should be implemented directly, even when visual review may take more than five minutes, unless another trigger above applies. Other clear, low-risk changes that are easy to review can also be implemented directly. Topic mentions, historical documentation questions, and delegating a bounded subtask do not activate feature discovery by themselves. A read-only lookup still names the consulted specs in the visible answer.
-
-Once discovery activates, the five-question minimum applies even to clear existing-spec changes or work that will create no new spec. Missing concrete goals or clues/examples require additional questions outside that minimum. A discovery round can be reused on resume only when the required questions were actually asked and answered by you for the same unchanged scope; existing approvals remain valid. After discovery, an owning spec updates automatically; the agent asks about a new spec only when none owns the behavior and you have not already selected a branch.
-
-## How To Use It
-
-Copy the instruction you need and give it to your coding agent.
-
-### Install
+## What gets installed
 
 ```text
-Run npx simplest-sdd@latest init and follow the instructions
-```
-
-Installation explicitly presents at least eight material project, product, and workflow questions in one round as a numbered Discovery questions section in the agent’s response, requests your answers, and waits for your answer to every question before editing files. Repository facts, inferred answers, the agent’s recommendations, and silence do not satisfy this gate. You may answer directly or explicitly confirm answers presented for your confirmation. Questions needed to establish a missing concrete goal or clues/examples are additional and do not count toward the eight.
-
-### Update
-
-```text
-Run npx simplest-sdd@latest update and follow the instructions
-```
-
-Schema 0.18.0 removes fixed HTML presentation templates. The model chooses a compact design for each document's audience and content, with a clear current state and pending next action. Natural prose explains the reasoning; ASD-STE100 principles help make structured actions and checks precise. Proposed changes stay visible until they have approval and their implementation is complete and verified.
-
-The update leaves existing specs, plans, and decisions unchanged. When a later task revises an old spec, the agent updates its presentation and preserves its content, links, and history. The update removes active use of HTML format templates. It preserves custom or ambiguously owned template files as inactive history.
-
-The update also preserves the numbered `Discovery questions` section, the eight-question installation minimum, and the five-question feature discovery minimum. The agent waits for every answer. If it ends a turn with answers pending, its final response includes each unanswered question. Existing approvals, project facts, local constraints, and spec reporting remain in force. Updating instructions does not rerun bootstrap discovery.
-
-If old execution records exist, the update instruction asks whether to leave them untouched (the default) or delete them. Deletion requires your explicit choice. New work no longer creates execution records or asks for a rating.
-
-### Remove
-
-```text
-Run npx simplest-sdd@latest remove and follow the instructions
-```
-
-## What It Adds To A Project
-
-```text
-AGENTS.md                         # project facts, constraints, and routing
-CLAUDE.md                         # imports AGENTS.md for Claude
+AGENTS.md                         # project instructions and routing
+CLAUDE.md                         # imports AGENTS.md
 .agents/skills/spec-library/
-├── SKILL.md                      # short workflow entrypoint
-├── references/
-│   ├── discovery.md              # context, reuse, and spec choice
-│   ├── authoring.md              # contracts, decisions, and HTML guidance
-│   └── execution.md              # implementation, validation, and close-out
-├── index.html                    # browsable specification library
-├── specs/<feature>/
-│   ├── business.html             # why and what
-│   ├── technical.html            # how and boundaries
-│   └── plan.html                 # tasks and verification
-└── decisions/                    # durable decisions only
+  SKILL.md                        # workflow, testing and project practice
+  DECISIONS.md                    # created with the first lasting decision
+.claude/skills/spec-library       # relative link to the canonical skill
 ```
 
-The library uses standalone HTML files that people and agents can read. Core content stays available without scripts. Embedded interactions can help readers explore details. A concise `AGENTS.md` routes to the skill. The short `SKILL.md` loads only the references needed for the current phase. The authoring reference defines content and review requirements without a fixed HTML format. Cross-document links state the target's role and why it matters. `AGENTS.md` and `.agents/skills` are the source of truth, with a compatibility link for Claude skills.
+Each decision has an ID-only heading, status and short rule. Add its reason, scope, shared consumers, related IDs and history where they matter. New product areas get headings in the same file. Search or follow a Markdown link directly to an ID. [Read a decision file](examples/DECISIONS.md) · [Follow a feature conversation](examples/README.md).
 
-See the [examples](examples/) for an anonymized request-refinement conversation and generated specs, plans, and decisions.
+## Use it
+
+Give one instruction to a coding agent working in your project.
+
+| Action | Instruction |
+| --- | --- |
+| Install | `Run npx simplest-sdd@latest init and follow the instructions` |
+| Update | `Run npx simplest-sdd@latest update and follow the instructions` |
+| Remove | `Run npx simplest-sdd@latest remove and follow the instructions` |
+
+The CLI prints the instructions and the agent applies them. Installation discovers the testing discipline and preserves project configuration. Removal deactivates the skill, preserves the decisions and returns unique working practices to the project's instructions.
+
+### Updating an older installation
+
+Schema **0.20.1** updates existing decision files and converts older Markdown specs and HTML libraries directly. The agent consolidates the business rules into `DECISIONS.md`, keeps their IDs, statuses and history, and fixes active links. Project-specific testing commands and workflow refinements carry forward.
+
+The update deletes obsolete generated run reports and their support files, including copies kept by an earlier migration. It also removes obsolete HTML, references and empty framework folders. Git retains clean, tracked originals. The agent saves uncommitted source documents and project guidance under `.agents/archive/simplest-sdd/` when they need a recovery copy. It leaves the migration uncommitted and reports which files it removed. Repeating the update with the same inputs produces no diff.
 
 ## Inspiration
 
-Simplest SDD combines a few ideas into a deliberately small framework.
+- Matt Pocock’s interview skills informed how the agent explores choices and saves decisions as they are settled. [Grill Me](https://github.com/mattpocock/skills/blob/main/docs/productivity/grill-me.md) · [Grill With Docs](https://github.com/mattpocock/skills/blob/main/docs/engineering/grill-with-docs.md).
+- Lauren Tan’s poteto-mode informed checking for a simpler existing solution, making reversible calls and verifying the behavior of affected consumers. [poteto-mode](https://github.com/cursor/plugins/blob/main/pstack/skills/poteto-mode/SKILL.md).
 
-### Concepts
+These practices are included in Simplest SDD. Earlier versions also drew on [Augment Code](https://www.augmentcode.com/blog), [Theo's videos](https://www.youtube.com/@t3dotgg), [shadcn/improve](https://github.com/shadcn/improve), [design-taste-frontend](https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/SKILL.md), [i-have-adhd](https://github.com/ayghri/i-have-adhd/blob/main/skills/i-have-adhd/SKILL.md), and [OpenAI's guidance on skill entrypoints](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra).
 
-- **Spec-driven development:** treat the spec as a living contract that guides implementation and verification, rather than documentation written once and forgotten.
-- **Skill graphs:** prefer small, reusable instructions and connected, relevant context over one giant prompt.
-
-### Sources
-
-- [Augment Code](https://www.augmentcode.com/blog)
-- [Theo's videos](https://www.youtube.com/@t3dotgg)
-- [shadcn/improve](https://github.com/shadcn/improve)
-- [design-taste-frontend](https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/SKILL.md) and [i-have-adhd](https://github.com/ayghri/i-have-adhd/blob/main/skills/i-have-adhd/SKILL.md) informed the design and reading guidance; neither skill is an installation dependency.
-- [OpenAI: Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra) — informed smaller instruction entrypoints, selective context loading, and removing workflow steps that repeat settled decisions.
-- Small refinements shaped by my own experience working with coding agents.
-
-> **A friendly disclaimer:** I have not read up on loop engineering yet, so it has not shaped this framework. Give me a chance—I will get there.
-
-## The Short Version
-
-Simplest SDD helps an AI agent understand before it builds, resolve consequential decisions with you, complete authorized work, and leave verified results and useful project knowledge for the next session.
-
-Project website: [sd2.marcebollin.com](https://sd2.marcebollin.com)
+[Project website](https://sd2.marcebollin.com)

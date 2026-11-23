@@ -21,7 +21,7 @@ test("prints help and the package version", () => {
   assert.doesNotMatch(output, /analytics|codex-usage|--format|--session/);
   assert.equal(run([]), output);
   assert.equal(run(["--version"]).trim(), packageJson.version);
-  assert.equal(packageJson.version, versions.currentSchemaVersion);
+  assert.ok(versions.versions.some(({ version }) => version === versions.currentSchemaVersion));
 });
 
 test("rejects the removed telemetry commands and options", () => {
@@ -52,233 +52,276 @@ test("retains argument validation for the supported commands", () => {
   }
 });
 
-test("prints the maintained init template with the current schema version", () => {
-  const template = fs.readFileSync(path.join(root, "prompts", "init.md"), "utf8");
+test("prints the init template with the shared contract and current schema version", () => {
   const output = run(["init"]);
 
-  assert.equal(output, template.replaceAll("{{schemaVersion}}", versions.currentSchemaVersion).trimEnd() + "\n");
+  assert.equal(output, rendered("init").trimEnd() + "\n");
+  assert.ok(output.includes(renderedContract()));
   assert.doesNotMatch(output, /\{\{[a-zA-Z]+\}\}/);
+  assert.doesNotMatch(output, /Detected Local State|Simplest SDD Schema Versions/);
 });
 
-test("delivers the complete current update contract even without migration history", (t) => {
-  const template = fs.readFileSync(path.join(root, "prompts", "update.md"), "utf8");
+test("update delivers the same contract as init, after the detected state and history", (t) => {
   const output = run(["update", "--cwd", project(t, versions.currentSchemaVersion)]);
-  const currentRules = template.slice(template.indexOf("## Rules"))
-    .replaceAll("{{schemaVersion}}", versions.currentSchemaVersion)
-    .replaceAll("{{packageVersion}}", packageJson.version);
+  const rules = rendered("update");
 
-  assert.ok(output.endsWith(currentRules.trimEnd() + "\n"));
+  assert.ok(output.endsWith(rules.slice(rules.indexOf("## Rules")).trimEnd() + "\n"));
+  assert.ok(output.includes(renderedContract()));
+  assert.ok(output.indexOf("## Detected Local State") < output.indexOf("## Simplest SDD Schema Versions"));
+  assert.ok(output.indexOf("## Simplest SDD Schema Versions") < output.indexOf("## Rules"));
   assert.doesNotMatch(output, /\{\{[a-zA-Z]+\}\}/);
-  assert.deepEqual(migrationVersions(output), []);
 });
 
-test("fresh init provides content-led HTML authoring without format scaffolds", () => {
-  const output = run(["init"]);
+test("the installed skill routes ordinary conversation to one decision file and its local practice", () => {
+  const contract = renderedContract();
+  const skill = contract.match(/```markdown\n(---\n[\s\S]*?)\n```/)[1];
 
-  assertAuthoringContract(output);
-  assert.match(output, /Do not create a `templates\/` directory on fresh installs/);
-  assert.doesNotMatch(output, /```html|Use this baseline style|business is violet|no JavaScript unless|templates\/(?:business-spec|technical-spec|plan|decision-category)\.html/);
-});
-
-test("authoring keeps reader guidance primary and excludes blanket skill mandates", (t) => {
-  const outputs = [
-    run(["init"]),
-    run(["update", "--cwd", project(t, versions.currentSchemaVersion)])
-  ];
-
-  for (const output of outputs) {
-    assert.match(output, /reader and the reading task/);
-    assert.match(output, /clear hierarchy with readable typography/);
-    assert.match(output, /Lead with the outcome or change[^\n]*current state/);
-    assert.match(output, /natural, direct prose/);
-    assert.match(output, /one bounded action or testable condition per item/i);
-    assert.match(output, /never a completeness limit: retain every requirement, alternative, exception, and required discovery question/);
-    assert.match(output, /without another user request/);
-    assert.match(output, /Each control must perform a clear reading task and show its (?:current )?state/);
-    assert.match(output, /Use motion only to explain a user-triggered change/);
-    assert.match(output, /(?:Keep|keep) information still by default/);
-    assert.match(output, /not installation or runtime dependencies/);
-    assert.match(output, /No dictionary check or compliance report is required/);
-    assert.doesNotMatch(output, /ASD-STE100 Simplified Technical English for (?:all )?new or revised artifact prose|descriptions to 25 words|Check the official specification and dictionary/);
-    assert.doesNotMatch(output, /Cap lists to 5 items|Display them only when the user asks|\bMOTION_INTENSITY\b|\bDESIGN_VARIANCE\b|\*\*Framework:\*\*|\*\*Animation:\*\*/);
+  assert.match(skill, /^---\nname: spec-library\ndescription: [^\n]*conversation[^\n]*\n---/);
+  assert.ok(skill.includes(`<!-- simplest-sdd-schema-version: ${versions.currentSchemaVersion} -->`));
+  assert.match(skill, /DECISIONS\.md/);
+  assert.match(skill, /^## Project practice$/m);
+  assert.doesNotMatch(skill, /index\.html|decisions\/<area>|references\/(decisions|testing)\.md/);
+  for (const status of ["proposed", "approved", "active", "superseded", "retired"]) {
+    assert.ok(skill.includes(`\`${status}\``), status);
   }
 });
 
-test("fresh init does not prescribe execution artifacts or request ratings", (t) => {
+test("init and the installed workflow allow clear requests to proceed without a question quota", () => {
+  for (const output of [run(["init"]), renderedContract()]) {
+    assert.match(output, /no minimum/i);
+    assert.match(output, /clear request can proceed immediately/i);
+    assert.doesNotMatch(output, /at least (?:five|eight|\d+) questions|five-question|eight-question/i);
+  }
+});
+
+test("install and update both supply reuse guidance, TDD and the opt-in modes", (t) => {
+  for (const command of ["init", "update"]) {
+    const output = run([command, "--cwd", project(t)]);
+    const guidance = output.slice(output.indexOf("## Product decisions and reuse"), output.indexOf("### Library Layout"));
+    assert.match(guidance, /Extend before you build/);
+    assert.match(guidance, /existing users/);
+    assert.match(output, /failing behavioral test, make it pass, then refactor/);
+    assert.match(output, /intentional test-free/);
+    assert.match(output, /invocation policy/);
+    for (const request of ["Grill me.", "Why does it work this way?", "Review reuse."]) {
+      assert.ok(output.includes(`**"${request}"**`), request);
+    }
+  }
+});
+
+test("fresh init is read-only and prescribes no legacy artifacts", (t) => {
   const cwd = project(t);
   const output = run(["init", "--cwd", cwd]);
 
-  assert.doesNotMatch(output, /execution\.json|executions\.jsonl|humanEvaluations|execution\.schema\.json/);
-  assert.doesNotMatch(output, /How would you rate|overall-execution-1-to-10-v1|analytics --format|codex-usage --session/);
-  assert.doesNotMatch(output, /legacy execution ledger:|legacy feature execution records:/);
+  assert.doesNotMatch(output, /execution\.json|executions\.jsonl|How would you rate|legacy/);
+  assert.match(output, /run `npx simplest-sdd@latest update` instead/);
   assert.deepEqual(fs.readdirSync(cwd), []);
 });
 
-test("prints detected update state and applicable migration history", (t) => {
-  const cwd = project(t, "0.2.0");
+test("prints the detected state of a legacy library without modifying it", (t) => {
+  const cwd = project(t, "0.18.0");
   const skillDir = path.join(cwd, ".agents", "skills", "spec-library");
   fs.writeFileSync(path.join(cwd, "AGENTS.md"), "# Agent guide\n");
   fs.writeFileSync(path.join(cwd, "CLAUDE.md"), "@AGENTS.md\n");
-  fs.writeFileSync(path.join(skillDir, "index.html"), "<!doctype html><title>Spec Library</title>\n");
+  writeFiles(skillDir, [
+    ["index.html", "<!doctype html><title>Spec Library</title>\n"],
+    ["specs/index.html", "<!doctype html>\n"],
+    ["specs/checkout/business.html", "<!doctype html>\n"],
+    ["specs/checkout/technical.html", "<!doctype html>\n"],
+    ["specs/checkout/plan.html", "<!doctype html>\n"],
+    ["specs/refunds/business.html", "<!doctype html>\n"],
+    ["decisions/index.html", "<!doctype html>\n"],
+    ["decisions/design.html", "<!doctype html>\n"],
+    ["decisions/architecture.html", "<!doctype html>\n"],
+    ["references/discovery.md", "# Discovery\n"],
+    ["references/execution.md", "# Execution\n"],
+    ["templates/plan.html", "<!doctype html>\n"]
+  ]);
   const before = snapshot(cwd);
 
   const output = run(["update", `--cwd=${cwd}`]);
 
-  assert.match(output, /Detected Local State/);
-  assert.ok(output.includes(`Latest schema version: \`${versions.currentSchemaVersion}\``));
   assert.match(output, /regular file importing @AGENTS\.md/);
-  assert.match(output, /found \(0\.2\.0\)/);
-  assert.match(output, /library index: HTML index found/);
-  const history = migrationVersions(output);
-  assert.equal(history[0], versions.currentSchemaVersion);
-  assert.ok(history.includes("0.3.0"));
-  assert.ok(history.includes("0.14.0"));
-  assert.ok(!history.includes("0.2.0"));
+  assert.match(output, /found \(0\.18\.0\)/);
+  assert.match(output, /decision map \(`index\.html`\): file/);
+  assert.match(output, /documents in `decisions\/`: 2/);
+  assert.match(output, /legacy feature documents in `specs\/`: 2 business, 1 technical, 1 plan/);
+  assert.match(output, /legacy indexes: `specs\/index\.html`, `decisions\/index\.html`/);
+  assert.match(output, /legacy references: `references\/discovery\.md`, `references\/execution\.md`/);
+  assert.match(output, /legacy templates: directory/);
   assert.deepEqual(snapshot(cwd), before);
 });
 
-test("prints only applicable migrations for recent installations", (t) => {
-  for (const [installedVersion, expectedMigrations] of [
-    ["0.14.0", ["0.18.0", "0.17.2", "0.17.1", "0.17.0", "0.16.0", "0.15.0"]],
-    ["0.15.0", ["0.18.0", "0.17.2", "0.17.1", "0.17.0", "0.16.0"]],
-    ["0.16.0", ["0.18.0", "0.17.2", "0.17.1", "0.17.0"]],
-    ["0.17.0", ["0.18.0", "0.17.2", "0.17.1"]],
-    ["0.17.1", ["0.18.0", "0.17.2"]],
-    ["0.17.2", ["0.18.0"]]
-  ]) {
-    const cwd = project(t, installedVersion);
-    const before = snapshot(cwd);
-    const output = run(["update", "--cwd", cwd]);
+test("inventories a physical Claude-only installation with unversioned Markdown sources", (t) => {
+  const cwd = project(t);
+  const library = path.join(cwd, ".claude", "skills", "spec-library");
+  writeFiles(library, [
+    ["SKILL.md", "---\nname: spec-library\ndescription: Project rules.\n---\n"],
+    ["specs/INDEX.md", "# Features\n"],
+    ["decisions/INDEX.md", "# Decisions\n"],
+    ["decisions/001-exports.md", "# Exports keep visible order\n"],
+    ["specs/saved/business.md", "Every export includes all matching items.\n"],
+    ["specs/saved/technical.md", "Use a buffered writer.\n"],
+    ["specs/saved/plan.md", "Update the exporter.\n"],
+    ["specs/discovery/business.html", "<article>Export every result type.</article>"],
+    ["archive/specs/retired/plan.md", "Already retired.\n"]
+  ]);
+  const before = snapshot(cwd);
+  const output = run(["update", "--cwd", cwd]);
 
-    assert.deepEqual(migrationVersions(output), expectedMigrations);
-    assert.deepEqual(snapshot(cwd), before);
-  }
+  assert.match(output, /\.claude\/skills\/spec-library\/SKILL\.md`: found \(unversioned\)/);
+  assert.match(output, /documents in `decisions\/`: 1/);
+  assert.match(output, /legacy feature documents in `specs\/`: 2 business, 1 technical, 1 plan/);
+  assert.match(output, /legacy indexes: `specs\/INDEX\.md`, `decisions\/INDEX\.md`/);
+  assert.deepEqual(snapshot(cwd), before);
 });
 
-test("every upgrade path preserves existing HTML, templates, and custom instructions", (t) => {
-  const installedVersions = [undefined, "unversioned", ...versions.versions.map(({ version }) => version)];
+test("update sees both sides of a partial 0.19 conversion and skips recovery copies", (t) => {
+  const cwd = project(t, "0.19.0");
+  const library = path.join(cwd, ".agents", "skills", "spec-library");
+  writeFiles(library, [
+    ["DECISIONS.md", "# Product decisions\n\n### DES-001\nExisting record.\n"],
+    ["index.html", '<a href="decisions/lists.html#DES-001">Shared card</a>'],
+    ["decisions/lists.html", '<article id="DES-001" data-status="active">Shared card</article>'],
+    ["references/decisions.md", "# Decision records\n"],
+    ["references/testing.md", "Use TDD with npm test.\n"],
+    ["archive/decisions/old.html", "Historical only.\n"]
+  ]);
+  writeFiles(cwd, [[".agents/archive/simplest-sdd/decisions/other.html", "Another original.\n"]]);
+  const before = snapshot(cwd);
+  const output = run(["update", "--cwd", cwd]);
+  assert.match(output, /decision file `DECISIONS\.md`: file/);
+  assert.match(output, /legacy decision map \(`index\.html`\): file/);
+  assert.match(output, /documents in `decisions\/`: 1/);
+  assert.match(output, /legacy references: `references\/decisions\.md`, `references\/testing\.md`/);
+  assert.deepEqual(migrationVersions(output), [versions.currentSchemaVersion]);
+  assert.deepEqual(snapshot(cwd), before);
+});
 
-  for (const installedVersion of installedVersions) {
+test("every older installation receives only the self-contained baseline migration", (t) => {
+  const baselineIndex = versions.versions.findIndex(entry => entry.version === versions.migrationBaseline);
+  assert.ok(baselineIndex >= 0);
+  const expectedVersions = versions.versions.slice(0, baselineIndex + 1).map(entry => entry.version);
+  const previousVersions = versions.versions.slice(baselineIndex + 1);
+  assert.ok(previousVersions.some(entry => entry.version === "0.18.0"));
+  for (const installedVersion of [undefined, "unversioned", ...previousVersions.map(entry => entry.version)]) {
     const cwd = project(t, installedVersion);
-    const skillDir = path.join(cwd, ".agents", "skills", "spec-library");
-    for (const [relative, contents] of [
-      ["specs/checkout/business.html", '<!doctype html><title>Approved contract</title><section id="scope">Keep this exact text.</section>\n'],
-      ["specs/checkout/technical.html", '<!doctype html><a href="business.html#scope">Existing scope</a>\n'],
-      ["specs/checkout/plan.html", '<!doctype html><p>Implemented and verified.</p>\n'],
+    writeFiles(path.join(cwd, ".agents", "skills", "spec-library"), [
+      ["specs/checkout/business.html", '<!doctype html><section id="scope">Keep this exact text.</section>\n'],
       ["decisions/design.html", '<!doctype html><article id="DES-001">Approved decision</article>\n'],
-      ["templates/business-spec.html", '<!doctype html><style>body { color: purple; }</style><p>Legacy format</p>\n'],
       ["references/local-policy.md", "# Custom policy\nPreserve these instructions.\n"]
-    ]) {
-      const target = path.join(skillDir, relative);
-      fs.mkdirSync(path.dirname(target), { recursive: true });
-      fs.writeFileSync(target, contents);
-    }
+    ]);
     const before = snapshot(cwd);
     const output = run(["update", "--cwd", cwd]);
 
+    assert.deepEqual(migrationVersions(output), expectedVersions, installedVersion ?? "missing");
+    assert.match(output, /self-contained baseline/);
     assert.deepEqual(snapshot(cwd), before, `${installedVersion ?? "missing"} installation was modified`);
-    const currentRules = output.slice(output.indexOf("## Rules"));
-    assertAuthoringContract(currentRules);
-    assert.match(currentRules, /unchanged during (?:this )?(?:instruction )?migration/);
-    assert.match(currentRules, /next intentional spec content update/);
-    assert.match(currentRules, /Preserve customized, ambiguously owned, or still-linked files as inactive history/);
-    assert.match(currentRules, /Delete only unmodified generated templates with no remaining document references/);
-    assert.match(output, /The current rules below take precedence over historical migration steps/);
   }
 });
 
-test("update requires an explicit legacy cleanup choice and preserves data by default", (t) => {
-  const output = run(["update", "--cwd", project(t, versions.currentSchemaVersion)]);
-
-  assert.match(output, /Leave old records untouched \(Recommended\)/);
-  assert.match(output, /Delete old records/);
-  assert.match(output, /preserve every existing record and ledger byte-for-byte/);
-  assert.match(output, /delete only the identified feature `execution\.json` files and `data\/executions\.jsonl` after the user explicitly selects deletion/);
-  assert.match(output, /Silence or an unanswered question is not deletion approval/);
-  assert.match(output, /If no legacy data exists, skip the question/);
-  assert.match(output, /On a current-version installation, offer this choice when retained legacy data still exists/);
-  assert.match(output, /Do not delete a whole feature folder/);
-  assert.match(output, /Do not follow symlinks or delete targets outside the inventoried library paths/);
-  assert.match(output, /remove dangling references to the deleted files/);
-  assert.match(output, /Preserve historical prose and existing valid archival links.*on the leave path/);
-});
-
-test("current removal rules override historical tracking and evaluation migrations", (t) => {
-  const output = run(["update", "--cwd", project(t)]);
-
-  assert.ok(migrationVersions(output).includes("0.13.0"));
-  const precedence = output.indexOf("The current rules below take precedence over historical migration steps");
-  assert.ok(precedence >= 0 && precedence < output.indexOf("## Simplest SDD Schema Versions"));
-  assert.match(output, /every older instruction to create, upgrade, record, validate, export, or rebuild execution data or to request human feedback/);
-  assert.match(output, /Skip those older steps entirely, including for missing or unversioned installations/);
-  assert.match(output, /never create intermediate records or ratings only to remove them later/);
-  assert.match(output, /Do not create or maintain execution records.*or ask for execution ratings or qualification/);
+test("the migration covers the original formats and protects decisions and uncommitted work", (t) => {
+  const output = run(["update", "--cwd", project(t, "0.18.0")]);
+  for (const source of ["business.html", "business.md", "technical.html", "plan.html", "archive/"]) {
+    assert.ok(output.includes(source), source);
+  }
+  assert.match(output, /open questions, suggestions and rejected alternatives out of the decision set/i);
+  assert.match(output, /Preserve existing IDs, attribution, reasons and scope/);
+  assert.match(output, /dirty, staged, untracked or non-Git original/);
+  assert.match(output, /Keep the Git index intact/);
+  assert.ok(output.includes("DECISIONS.md#"));
+  assert.ok(output.includes(".agents/archive/simplest-sdd/"));
 });
 
 test("omits migration history for a current installation", (t) => {
   const output = run(["update", "--cwd", project(t, versions.currentSchemaVersion)]);
 
   assert.match(output, /installed schema is current; no migration history is needed/);
+  assert.match(output, /Do not rewrite compliant files/);
+  assert.doesNotMatch(output, /codex-usage|execution\.json|executions\.jsonl/);
   assert.deepEqual(migrationVersions(output), []);
+});
+
+test("update recognizes a previously archived report without an active skill", (t) => {
+  const cwd = project(t);
+  writeFiles(cwd, [[".agents/archive/simplest-sdd/staged/data/executions.jsonl", "original, unread\n"]]);
+  const before = snapshot(cwd);
+  const output = run(["update", "--cwd", cwd]);
+  assert.ok(output.includes("data/executions.jsonl"));
+  assert.match(output, /leave the skill inactive/);
+  assert.doesNotMatch(output, /original, unread/);
+  assert.deepEqual(snapshot(cwd), before);
 });
 
 test("does not recommend downgrading a newer installation", (t) => {
   const output = run(["update", "--cwd", project(t, "99.0.0")]);
 
   assert.match(output, /Do not downgrade it/);
-  assert.match(output, /report it and stop without changing files or offering cleanup/);
+  assert.match(output, /stop and report the version/);
   assert.deepEqual(migrationVersions(output), []);
 });
 
-test("legacy detection is read-only and does not parse records or follow directory symlinks", (t) => {
-  const cwd = project(t, "0.14.0");
+test("updates identify retired files even at the current marker without reading run data", (t) => {
+  const cwd = project(t, versions.currentSchemaVersion);
   const skillDir = path.join(cwd, ".agents", "skills", "spec-library");
   const specsDir = path.join(skillDir, "specs");
-  for (const [relative, contents] of [
+  writeFiles(skillDir, [
     ["specs/first/execution.json", "old or incomplete record\n"],
     ["specs/group/second/execution.json", "{not valid json"],
     ["specs/first/business.html", "<!doctype html><title>Keep this spec</title>\n"],
     ["data/executions.jsonl", '{"legacy":true}\ninvalid old line\n'],
     ["data/unrelated.json", '{"keep":true}\n']
-  ]) {
-    const target = path.join(skillDir, relative);
-    fs.mkdirSync(path.dirname(target), { recursive: true });
-    fs.writeFileSync(target, contents);
-  }
+  ]);
   fs.symlinkSync(specsDir, path.join(specsDir, "loop"));
   const before = snapshot(cwd);
 
   for (const command of ["init", "update", "remove"]) {
     const output = run([command, "--cwd", cwd]);
+    if (command === "update") {
+      for (const legacy of ["specs/**/execution.json", "data/executions.jsonl", "templates/execution-template.json", "schema/execution.schema.json", "examples/execution-record.json"]) {
+        assert.ok(output.includes(legacy), legacy);
+      }
+      assert.match(output, /Delete .*generated run reports/);
+      assert.match(output, /including .*framework recovery copies/);
+      assert.match(output, /Remove .*rating requests.*usage collection/);
+      assert.doesNotMatch(output, /historical `data\/executions\.jsonl`.*to that recovery location/);
+    } else {
+      assert.doesNotMatch(output, /execution\.json|executions\.jsonl|legacy execution ledger|feature execution records/);
+    }
     if (command !== "init") {
-      assert.match(output, /legacy execution ledger: file/);
-      assert.match(output, /legacy feature execution records: 2/);
+      assert.match(output, /legacy feature documents in `specs\/`: 1 business, 0 technical, 0 plan/);
     }
     assert.doesNotMatch(output, /old or incomplete record|not valid json|invalid old line/);
     assert.deepEqual(snapshot(cwd), before);
   }
 });
 
-test("reports absent legacy records without creating any project files", (t) => {
+test("reports an absent library without creating any project files", (t) => {
   const cwd = project(t);
   for (const command of ["update", "remove"]) {
     const output = run([command, "--cwd", cwd]);
-    assert.match(output, /legacy execution ledger: missing/);
-    assert.match(output, /legacy feature execution records: 0/);
+    assert.match(output, /decision map \(`index\.html`\): missing/);
+    assert.doesNotMatch(output, /legacy execution ledger|feature execution records|execution\.json|executions\.jsonl/);
     assert.deepEqual(fs.readdirSync(cwd), []);
   }
+  assert.match(run(["update", "--cwd", cwd]), /If neither .* contains a library or its documents, direct the user to `npx simplest-sdd@latest init`/);
 });
 
 test("prints conservative removal instructions", () => {
   const output = run(["remove"]);
 
   assert.match(output, /Removal Instructions/);
-  assert.match(output, /Never delete user-authored specs or decisions by default/);
-  assert.match(output, /Treat removal as the active phase/);
-  assert.match(output, /execution\.json.*user-owned execution history/);
+  assert.match(output, /It does not delete the project's recorded decisions/);
+  assert.match(output, /Delete one only after showing the exact files and receiving explicit confirmation/);
+  assert.ok(output.includes("Preserve `DECISIONS.md`"));
+  assert.ok(output.includes("Project practice"));
+  assert.match(output, /## Product decisions and reuse`, or the older `## Spec-driven workflow`/);
+  assert.doesNotMatch(output, /\{\{[a-zA-Z]+\}\}/);
 });
 
-test("does not ship the retired execution helpers, schema, or example", () => {
+test("ships the shared contract and none of the retired helpers", () => {
+  assert.ok(packageJson.files.includes("prompts"));
+  assert.ok(fs.existsSync(path.join(root, "prompts", "contract.md")));
   for (const relative of [
     "lib/execution-data.mjs",
     "lib/codex-usage.mjs",
@@ -289,29 +332,36 @@ test("does not ship the retired execution helpers, schema, or example", () => {
   }
 });
 
-function assertAuthoringContract(output) {
-  assert.match(output, /(?:model (?:choose|design)|model-designed)/i);
-  assert.match(output, /compact.*interactive|interactive[\s\S]*?compact/);
-  assert.match(output, /Do not (?:copy an HTML template or )?prescribe a layout, palette, CSS class set/);
-  assert.match(output, /suggestions[\s\S]*?separate from accepted requirements/);
-  assert.match(output, /diagrams and images wherever they explain/);
-  assert.match(output, /embedded (?:CSS and[^\n]*?embedded )?JavaScript|small embedded JavaScript/);
-  assert.match(output, /complete reading path (?:when|with) JavaScript (?:is )?disabled/);
-  assert.match(output, /keyboard access, visible focus/);
-  assert.match(output, /design-taste-frontend/);
-  assert.match(output, /i-have-adhd/);
-  assert.match(output, /Use ASD-STE100 as a complement for structured content, not a document-wide controlled-language requirement/);
-  assert.match(output, /structured lists, action steps, checklists, and acceptance criteria/);
-  assert.match(output, /last approved and implemented content as the review baseline/);
-  assert.match(output, /Show removals in a[^\n]*?(?:removal note|before\/after)/);
-  assert.match(output, /Partial or failed implementation and incomplete verification/);
-  assert.match(output, /Remove revision highlighting only when the same change is approved or already authorized under the workflow, implemented, and verified/);
-  assert.match(output, /Existing-owner maintenance does not gain a new approval gate/);
-  assert.match(output, /Keep other pending highlights intact/);
-  assert.match(output, /(?:rejected|Rejected) or withdrawn/);
-  assert.match(output, /(?:must leave|Leave) existing specs, plans, and decisions unchanged/);
-  assert.match(output, /When a spec next needs an intentional content update/);
-  assert.match(output, /`Document relationships` section[^\n]*?(?:`Role`|Role)[^\n]*?(?:`Document`|Document)[^\n]*?(?:`Why it matters`|Why it matters)/);
+test("published instructions and release notes omit the retired reporting workflow", () => {
+  const sources = [
+    "README.md", "PROMPT.md", "schema/CHANGELOG.md", "schema/versions.json",
+    "src/pages/about.astro", "src/pages/how.astro", "prompts/contract.md",
+    ...["init", "update", "remove"].map(command => `prompts/${command}.md`)
+  ];
+  const oldWorkflow = /simplest-sdd(?:@latest)? analytics\b|codex-usage|humanEvaluations|execution\.json|executions\.jsonl|execution (?:rating|analytics)|analytics record/i;
+  for (const source of sources) {
+    assert.doesNotMatch(fs.readFileSync(path.join(root, source), "utf8"), oldWorkflow, source);
+  }
+});
+
+function rendered(command) {
+  return fs.readFileSync(path.join(root, "prompts", `${command}.md`), "utf8")
+    .replace("{{contract}}", () => fs.readFileSync(path.join(root, "prompts", "contract.md"), "utf8").trimEnd())
+    .replaceAll("{{schemaVersion}}", versions.currentSchemaVersion)
+    .replaceAll("{{packageVersion}}", packageJson.version);
+}
+
+function renderedContract() {
+  return fs.readFileSync(path.join(root, "prompts", "contract.md"), "utf8").trimEnd()
+    .replaceAll("{{schemaVersion}}", versions.currentSchemaVersion);
+}
+
+function writeFiles(directory, files) {
+  for (const [relative, contents] of files) {
+    const target = path.join(directory, relative);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, contents);
+  }
 }
 
 function project(t, installedVersion) {

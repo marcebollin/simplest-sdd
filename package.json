@@ -1,7 +1,7 @@
 {
   "name": "simplest-sdd",
-  "version": "0.18.0",
-  "description": "A discovery-first workflow with durable specs, explicit decisions, and verified implementation.",
+  "version": "0.20.1",
+  "description": "A compact library of business decisions for coding agents: locate what a change touches, reuse before building, and ask only what matters.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/marcebollin/simplest-sdd.git"
