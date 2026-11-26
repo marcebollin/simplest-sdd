@@ -2,6 +2,11 @@
 
 This changelog tracks the installed simplest-sdd schema. Workflow releases advance the schema version; CLI-only releases may leave it unchanged.
 
+## 0.21.0 - 2026-11-26
+
+- Fresh installs give the agent a short communication brief in `AGENTS.md` or link to the project's existing guidance. The brief distinguishes product users from the person receiving a reply and uses the reader's known preferences for vocabulary, tone and detail.
+- Updates check for equivalent guidance at any supported schema version. They fill gaps, preserve local wording and reuse the same source for later preferences expressed in conversation.
+
 ## 0.20.1 - 2026-11-23
 
 - Updates remove obsolete generated run reports and their support files from the skill and earlier framework backups. The update keeps business decisions, local practices and unrelated project files.

@@ -1,7 +1,24 @@
 {
-  "currentSchemaVersion": "0.20.1",
-  "migrationBaseline": "0.20.1",
+  "currentSchemaVersion": "0.21.0",
+  "migrationBaseline": "0.21.0",
   "versions": [
+    {
+      "version": "0.21.0",
+      "date": "2026-11-26",
+      "summary": "Give the agent project-specific guidance on who it is talking to and how to communicate with that reader.",
+      "changes": [
+        "Make audience guidance reachable from AGENTS.md. Apply confirmed preferences to their intended readers and use plain language when preferences are unknown."
+      ],
+      "migrations": [
+        {
+          "from": "0.20.1 and all earlier or unversioned installations",
+          "steps": [
+            "Apply this self-contained baseline directly. Keep equivalent communication guidance in its existing wording and location, adding only what is missing.",
+            "For older libraries, consolidate lasting decisions in DECISIONS.md, preserve their IDs and links, and retire obsolete generated documents and reports. Preserve local project practices, testing, configuration and uncommitted source documents."
+          ]
+        }
+      ]
+    },
     {
       "version": "0.20.1",
       "date": "2026-11-23",

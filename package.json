@@ -1,6 +1,6 @@
 {
   "name": "simplest-sdd",
-  "version": "0.20.1",
+  "version": "0.21.0",
   "description": "A compact library of business decisions for coding agents: locate what a change touches, reuse before building, and ask only what matters.",
   "repository": {
     "type": "git",

@@ -16,6 +16,12 @@ Use `.agents/skills/spec-library/SKILL.md` for features and fixes, questions abo
 A clear request can proceed immediately. Ask about an open choice when its answer changes the outcome.
 ```
 
+### Audience and Communication
+
+Keep a short brief alongside the project's own instructions in `AGENTS.md`, or link from there to its existing home. Use the request and project vocabulary to distinguish who builds the product, who uses it and who will read the agent's reply. Explain terms such as “we” or “client” when their meaning could change a decision.
+
+Write the brief as instructions for questions, updates and handoffs. Follow the audience named in the current request and match the reader's vocabulary, tone and preferred level of detail. For example, a shop owner may want to know what shoppers will see after a failed payment, while the engineer reviewing the fix may want the failure case and its test. Use only roles and preferences supported by the project or conversation. Where preferences are unknown, have the agent lead with the outcome in plain language. Ask about the reader only when the answer would materially change the response.
+
 ### Library Layout
 
 ```text
@@ -44,7 +50,7 @@ The product's rules live in `DECISIONS.md` beside this skill. Create it when the
 ## Learn from conversation
 
 - When the user states or corrects a lasting product promise, update its record in the same turn, even during a discussion with no coding task. Find an existing rule first. Amend it, supersede it or add a new ID as appropriate. An explicit instruction needs no second confirmation.
-- When the user establishes a recurring way of working on this project, update the smallest relevant instruction under **Project practice**. If an existing project policy or testing skill already owns it, maintain that source and link to it here. Preserve these local refinements across framework updates.
+- When the user establishes a recurring way of working on this project, update the smallest relevant instruction under **Project practice**. If an existing project policy or testing skill already owns it, maintain that source and link to it here. Keep standing communication preferences with the audience guidance in or linked from `AGENTS.md`, scoped to the reader the user named. Preserve these local refinements across framework updates.
 - Keep ideas, unanswered questions and one-off directions in the conversation. A question about the current rule is a lookup. If it is genuinely unclear whether a correction should apply next time and that distinction matters, ask. Honor requests to brainstorm or read without editing.
 - A repeated correction can reveal an improvement. Check the saved rule and the evidence, suggest a lasting change if the intended policy is uncertain, then apply the user's decision. Keep one current instruction for each practice. A conversational edit applies to this project and keeps the installed schema marker intact.
 - Say what you saved and where. When the same guidance is already present, cite it. Recording an agreement does not itself authorize a product change or establish that it shipped.

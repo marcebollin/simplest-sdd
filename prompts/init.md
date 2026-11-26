@@ -20,13 +20,13 @@ Record durable business decisions the user states or confirms, including decisio
 
 ## Make `AGENTS.md` Canonical Without Losing Content
 
-Keep the existing instructions and incorporate unique Claude content as described in Claude Compatibility. If no instructions exist, create a concise `AGENTS.md` using the project facts you found. Add the workflow below, adapted to this project.
+Keep the existing instructions and incorporate unique Claude content as described in Claude Compatibility. If no instructions exist, create a concise `AGENTS.md` using the project facts you found. Include the audience and communication brief below, reusing any guidance the project already has. Add the workflow, adapted to this project.
 
 {{contract}}
 
 ## Validate
 
-- Verify the schema marker, skill frontmatter, canonical instructions, regular `CLAUDE.md` import, relative Claude skill link and reference links.
+- Verify the schema marker, skill frontmatter, canonical instructions, regular `CLAUDE.md` import, relative Claude skill link and reference links. Check that a new conversation can find the audience brief from `AGENTS.md`.
 - Confirm the installed skill contains local project practice and verified testing commands or their canonical link. If decisions were recorded, check their IDs and Markdown links. A fresh install creates no HTML or empty directories.
 - Check that a plain-language product decision and a recurring workflow correction reach their respective files, and a one-off request creates no standing policy. Check that a clear bug fix can honor an existing rule without an interview or new record, and that a request affecting a shared capability leads the agent to its other consumers.
 - Run applicable documentation or build checks. Report the installed files, testing discipline, inferred project facts and any missing verification.

@@ -72,6 +72,22 @@ test("update delivers the same contract as init, after the detected state and hi
   assert.doesNotMatch(output, /\{\{[a-zA-Z]+\}\}/);
 });
 
+test("fresh installs and existing libraries receive the audience brief before an update can be treated as complete", (t) => {
+  const init = run(["init", "--cwd", project(t)]);
+  const brief = init.match(/^### Audience and Communication\n([\s\S]*?)(?=^### )/m)?.[1].trim();
+  assert.ok(brief, "init must tell the agent how to set up the audience brief");
+  assert.match(brief, /`AGENTS\.md`/);
+
+  for (const version of ["0.20.1", versions.currentSchemaVersion]) {
+    const output = run(["update", "--cwd", project(t, version)]);
+    assert.ok(output.includes(brief), `update from ${version} must include the same guidance`);
+    const inspection = output.indexOf("## Inspect The Installation");
+    const stop = output.indexOf("validate and stop", inspection);
+    assert.ok(inspection >= 0 && stop > inspection);
+    assert.match(output.slice(inspection, stop), /communication guidance/i);
+  }
+});
+
 test("the installed skill routes ordinary conversation to one decision file and its local practice", () => {
   const contract = renderedContract();
   const skill = contract.match(/```markdown\n(---\n[\s\S]*?)\n```/)[1];

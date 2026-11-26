@@ -36,6 +36,11 @@ const contractAnnotations: Record<string, Annotation> = {
     tone: "amber",
     reference: skillSources.potetoMode
   },
+  "Audience and Communication": {
+    explanation: "A client may want to hear what their customers will notice. An engineer reviewing the same change may want the failure case and the test result. The brief keeps each reader’s preferences in reach during ordinary conversation.",
+    tone: "blue",
+    reference: skillSources.theoLakebed
+  },
   "Library Layout": {
     explanation: "An empty project needs only the skill and agent configuration. The first lasting decision creates DECISIONS.md. New areas are headings in that file.",
     tone: "teal"
@@ -95,7 +100,7 @@ const updateAnnotations: Record<string, Annotation> = {
     tone: "rose"
   },
   "Inspect The Installation": {
-    explanation: "Inventories active sources, local refinements and recovery needs. A partial conversion reuses existing IDs. A current version marker still requires checking for leftover generated files.",
+    explanation: "Checks for existing audience guidance before filling a gap, even at the current version. A partial conversion reuses existing IDs and checks for leftover generated files.",
     tone: "blue"
   },
   "Replace The Workflow Instructions": {
@@ -225,7 +230,7 @@ const promptDefinitions = [
     id: "init",
     tabLabel: "Install",
     actionLabel: "installation",
-    summary: "Installs the local skill with the project’s testing and workflow guidance. A confirmed rule creates the first decision file.",
+    summary: "Installs the skill with the project’s testing discipline and guidance on how to address each reader. A confirmed rule creates the first decision file.",
     instruction: "Run npx simplest-sdd@latest init and follow the instructions",
     rawUrl: "/init-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/init.md",
@@ -235,7 +240,7 @@ const promptDefinitions = [
     id: "update",
     tabLabel: "Update",
     actionLabel: "migration",
-    summary: "Consolidates old Markdown, HTML maps and area pages into DECISIONS.md. After checking the new links and preserving originals that need recovery, the agent removes obsolete generated files and empty folders.",
+    summary: "Adds missing communication guidance and keeps established preferences. Older Markdown and HTML libraries become one DECISIONS.md file after the agent checks links and preserves originals that need recovery.",
     instruction: "Run npx simplest-sdd@latest update and follow the instructions",
     rawUrl: "/update-prompt.txt",
     githubUrl: "https://github.com/marcebollin/simplest-sdd/blob/main/prompts/update.md",

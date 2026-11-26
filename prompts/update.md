@@ -18,7 +18,9 @@ Inspect `AGENTS.md`, `CLAUDE.md`, the canonical skill and any physical Claude co
 
 Inventory the original files and their staged and unstaged Git state. Include any existing `DECISIONS.md`, the 0.19 `index.html` and `decisions/<area>.html` files, generated Markdown references, older feature specs, plans, indexes and templates. Check both the in-skill `archive/` and `.agents/archive/simplest-sdd/` for obsolete generated reports before treating a migration as complete. Do not follow symlinks when searching for files to delete.
 
-A current marker alone does not prove cleanup finished. For a partial conversion, match existing IDs and source history before appending or retiring anything. For a compliant installation with no remaining generated inputs, validate and stop. Do not rewrite compliant files.
+At every supported version, check the communication guidance in the project instructions, Project practice and their linked policies. Look for equivalent guidance under any heading. Keep its wording and scope, and make sure it is reachable from `AGENTS.md`. Add the brief from Audience and Communication only where guidance is missing. A product description identifying end users alone still leaves open how the agent should address its reader.
+
+For a partial conversion, match existing IDs and source history before appending or retiring anything. Once the audience guidance is in place, the installation is otherwise compliant and no generated inputs remain, validate and stop. Do not rewrite compliant files.
 
 ## Convert The Library
 

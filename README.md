@@ -42,11 +42,15 @@ Give one instruction to a coding agent working in your project.
 | Update | `Run npx simplest-sdd@latest update and follow the instructions` |
 | Remove | `Run npx simplest-sdd@latest remove and follow the instructions` |
 
-The CLI prints the instructions and the agent applies them. Installation discovers the testing discipline and preserves project configuration. Removal deactivates the skill, preserves the decisions and returns unique working practices to the project's instructions.
+The CLI prints the instructions and the agent applies them. On install, it records who the agent works with and how they prefer to communicate in `AGENTS.md`, or links to the project's existing guidance. For example, a client might ask to hear what changed for their customers, while a maintainer wants the failure case and test results. If the reader's preferences are unknown, the agent leads with the outcome in plain language. You can set a standing preference later in conversation.
+
+Installation also discovers the testing discipline and preserves project configuration. Removal deactivates the skill, preserves the decisions and returns unique working practices to the project's instructions.
 
 ### Updating an older installation
 
-Schema **0.20.1** updates existing decision files and converts older Markdown specs and HTML libraries directly. The agent consolidates the business rules into `DECISIONS.md`, keeps their IDs, statuses and history, and fixes active links. Project-specific testing commands and workflow refinements carry forward.
+Schema **0.21.0** checks for communication guidance even on an installation marked current. It fills gaps and keeps existing instructions for each audience in their own words.
+
+Updates convert older Markdown specs and HTML libraries directly. The agent consolidates the business rules into `DECISIONS.md`, keeps their IDs, statuses and history, and fixes active links. Project-specific testing commands and workflow refinements carry forward.
 
 The update deletes obsolete generated run reports and their support files, including copies kept by an earlier migration. It also removes obsolete HTML, references and empty framework folders. Git retains clean, tracked originals. The agent saves uncommitted source documents and project guidance under `.agents/archive/simplest-sdd/` when they need a recovery copy. It leaves the migration uncommitted and reports which files it removed. Repeating the update with the same inputs produces no diff.
 
@@ -54,7 +58,8 @@ The update deletes obsolete generated run reports and their support files, inclu
 
 - Matt Pocock’s interview skills informed how the agent explores choices and saves decisions as they are settled. [Grill Me](https://github.com/mattpocock/skills/blob/main/docs/productivity/grill-me.md) · [Grill With Docs](https://github.com/mattpocock/skills/blob/main/docs/engineering/grill-with-docs.md).
 - Lauren Tan’s poteto-mode informed checking for a simpler existing solution, making reversible calls and verifying the behavior of affected consumers. [poteto-mode](https://github.com/cursor/plugins/blob/main/pstack/skills/poteto-mode/SKILL.md).
+- Theo Browne’s Lakebed instructions explain who is building the product, who uses it and what the team means by “we.” Simplest SDD uses that distinction when adapting replies to the reader. [Theo’s video](https://www.youtube.com/watch?v=xJaMTo2YgO8) · [Lakebed agent instructions](https://gist.github.com/t3dotgg/cbe978269b4c7258c4d20164aece7087).
 
-These practices are included in Simplest SDD. Earlier versions also drew on [Augment Code](https://www.augmentcode.com/blog), [Theo's videos](https://www.youtube.com/@t3dotgg), [shadcn/improve](https://github.com/shadcn/improve), [design-taste-frontend](https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/SKILL.md), [i-have-adhd](https://github.com/ayghri/i-have-adhd/blob/main/skills/i-have-adhd/SKILL.md), and [OpenAI's guidance on skill entrypoints](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra).
+These practices are included in Simplest SDD. Earlier versions also drew on [Augment Code](https://www.augmentcode.com/blog), [shadcn/improve](https://github.com/shadcn/improve), [design-taste-frontend](https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/SKILL.md), [i-have-adhd](https://github.com/ayghri/i-have-adhd/blob/main/skills/i-have-adhd/SKILL.md), and [OpenAI's guidance on skill entrypoints](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra).
 
 [Project website](https://sd2.marcebollin.com)
